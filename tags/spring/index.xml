@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spring on 小蜜蜂</title>
-    <link>https://xumf.github.io/tags/spring/</link>
+    <link>https://xumf.github.com/tags/spring/</link>
     <description>Recent content in Spring on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Thu, 26 Apr 2018 23:13:45 +0800</lastBuildDate>
     
-	<atom:link href="https://xumf.github.io/tags/spring/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.com/tags/spring/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Spring Controller方法自定义参数</title>
-      <link>https://xumf.github.io/blog/java-controller-param/</link>
+      <link>https://xumf.github.com/blog/java-controller-param/</link>
       <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
       
-      <guid>https://xumf.github.io/blog/java-controller-param/</guid>
+      <guid>https://xumf.github.com/blog/java-controller-param/</guid>
       <description>&amp;emsp;&amp;emsp;WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
 &amp;emsp;&amp;emsp;SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
  文中的@Data是使用了lombok插件

@@ -2,102 +2,102 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 小蜜蜂</title>
-    <link>https://xumf.github.io/tags/</link>
+    <link>https://xumf.github.com/tags/</link>
     <description>Recent content in Tags on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Sat, 28 Apr 2018 13:54:50 +0800</lastBuildDate>
     
-	<atom:link href="https://xumf.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Blog</title>
-      <link>https://xumf.github.io/tags/blog/</link>
+      <link>https://xumf.github.com/tags/blog/</link>
       <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/blog/</guid>
+      <guid>https://xumf.github.com/tags/blog/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Centos</title>
-      <link>https://xumf.github.io/tags/centos/</link>
+      <link>https://xumf.github.com/tags/centos/</link>
       <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/centos/</guid>
+      <guid>https://xumf.github.com/tags/centos/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Github</title>
-      <link>https://xumf.github.io/tags/github/</link>
+      <link>https://xumf.github.com/tags/github/</link>
       <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/github/</guid>
+      <guid>https://xumf.github.com/tags/github/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java</title>
-      <link>https://xumf.github.io/tags/java/</link>
+      <link>https://xumf.github.com/tags/java/</link>
       <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/java/</guid>
+      <guid>https://xumf.github.com/tags/java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Maven</title>
-      <link>https://xumf.github.io/tags/maven/</link>
+      <link>https://xumf.github.com/tags/maven/</link>
       <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/maven/</guid>
+      <guid>https://xumf.github.com/tags/maven/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Rabbitmq</title>
-      <link>https://xumf.github.io/tags/rabbitmq/</link>
+      <link>https://xumf.github.com/tags/rabbitmq/</link>
       <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/rabbitmq/</guid>
+      <guid>https://xumf.github.com/tags/rabbitmq/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Redis</title>
-      <link>https://xumf.github.io/tags/redis/</link>
+      <link>https://xumf.github.com/tags/redis/</link>
       <pubDate>Sun, 22 Apr 2018 15:43:54 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/redis/</guid>
+      <guid>https://xumf.github.com/tags/redis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Spring</title>
-      <link>https://xumf.github.io/tags/spring/</link>
+      <link>https://xumf.github.com/tags/spring/</link>
       <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/spring/</guid>
+      <guid>https://xumf.github.com/tags/spring/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Tomcat</title>
-      <link>https://xumf.github.io/tags/tomcat/</link>
+      <link>https://xumf.github.com/tags/tomcat/</link>
       <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/tomcat/</guid>
+      <guid>https://xumf.github.com/tags/tomcat/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Work</title>
-      <link>https://xumf.github.io/tags/work/</link>
+      <link>https://xumf.github.com/tags/work/</link>
       <pubDate>Thu, 19 Apr 2018 21:09:25 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/work/</guid>
+      <guid>https://xumf.github.com/tags/work/</guid>
       <description></description>
     </item>
     

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Maven on 小蜜蜂</title>
-    <link>https://xumf.github.io/tags/maven/</link>
+    <link>https://xumf.github.com/tags/maven/</link>
     <description>Recent content in Maven on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 22 Apr 2018 13:42:22 +0800</lastBuildDate>
     
-	<atom:link href="https://xumf.github.io/tags/maven/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.com/tags/maven/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Maven环境隔离</title>
-      <link>https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</link>
+      <link>https://xumf.github.com/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</link>
       <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
       
-      <guid>https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</guid>
+      <guid>https://xumf.github.com/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</guid>
       <description>在pom.xml的build标签中添加
 &amp;lt;resources&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;!- 配置文件夹 -&amp;gt; &amp;lt;directory&amp;gt;src/main/resources.${deploy.type}&amp;lt;/directory&amp;gt; &amp;lt;excludes&amp;gt; &amp;lt;!— 打包时忽略的文件 —&amp;gt; &amp;lt;exclude&amp;gt;.jsp&amp;lt;/exclude&amp;gt; &amp;lt;/excludes&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;!- 公共资源文件文件夹 -&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;directory&amp;gt;src/main/resources&amp;lt;/directory&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;/resources&amp;gt;  在pom.xml的build标签下添加
 &amp;lt;profiles&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!- 开发环境 -&amp;gt; &amp;lt;id&amp;gt;dev&amp;lt;/id&amp;gt; &amp;lt;activation&amp;gt; &amp;lt;!- 默认环境 -&amp;gt; &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt; &amp;lt;/activation&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;dev&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!- 测试环境 -&amp;gt; &amp;lt;id&amp;gt;beta&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;beta&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!- 生产环境 -&amp;gt; &amp;lt;id&amp;gt;prod&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;prod&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;/profiles&amp;gt;  添加资源文件夹

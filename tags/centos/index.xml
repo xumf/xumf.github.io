@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Centos on 小蜜蜂</title>
-    <link>https://xumf.github.io/tags/centos/</link>
+    <link>https://xumf.github.com/tags/centos/</link>
     <description>Recent content in Centos on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 22 Apr 2018 22:21:04 +0800</lastBuildDate>
     
-	<atom:link href="https://xumf.github.io/tags/centos/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.com/tags/centos/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Centos Download Rabbitmq</title>
-      <link>https://xumf.github.io/blog/centos-download-rabbitmq/</link>
+      <link>https://xumf.github.com/blog/centos-download-rabbitmq/</link>
       <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
       
-      <guid>https://xumf.github.io/blog/centos-download-rabbitmq/</guid>
+      <guid>https://xumf.github.com/blog/centos-download-rabbitmq/</guid>
       <description>到erlang官网下载erlang
  到rabbitMQ官网下载mq
  安装依赖包
