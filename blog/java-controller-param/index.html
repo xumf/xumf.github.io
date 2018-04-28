@@ -77,16 +77,16 @@
 </hgroup>
 <hr class="sep" />
 </header>
-	<p>&emsp;&emsp;WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
+	<p>  WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
 
-<p>&emsp;&emsp;SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
+<p>  SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
 
 <blockquote>
 <p>文中的<code>@Data</code>是使用了<a href="https://www.projectlombok.org/">lombok</a>插件</p>
 </blockquote>
 
 <ol>
-<li><p>编写User类</p>
+<li><p>编写User类</p>
 
 <pre><code class="language-java">@Data
 public class User {
@@ -117,8 +117,7 @@ public class User {
 
 <li><p>编写常量类</p>
 
-<pre><code class="language-java">
-public class Consts {
+<pre><code class="language-java">public class Consts {
 
   // 获取cookie中或者参数中token的标识
   public static final String TOKEN_NAME = &quot;token_name&quot;;
@@ -247,7 +246,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 <li><p>以上就完成了springMVC参数的注入，下面举个使用的栗子，当登录完成后，客户端调用<code>host:port/demo/user/get</code>
 不需要传任何参数，就会返回用户对象user</p>
 
-<pre><code class="language-java">@Controller
+<pre><code>```java
+@Controller
    @RequestMapping(&quot;/demo&quot;)
    public class DemoController {
 
@@ -257,6 +257,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
            return user;
        }
    }
+```
 </code></pre></li>
 </ol>
 

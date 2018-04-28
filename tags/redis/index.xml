@@ -35,7 +35,20 @@
       <pubDate>Thu, 19 Apr 2018 21:09:25 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/redis%E5%91%BD%E4%BB%A4/</guid>
-      <description>redis的启动命令  启动客户端  $ redis-cli   关闭客户端  $ redis-cli shutdown   指定端口启动  $ redis-cli -p 6380   指定端口关闭  $ redis-cli -p 6380 shutdown   指定ip启动  $ redis-cli -h 127.0.0.1   指定ip关闭  $ redis-cli -h 127.0.0.1 shutdown   指定密码启动  $ redis-cli -a 123456  redis基础命令  清除当前数据库所有的键  $ flushdb   清除全部数据库所有的键  $ flushall   测试数据库链接是否成功  $ ping   当前数据库key的数量  $ dbsize   切换数据库  $ select 数据库编号   查看当前数据库所有的key  $ keys *   持久化  $ save   退出  $ quit  redis键基础命令  添加一个key  $ set 键 值   删除一个key  $ del 键   判断键是否存在（返回1为存在，0位不存在）  $ exists 键   查询键的剩余生存时间（-1为永远，不存在的key为-2，以秒为单位）  $ ttl 键   设置键的有效时间（10ms）  $ expire 键 10   查看键的类型  $ type 键   设置一个hash值（hset 键 字段 值）  $ hset 键 字段 值   随机键  $ randomkey   修改键的名字，无论key是否存在  $ rename 键 新键名   修改键的名字，如果key存在就不改变  $ renamenx 键 新键名   设置键并且设置有效时间（秒为单位）（setex 键 有效时间 值）  $ setex 键 100 值   设置键并且设置有效时间（毫秒为单位）（psetex 键 有效时间 值）  $ psetex 键 10000 值   通过键获取对应的值  $ get 键   获取键对应值得一段闭区间值（getrange 键 起始下标 结束下标）  $ getrange 键 0 1   设置键的时候，如果键已存在，设置成功后返回旧的值（getset 键 值）  $ getset 键 值   批量设置多个键值（mset 键 值 键 值 键 值 …）  $ mset 键 值 键 值 键 值   批量获取读个键的值（mget 键 键 键 …）  $ mget 键1 键2 键3   设置键，如果已存在则不做操作（setnx 键 值）  $ setnx 键 值   获取键对应值得长度  $ strlen 键   批量设置键值，如果有其中一个已经存在，则全部设置失败）  $ msetnx 键 值 键 值 键 值   给键对应值是integer类型的加一（键对应的值要为数值类型）  $ incr 键   给键对应值是integer类型的加一定的增量（incrby 键 增量值）  $ incrby 键 100   给键对应值是integer类型的减一  $ decr 键   给键对应值是integer类型的加一定的减量（decrby 键 减量值）  $ decrby 键 100   给键对应值追加内容  $ append 键 追加的值  hash类型的操作  查看哈希类型的键，字段是否存在（hexists 键 字段）  $ hexists 键 哈希类型的键   获取哈希类型的所有的建，以及键所有的字段的值（hgetall 键）  $ hgetall 键   获取哈希类型的键所有的字段（hkeys 键）  $ hkeys 键   获取哈希类型的键所有的字段的值（hvals 键）  $ hvals 键   获取哈希类型的键字段数量（hlen 键）  $ hlen 键   批量获取键对应的值（hmget 键 字段 字段 字段 …）  $ hmget 键 哈希类型的键1 哈希类型的键2 哈希类型的键3   批量设置键中的字段对应值（hmset 键 字段 值 字段 值 字段 值 …）  $ hmset 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3   批量设置键中的字段对应值，如果对应字段已经存在则失败（hmsetnx 键 字段 值 字段 值 字段 值 …）  $ hmsetnx 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3  list类型的操作  设置集合类型（lpush 键 值 值 值 值 …）  $ lpush 键 值1 值2 值3 值4 值5 值6   查看集合的长度  $ llen 键   拿集合的一个范围（lrange 键 起始下标 结束下标）  $ lrange 键 0 2   设置集合下标的对应值（lset 键 下标 值）  $ lset 键 0 89   获取集合某个下标的值（lindex 键 下标）  $ lindex 键 0   移除集合第一个元素  $ lpop 键   移除集合最后一个元素  $ rpop 键  （无序）set类型的操作  添加集合  $ sadd 键 值1 值2 值3   查看集合的所有元素</description>
+      <description>redis的启动命令  启动客户端
+$ redis-cli  关闭客户端
+$ redis-cli shutdown  指定端口启动
+$ redis-cli -p 6380  指定端口关闭
+$ redis-cli -p 6380 shutdown  指定ip启动
+$ redis-cli -h 127.0.0.1  指定ip关闭
+$ redis-cli -h 127.0.0.1 shutdown  指定密码启动
+$ redis-cli -a 123456   redis基础命令  清除当前数据库所有的键
+$ flushdb  清除全部数据库所有的键
+$ flushall  测试数据库链接是否成功
+$ ping  当前数据库key的数量
+$ dbsize  切换数据库
+$ select 数据库编号  查看当前数据库所有的key
+$ keys *  持久化</description>
     </item>
     
   </channel>
