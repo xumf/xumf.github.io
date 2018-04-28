@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Github on 小蜜蜂</title>
-    <link>xumf.github.io/tags/github/</link>
+    <link>https://xumf.github.io/tags/github/</link>
     <description>Recent content in Github on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Sat, 28 Apr 2018 13:54:50 +0800</lastBuildDate>
     
-	<atom:link href="xumf.github.io/tags/github/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.io/tags/github/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>github静态网页</title>
-      <link>xumf.github.io/blog/github-page/</link>
+      <link>https://xumf.github.io/blog/github-page/</link>
       <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
       
-      <guid>xumf.github.io/blog/github-page/</guid>
+      <guid>https://xumf.github.io/blog/github-page/</guid>
       <description>  文章下的 xumf 都要换成你的 github用户名
  第一步：创建一个repository  xumf.github.io改为你的github用户名.github.io Description(可以不填)添加备注 点击Create repository   
 第二步：上传index.html到刚刚创建的repository上  clone repository到本地，$ git clone git@github.com:xumf/xumf.github.io.git 

@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on 小蜜蜂</title>
-    <link>xumf.github.io/categories/</link>
+    <link>https://xumf.github.io/categories/</link>
     <description>Recent content in Categories on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     
-	<atom:link href="xumf.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
