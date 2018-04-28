@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.32.2" />
+		<title>github静态网页 - 小蜜蜂</title>
+
+		<meta name="description" content="github">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+		
+		
+
+		
+		<link rel="stylesheet" href="/css/ui.min.css"/>
+		
+		<style>
+	a { color: #ff8181; }
+	blockquote {
+		border-left-color: #ff8181;
+		border-right-color: #ff8181; }
+	.bar a:hover {
+		color: #ff8181;
+		text-decoration: none; }
+	.sep {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		margin-left:0;
+		width: 24rem;
+		border-top: 2px solid #ff8181; }
+</style>
+
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="xumf.github.io/about/">了解我</a></li><li><a href="xumf.github.io/blog/">博客</a></li><li><a href="xumf.github.io/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>github静态网页</h1>
+	<h5>
+		
+		<time datetime="2018-04-28 13:54:50 &#43;0800 CST">2018年 4月 28日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/blog">blog</a>
+				
+				<a href="/tags/github">github</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	
+
+<blockquote>
+<p>文章下的 <strong><em>xumf</em></strong> 都要换成你的 <strong><em>github用户名</em></strong></p>
+</blockquote>
+
+<h3 id="第一步-创建一个repository">第一步：创建一个repository</h3>
+
+<ul>
+<li><code>xumf.github.io</code>改为<code>你的github用户名.github.io</code></li>
+<li>Description(可以不填)添加备注</li>
+<li>点击Create repository</li>
+</ul>
+
+<p><a href="https://github.com"><img src="https://s14.postimg.cc/6s4lynw4x/git-repository.png" alt="git-repository.png" /></a>
+<a href="https://postimg.cc/image/5pufgiav1/"><img src="https://s14.postimg.cc/ih8ln0kn5/fin.png" alt="fin.png" /></a></p>
+
+<h3 id="第二步-上传-index-html-到刚刚创建的repository上">第二步：上传index.html到刚刚创建的repository上</h3>
+
+<ul>
+<li><p>clone repository到本地，<code>$ git clone git@github.com:xumf/xumf.github.io.git</code>
+<a href="https://postimg.cc/image/em57keywd/"><img src="https://s14.postimg.cc/ad0hi8vn5/gitclone.png" alt="gitclone.png" /></a></p></li>
+
+<li><p>进入到xumf.github.io.git目录，<code>$ cd xumf.github.io.git</code>
+<a href="https://postimg.cc/image/8z8uml1f1/"><img src="https://s14.postimg.cc/qcj51fwq9/cddir.png" alt="cddir.png" /></a></p></li>
+
+<li><p>添加一个文件并编辑，<code>$ vim index.html</code>，编辑完成后<code>:wq</code>，保存退出。</p></li>
+
+<li><p>添加，上传index.html文件到github</p>
+
+<pre><code class="language-bash">$ git add index.html
+$ git commit index.html -m 'init'
+$ git push origin master
+</code></pre></li>
+
+<li><p>在浏览器打开<a href="https://xumf.github.io/">https://xumf.github.io/</a>，就能看到刚刚<code>index.html</code>的内容。
+<a href="https://postimg.cc/image/t08lbpxgd/"><img src="https://s14.postimg.cc/lk9bpx9r5/xgi.png" alt="xgi.png" /></a></p></li>
+</ul>
+
+	<nav class="no-print post-nav">
+	
+		<a class="prev-post" href="xumf.github.io/blog/java-controller-param/">
+			<img class="icon-text" src="/img/prev.svg"/>Spring Controller方法自定义参数</a>
+	
+	
+	</nav>
+</article>
+
+
+
+
+	
+
+
+<div id="SOHUCS"></div>
+<script type="text/javascript">
+  (function() {
+    var appid = 'cytzRk6Ih';
+    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs = function(d, a) {
+        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+        var b = document.createElement("script");
+        b.setAttribute("type", "text/javascript");
+        b.setAttribute("charset", "UTF-8");
+        b.setAttribute("src", d);
+        if (typeof a === "function") {
+          if (window.attachEvent) {
+            b.onreadystatechange = function() {
+              var e = b.readyState;
+              if (e === "loaded" || e === "complete") {
+                b.onreadystatechange = null;
+                a()
+              }
+            }
+          } else {
+            b.onload = a
+          }
+        }
+        c.appendChild(b)
+      };
+      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
+        window.changyan.api.config({
+          appid: appid,
+          conf: conf
+        })
+      });
+    }
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license">License</a>
+					
+				</p>
+				
+				<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span>返回</span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
+</html>
+

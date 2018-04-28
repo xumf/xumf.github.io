@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.32.2" />
+		<title>Redis命令 - 小蜜蜂</title>
+
+		<meta name="description" content="redis的启动命令  启动客户端  $ redis-cli   关闭客户端  $ redis-cli shutdown   指定端口启动  $ redis-cli -p 6380   指定端口关闭  $ redis-cli -p 6380 shutdown   指定ip启动  $ redis-cli -h 127.0.0.1   指定ip关闭  $ redis-cli -h 127.0.0.1 shutdown   指定密码启动  $ redis-cli -a 123456  redis基础命令  清除当前数据库所有的键  $ flushdb   清除全部数据库所有的键  $ flushall   测试数据库链接是否成功  $ ping   当前数据库key的数量  $ dbsize   切换数据库  $ select 数据库编号   查看当前数据库所有的key  $ keys *   持久化  $ save   退出  $ quit  redis键基础命令  添加一个key  $ set 键 值   删除一个key  $ del 键   判断键是否存在（返回1为存在，0位不存在）  $ exists 键   查询键的剩余生存时间（-1为永远，不存在的key为-2，以秒为单位）  $ ttl 键   设置键的有效时间（10ms）  $ expire 键 10   查看键的类型  $ type 键   设置一个hash值（hset 键 字段 值）  $ hset 键 字段 值   随机键  $ randomkey   修改键的名字，无论key是否存在  $ rename 键 新键名   修改键的名字，如果key存在就不改变  $ renamenx 键 新键名   设置键并且设置有效时间（秒为单位）（setex 键 有效时间 值）  $ setex 键 100 值   设置键并且设置有效时间（毫秒为单位）（psetex 键 有效时间 值）  $ psetex 键 10000 值   通过键获取对应的值  $ get 键   获取键对应值得一段闭区间值（getrange 键 起始下标 结束下标）  $ getrange 键 0 1   设置键的时候，如果键已存在，设置成功后返回旧的值（getset 键 值）  $ getset 键 值   批量设置多个键值（mset 键 值 键 值 键 值 …）  $ mset 键 值 键 值 键 值   批量获取读个键的值（mget 键 键 键 …）  $ mget 键1 键2 键3   设置键，如果已存在则不做操作（setnx 键 值）  $ setnx 键 值   获取键对应值得长度  $ strlen 键   批量设置键值，如果有其中一个已经存在，则全部设置失败）  $ msetnx 键 值 键 值 键 值   给键对应值是integer类型的加一（键对应的值要为数值类型）  $ incr 键   给键对应值是integer类型的加一定的增量（incrby 键 增量值）  $ incrby 键 100   给键对应值是integer类型的减一  $ decr 键   给键对应值是integer类型的加一定的减量（decrby 键 减量值）  $ decrby 键 100   给键对应值追加内容  $ append 键 追加的值  hash类型的操作  查看哈希类型的键，字段是否存在（hexists 键 字段）  $ hexists 键 哈希类型的键   获取哈希类型的所有的建，以及键所有的字段的值（hgetall 键）  $ hgetall 键   获取哈希类型的键所有的字段（hkeys 键）  $ hkeys 键   获取哈希类型的键所有的字段的值（hvals 键）  $ hvals 键   获取哈希类型的键字段数量（hlen 键）  $ hlen 键   批量获取键对应的值（hmget 键 字段 字段 字段 …）  $ hmget 键 哈希类型的键1 哈希类型的键2 哈希类型的键3   批量设置键中的字段对应值（hmset 键 字段 值 字段 值 字段 值 …）  $ hmset 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3   批量设置键中的字段对应值，如果对应字段已经存在则失败（hmsetnx 键 字段 值 字段 值 字段 值 …）  $ hmsetnx 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3  list类型的操作  设置集合类型（lpush 键 值 值 值 值 …）  $ lpush 键 值1 值2 值3 值4 值5 值6   查看集合的长度  $ llen 键   拿集合的一个范围（lrange 键 起始下标 结束下标）  $ lrange 键 0 2   设置集合下标的对应值（lset 键 下标 值）  $ lset 键 0 89   获取集合某个下标的值（lindex 键 下标）  $ lindex 键 0   移除集合第一个元素  $ lpop 键   移除集合最后一个元素  $ rpop 键  （无序）set类型的操作  添加集合  $ sadd 键 值1 值2 值3   查看集合的所有元素">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+		
+		
+
+		
+		<link rel="stylesheet" href="/css/ui.min.css"/>
+		
+		<style>
+	a { color: #ff8181; }
+	blockquote {
+		border-left-color: #ff8181;
+		border-right-color: #ff8181; }
+	.bar a:hover {
+		color: #ff8181;
+		text-decoration: none; }
+	.sep {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		margin-left:0;
+		width: 24rem;
+		border-top: 2px solid #ff8181; }
+</style>
+
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="xumf.github.io/about/">了解我</a></li><li><a href="xumf.github.io/blog/">博客</a></li><li><a href="xumf.github.io/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Redis命令</h1>
+	<h5>
+		
+		<time datetime="2018-04-19 21:09:25 &#43;0800 CST">2018年 4月 19日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/redis">redis</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	
+
+<h2 id="redis的启动命令">redis的启动命令</h2>
+
+<ul>
+<li>启动客户端</li>
+</ul>
+
+<pre><code class="language-bash">    $ redis-cli
+</code></pre>
+
+<ul>
+<li>关闭客户端</li>
+</ul>
+
+<pre><code class="language-bash">  $ redis-cli shutdown
+</code></pre>
+
+<ul>
+<li>指定端口启动</li>
+</ul>
+
+<pre><code class="language-bash">  $ redis-cli -p 6380
+</code></pre>
+
+<ul>
+<li>指定端口关闭</li>
+</ul>
+
+<pre><code class="language-bash">  $ redis-cli -p 6380 shutdown
+</code></pre>
+
+<ul>
+<li>指定ip启动</li>
+</ul>
+
+<pre><code class="language-bash">  $ redis-cli -h 127.0.0.1
+</code></pre>
+
+<ul>
+<li>指定ip关闭</li>
+</ul>
+
+<pre><code class="language-bash">  $ redis-cli -h 127.0.0.1 shutdown
+</code></pre>
+
+<ul>
+<li>指定密码启动</li>
+</ul>
+
+<pre><code class="language-bash">  $ redis-cli -a 123456
+</code></pre>
+
+<h2 id="redis基础命令">redis基础命令</h2>
+
+<ul>
+<li>清除当前数据库所有的键</li>
+</ul>
+
+<pre><code class="language-bash">  $ flushdb
+</code></pre>
+
+<ul>
+<li>清除全部数据库所有的键</li>
+</ul>
+
+<pre><code class="language-bash">  $ flushall
+</code></pre>
+
+<ul>
+<li>测试数据库链接是否成功</li>
+</ul>
+
+<pre><code class="language-bash">  $ ping
+</code></pre>
+
+<ul>
+<li>当前数据库key的数量</li>
+</ul>
+
+<pre><code class="language-bash">  $ dbsize
+</code></pre>
+
+<ul>
+<li>切换数据库</li>
+</ul>
+
+<pre><code class="language-bash">  $ select 数据库编号
+</code></pre>
+
+<ul>
+<li>查看当前数据库所有的key</li>
+</ul>
+
+<pre><code class="language-bash">  $ keys *
+</code></pre>
+
+<ul>
+<li>持久化</li>
+</ul>
+
+<pre><code class="language-bash">  $ save
+</code></pre>
+
+<ul>
+<li>退出</li>
+</ul>
+
+<pre><code class="language-bash">  $ quit
+</code></pre>
+
+<h2 id="redis键基础命令">redis键基础命令</h2>
+
+<ul>
+<li>添加一个key</li>
+</ul>
+
+<pre><code class="language-bash">  $ set 键 值
+</code></pre>
+
+<ul>
+<li>删除一个key</li>
+</ul>
+
+<pre><code class="language-bash">  $ del 键
+</code></pre>
+
+<ul>
+<li>判断键是否存在（返回1为存在，0位不存在）</li>
+</ul>
+
+<pre><code class="language-bash">  $ exists 键
+</code></pre>
+
+<ul>
+<li>查询键的剩余生存时间（-1为永远，不存在的key为-2，以秒为单位）</li>
+</ul>
+
+<pre><code class="language-bash">  $ ttl 键
+</code></pre>
+
+<ul>
+<li>设置键的有效时间（10ms）</li>
+</ul>
+
+<pre><code class="language-bash">  $ expire 键 10
+</code></pre>
+
+<ul>
+<li>查看键的类型</li>
+</ul>
+
+<pre><code class="language-bash">  $ type 键
+</code></pre>
+
+<ul>
+<li>设置一个hash值（hset 键 字段 值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hset 键 字段 值
+</code></pre>
+
+<ul>
+<li>随机键</li>
+</ul>
+
+<pre><code class="language-bash">  $ randomkey
+</code></pre>
+
+<ul>
+<li>修改键的名字，无论key是否存在</li>
+</ul>
+
+<pre><code class="language-bash">  $ rename 键 新键名
+</code></pre>
+
+<ul>
+<li>修改键的名字，如果key存在就不改变</li>
+</ul>
+
+<pre><code class="language-bash">  $ renamenx 键 新键名
+</code></pre>
+
+<ul>
+<li>设置键并且设置有效时间（秒为单位）（setex 键 有效时间 值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ setex 键 100 值
+</code></pre>
+
+<ul>
+<li>设置键并且设置有效时间（毫秒为单位）（psetex 键 有效时间 值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ psetex 键 10000 值
+</code></pre>
+
+<ul>
+<li>通过键获取对应的值</li>
+</ul>
+
+<pre><code class="language-bash">  $ get 键
+</code></pre>
+
+<ul>
+<li>获取键对应值得一段闭区间值（getrange 键 起始下标 结束下标）</li>
+</ul>
+
+<pre><code class="language-bash">  $ getrange 键 0 1
+</code></pre>
+
+<ul>
+<li>设置键的时候，如果键已存在，设置成功后返回旧的值（getset 键 值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ getset 键 值
+</code></pre>
+
+<ul>
+<li>批量设置多个键值（mset 键 值 键 值 键 值 …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ mset 键 值 键 值 键 值
+</code></pre>
+
+<ul>
+<li>批量获取读个键的值（mget 键 键 键  …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ mget 键1 键2 键3
+</code></pre>
+
+<ul>
+<li>设置键，如果已存在则不做操作（setnx 键 值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ setnx 键 值
+</code></pre>
+
+<ul>
+<li>获取键对应值得长度</li>
+</ul>
+
+<pre><code class="language-bash">  $ strlen 键
+</code></pre>
+
+<ul>
+<li>批量设置键值，如果有其中一个已经存在，则全部设置失败）</li>
+</ul>
+
+<pre><code class="language-bash">  $ msetnx 键 值 键 值 键 值
+</code></pre>
+
+<ul>
+<li>给键对应值是integer类型的加一（键对应的值要为数值类型）</li>
+</ul>
+
+<pre><code class="language-bash">  $ incr 键
+</code></pre>
+
+<ul>
+<li>给键对应值是integer类型的加一定的增量（incrby 键 增量值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ incrby 键 100
+</code></pre>
+
+<ul>
+<li>给键对应值是integer类型的减一</li>
+</ul>
+
+<pre><code class="language-bash">  $ decr 键
+</code></pre>
+
+<ul>
+<li>给键对应值是integer类型的加一定的减量（decrby 键 减量值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ decrby 键 100
+</code></pre>
+
+<ul>
+<li>给键对应值追加内容</li>
+</ul>
+
+<pre><code class="language-bash">  $ append 键 追加的值
+</code></pre>
+
+<h2 id="hash类型的操作">hash类型的操作</h2>
+
+<ul>
+<li>查看哈希类型的键，字段是否存在（hexists 键 字段）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hexists 键 哈希类型的键
+</code></pre>
+
+<ul>
+<li>获取哈希类型的所有的建，以及键所有的字段的值（hgetall 键）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hgetall 键
+</code></pre>
+
+<ul>
+<li>获取哈希类型的键所有的字段（hkeys 键）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hkeys 键
+</code></pre>
+
+<ul>
+<li>获取哈希类型的键所有的字段的值（hvals 键）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hvals 键
+</code></pre>
+
+<ul>
+<li>获取哈希类型的键字段数量（hlen 键）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hlen 键
+</code></pre>
+
+<ul>
+<li>批量获取键对应的值（hmget 键 字段 字段 字段 …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hmget 键 哈希类型的键1 哈希类型的键2 哈希类型的键3
+</code></pre>
+
+<ul>
+<li>批量设置键中的字段对应值（hmset 键 字段 值 字段 值 字段 值 …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hmset 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3
+</code></pre>
+
+<ul>
+<li>批量设置键中的字段对应值，如果对应字段已经存在则失败（hmsetnx 键 字段 值 字段 值 字段 值 …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ hmsetnx 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3
+</code></pre>
+
+<h2 id="list类型的操作">list类型的操作</h2>
+
+<ul>
+<li>设置集合类型（lpush 键 值 值 值 值 …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ lpush 键 值1 值2 值3 值4 值5 值6
+</code></pre>
+
+<ul>
+<li>查看集合的长度</li>
+</ul>
+
+<pre><code class="language-bash">  $ llen 键
+</code></pre>
+
+<ul>
+<li>拿集合的一个范围（lrange 键 起始下标 结束下标）</li>
+</ul>
+
+<pre><code class="language-bash">  $ lrange 键 0 2
+</code></pre>
+
+<ul>
+<li>设置集合下标的对应值（lset 键 下标 值）</li>
+</ul>
+
+<pre><code class="language-bash">  $ lset 键 0 89
+</code></pre>
+
+<ul>
+<li>获取集合某个下标的值（lindex 键 下标）</li>
+</ul>
+
+<pre><code class="language-bash">  $ lindex 键 0
+</code></pre>
+
+<ul>
+<li>移除集合第一个元素</li>
+</ul>
+
+<pre><code class="language-bash">  $ lpop 键
+</code></pre>
+
+<ul>
+<li>移除集合最后一个元素</li>
+</ul>
+
+<pre><code class="language-bash">  $ rpop 键
+</code></pre>
+
+<h2 id="无序-set类型的操作">（无序）set类型的操作</h2>
+
+<ul>
+<li>添加集合</li>
+</ul>
+
+<pre><code class="language-bash">  $ sadd 键 值1 值2 值3
+</code></pre>
+
+<ul>
+<li><p>查看集合的所有元素</p>
+
+<pre><code class="language-bash">$ smembers 键
+</code></pre></li>
+
+<li><p>查看两个集合的差集（sdiff 集合1 集合2 返回集合1中集合2没有的元素）</p></li>
+</ul>
+
+<pre><code class="language-bash">  $ sdiff 键1 键2
+</code></pre>
+
+<ul>
+<li>查看两个集合的交集</li>
+</ul>
+
+<pre><code class="language-bash">  $ sinter 键1 键2
+</code></pre>
+
+<ul>
+<li>查看两个集合的并集</li>
+</ul>
+
+<pre><code class="language-bash">  $ sunion 键1 键2
+</code></pre>
+
+<ul>
+<li>查看集合中的随机元素（srandmember 集合 一次获取元素的数量）</li>
+</ul>
+
+<pre><code class="language-bash">  $ srandmember 键 2
+</code></pre>
+
+<ul>
+<li>查看某个值是否为集合的元素（sismember 集合 元素）</li>
+</ul>
+
+<pre><code class="language-bash">  $ sismember 键 元素
+</code></pre>
+
+<ul>
+<li>移除集合中一个或者多个元素（srem 集合 元素 元素 …）</li>
+</ul>
+
+<pre><code class="language-bash">  $ srem 键 元素
+</code></pre>
+
+<ul>
+<li>移除并返回一个元素</li>
+</ul>
+
+<pre><code class="language-bash">  $ spop 键
+</code></pre>
+
+<h2 id="sortedset-有序集合类型操作">（sortedset）有序集合类型操作</h2>
+
+<ul>
+<li>添加集合（zadd 键 值 集合中的键 值 集合中的键 值 集合中的键 &hellip;）</li>
+</ul>
+
+<pre><code class="language-bash">  $ zadd 键 值 集合中的键 值 集合中的键 值 集合中的键
+</code></pre>
+
+<ul>
+<li>查看集合长度</li>
+</ul>
+
+<pre><code class="language-bash">  $ zcard 键
+</code></pre>
+
+<ul>
+<li>获取对应元素的值（zscore 集合 字段）</li>
+</ul>
+
+<pre><code class="language-bash">  $ zscore 键 集合中的键
+</code></pre>
+
+<ul>
+<li>查看符合区间条件的元素数量（zcount 集合 开始 结束）</li>
+</ul>
+
+<pre><code class="language-bash">  $ zcount 键 0 300
+</code></pre>
+
+<ul>
+<li>查看元素的索引</li>
+</ul>
+
+<pre><code class="language-bash">  $ zrank 集合 集合中的键
+</code></pre>
+
+<ul>
+<li>给某个元素增加一定的增量（zincrby sortedset 增量值 元素）</li>
+</ul>
+
+<pre><code class="language-bash">  $ zincrby 键 1000 集合中的键
+</code></pre>
+
+<ul>
+<li>获取集合中范围的元素值（zrange 集合 开始 结束）</li>
+</ul>
+
+<pre><code class="language-bash">  $ zrange 键 0 100
+</code></pre>
+
+<ul>
+<li>获取集合中范围的元素与元素值（zrange 集合 开始 结束 withscores）</li>
+</ul>
+
+<pre><code class="language-bash">  $ zrange sortedset 0 100 withscores
+</code></pre>
+
+	<nav class="no-print post-nav">
+	
+	
+		<a class="next-post" href="xumf.github.io/blog/tomcat%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2%E5%A4%9A%E5%BA%94%E7%94%A8/">Tomcat单机部署多应用（Mac/Linux）<img class="icon-text" src="/img/next.svg"/>
+		</a>
+	
+	</nav>
+</article>
+
+
+
+
+	
+
+
+<div id="SOHUCS"></div>
+<script type="text/javascript">
+  (function() {
+    var appid = 'cytzRk6Ih';
+    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs = function(d, a) {
+        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+        var b = document.createElement("script");
+        b.setAttribute("type", "text/javascript");
+        b.setAttribute("charset", "UTF-8");
+        b.setAttribute("src", d);
+        if (typeof a === "function") {
+          if (window.attachEvent) {
+            b.onreadystatechange = function() {
+              var e = b.readyState;
+              if (e === "loaded" || e === "complete") {
+                b.onreadystatechange = null;
+                a()
+              }
+            }
+          } else {
+            b.onload = a
+          }
+        }
+        c.appendChild(b)
+      };
+      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
+        window.changyan.api.config({
+          appid: appid,
+          conf: conf
+        })
+      });
+    }
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license">License</a>
+					
+				</p>
+				
+				<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span>返回</span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
+</html>
+

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.32.2" />
+		<title>Maven环境隔离 - 小蜜蜂</title>
+
+		<meta name="description" content="在pom.xml的build标签中添加
+&lt;resources&gt; &lt;resource&gt; &lt;!- 配置文件夹 -&gt; &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt; &lt;excludes&gt; &lt;!— 打包时忽略的文件 —&gt; &lt;exclude&gt;.jsp&lt;/exclude&gt; &lt;/excludes&gt; &lt;/resource&gt; &lt;!- 公共资源文件文件夹 -&gt; &lt;resource&gt; &lt;directory&gt;src/main/resources&lt;/directory&gt; &lt;/resource&gt; &lt;/resources&gt;  在pom.xml的build标签下添加
+&lt;profiles&gt; &lt;profile&gt; &lt;!- 开发环境 -&gt; &lt;id&gt;dev&lt;/id&gt; &lt;activation&gt; &lt;!- 默认环境 -&gt; &lt;activeByDefault&gt;true&lt;/activeByDefault&gt; &lt;/activation&gt; &lt;properties&gt; &lt;deploy.type&gt;dev&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!- 测试环境 -&gt; &lt;id&gt;beta&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;beta&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!- 生产环境 -&gt; &lt;id&gt;prod&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;prod&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;/profiles&gt;  添加资源文件夹
+ resource共享配置 resource.beta 测试环境配置 resource.dev 开发环境配置 resource.prod 生产环境配置   打包">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+		
+		
+
+		
+		<link rel="stylesheet" href="/css/ui.min.css"/>
+		
+		<style>
+	a { color: #ff8181; }
+	blockquote {
+		border-left-color: #ff8181;
+		border-right-color: #ff8181; }
+	.bar a:hover {
+		color: #ff8181;
+		text-decoration: none; }
+	.sep {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		margin-left:0;
+		width: 24rem;
+		border-top: 2px solid #ff8181; }
+</style>
+
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="xumf.github.io/about/">了解我</a></li><li><a href="xumf.github.io/blog/">博客</a></li><li><a href="xumf.github.io/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Maven环境隔离</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 13:42:22 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/maven">maven</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<ol>
+<li><p>在pom.xml的build标签中添加</p>
+
+<pre><code class="language-xml">&lt;resources&gt;
+    &lt;resource&gt;
+        &lt;!- 配置文件夹 -&gt;
+        &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt;
+        &lt;excludes&gt;
+            &lt;!— 打包时忽略的文件 —&gt;
+            &lt;exclude&gt;.jsp&lt;/exclude&gt;
+        &lt;/excludes&gt;
+    &lt;/resource&gt;
+    &lt;!- 公共资源文件文件夹 -&gt;
+    &lt;resource&gt;
+        &lt;directory&gt;src/main/resources&lt;/directory&gt;
+    &lt;/resource&gt;
+&lt;/resources&gt;
+</code></pre></li>
+
+<li><p>在pom.xml的build标签下添加</p>
+
+<pre><code class="language-xml">&lt;profiles&gt;
+    &lt;profile&gt;
+        &lt;!- 开发环境 -&gt;
+        &lt;id&gt;dev&lt;/id&gt;
+        &lt;activation&gt;
+            &lt;!- 默认环境 -&gt;
+            &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
+        &lt;/activation&gt;
+        &lt;properties&gt;
+            &lt;deploy.type&gt;dev&lt;/deploy.type&gt;
+        &lt;/properties&gt;
+    &lt;/profile&gt;
+    &lt;profile&gt;
+        &lt;!- 测试环境 -&gt;
+        &lt;id&gt;beta&lt;/id&gt;
+        &lt;properties&gt;
+            &lt;deploy.type&gt;beta&lt;/deploy.type&gt;
+        &lt;/properties&gt;
+    &lt;/profile&gt;
+    &lt;profile&gt;
+        &lt;!- 生产环境 -&gt;
+        &lt;id&gt;prod&lt;/id&gt;
+        &lt;properties&gt;
+            &lt;deploy.type&gt;prod&lt;/deploy.type&gt;
+        &lt;/properties&gt;
+    &lt;/profile&gt;
+&lt;/profiles&gt;
+</code></pre></li>
+
+<li><p>添加资源文件夹</p>
+
+<ul>
+<li>resource共享配置</li>
+<li>resource.beta 测试环境配置</li>
+<li>resource.dev 开发环境配置</li>
+<li>resource.prod 生产环境配置
+<img src="https://i.imgur.com/PPppeP5.png" alt="96FDADDB-0500-43C5-A132-085648B3E4C1" /></li>
+</ul></li>
+
+<li><p>打包</p></li>
+</ol>
+
+<blockquote>
+<p>-P后面对应需要打包的环境，dev开发环境，beta测试环境，prod生产环境</p>
+</blockquote>
+
+<pre><code class="language-bash">  $ mvn clean package -Dmaven.test.skip=true -Pdev
+</code></pre>
+
+	<nav class="no-print post-nav">
+	
+		<a class="prev-post" href="xumf.github.io/blog/tomcat%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2%E5%A4%9A%E5%BA%94%E7%94%A8/">
+			<img class="icon-text" src="/img/prev.svg"/>Tomcat单机部署多应用（Mac/Linux）</a>
+	
+	
+		<a class="next-post" href="xumf.github.io/blog/redis-pressure-test/">Redis压测<img class="icon-text" src="/img/next.svg"/>
+		</a>
+	
+	</nav>
+</article>
+
+
+
+
+	
+
+
+<div id="SOHUCS"></div>
+<script type="text/javascript">
+  (function() {
+    var appid = 'cytzRk6Ih';
+    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs = function(d, a) {
+        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+        var b = document.createElement("script");
+        b.setAttribute("type", "text/javascript");
+        b.setAttribute("charset", "UTF-8");
+        b.setAttribute("src", d);
+        if (typeof a === "function") {
+          if (window.attachEvent) {
+            b.onreadystatechange = function() {
+              var e = b.readyState;
+              if (e === "loaded" || e === "complete") {
+                b.onreadystatechange = null;
+                a()
+              }
+            }
+          } else {
+            b.onload = a
+          }
+        }
+        c.appendChild(b)
+      };
+      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
+        window.changyan.api.config({
+          appid: appid,
+          conf: conf
+        })
+      });
+    }
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license">License</a>
+					
+				</p>
+				
+				<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span>返回</span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
+</html>
+

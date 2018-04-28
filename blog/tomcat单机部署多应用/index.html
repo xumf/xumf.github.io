@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.32.2" />
+		<title>Tomcat单机部署多应用（Mac/Linux） - 小蜜蜂</title>
+
+		<meta name="description" content=" 按照以下步骤依次执行：  ${tomcat}为tomcat的根目录
+  修改/etc/profile增加tomcat环境变量
+export CATALINA_BASE=/Users/xumf/tomcat1 export CATALINA_HOME=/Users/xumf/tomcat1 export TOMCAT_HOME=/Users/xumf/tomcat1 export CATALINA_2_BASE=/Users/xumf/tomcat2 export CATALINA_2_HOME=/Users/xumf/tomcat2 export TOMCAT_2_HOME=/Users/xumf/tomcat2  保存退出，输入esc然后:wq
+ 执行
+$ source /etc/profile  第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh
+$ vim ${tomcat}/bin/catalina.sh  找到# OS specific support. $var must be set to either true or false.在这行下面编辑，新增配置，保存退出
+export CATALINA_BASE=$CATALINA_2_BASE export CATALINA_HOME=$CATALINA_2_HOME  打开第二个tomcat的conf目录下server.xml,$ vim ${tomcat}/conf/server.xml
+ 8005改为9005  8080改为9080  8009改为9009    ">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+		
+		
+
+		
+		<link rel="stylesheet" href="/css/ui.min.css"/>
+		
+		<style>
+	a { color: #ff8181; }
+	blockquote {
+		border-left-color: #ff8181;
+		border-right-color: #ff8181; }
+	.bar a:hover {
+		color: #ff8181;
+		text-decoration: none; }
+	.sep {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		margin-left:0;
+		width: 24rem;
+		border-top: 2px solid #ff8181; }
+</style>
+
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="xumf.github.io/about/">了解我</a></li><li><a href="xumf.github.io/blog/">博客</a></li><li><a href="xumf.github.io/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Tomcat单机部署多应用（Mac/Linux）</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 13:16:53 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/tomcat">tomcat</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	
+
+<h3 id="按照以下步骤依次执行">按照以下步骤依次执行：</h3>
+
+<blockquote>
+<p><code>${tomcat}</code>为tomcat的根目录</p>
+</blockquote>
+
+<ol>
+<li><p>修改<code>/etc/profile</code>增加tomcat环境变量</p>
+
+<pre><code class="language-bash">export CATALINA_BASE=/Users/xumf/tomcat1
+export CATALINA_HOME=/Users/xumf/tomcat1
+export TOMCAT_HOME=/Users/xumf/tomcat1
+export CATALINA_2_BASE=/Users/xumf/tomcat2
+export CATALINA_2_HOME=/Users/xumf/tomcat2
+export TOMCAT_2_HOME=/Users/xumf/tomcat2
+</code></pre></li>
+
+<li><p>保存退出，输入esc然后<code>:wq</code></p></li>
+
+<li><p>执行</p>
+
+<pre><code class="language-bash">$ source /etc/profile
+</code></pre></li>
+
+<li><p>第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh</p>
+
+<pre><code class="language-bash">$ vim ${tomcat}/bin/catalina.sh
+</code></pre></li>
+
+<li><p>找到# OS specific support. $var <em>must</em> be set to either true or false.在这行下面编辑，新增配置，保存退出</p>
+
+<pre><code class="language-bash">export CATALINA_BASE=$CATALINA_2_BASE
+export CATALINA_HOME=$CATALINA_2_HOME
+</code></pre></li>
+
+<li><p>打开第二个tomcat的conf目录下server.xml,<code>$ vim ${tomcat}/conf/server.xml</code></p>
+
+<ul>
+<li><p>8005改为9005
+<img src="https://i.imgur.com/rpuceXa.png" alt="0AE3D7B7-F96A-4FAE-A13A-94B836BCD4DF" /></p></li>
+
+<li><p>8080改为9080
+<img src="https://i.imgur.com/IiW7hgv.png" alt="05F4A861-6CD4-453C-B12F-3F83ACA24D35" /></p></li>
+
+<li><p>8009改为9009
+<img src="https://i.imgur.com/1MGeszj.png" alt="8359A2A1-9443-4829-841F-70100348C9C9" /></p></li>
+</ul></li>
+</ol>
+
+	<nav class="no-print post-nav">
+	
+		<a class="prev-post" href="xumf.github.io/blog/redis%E5%91%BD%E4%BB%A4/">
+			<img class="icon-text" src="/img/prev.svg"/>Redis命令</a>
+	
+	
+		<a class="next-post" href="xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/">Maven环境隔离<img class="icon-text" src="/img/next.svg"/>
+		</a>
+	
+	</nav>
+</article>
+
+
+
+
+	
+
+
+<div id="SOHUCS"></div>
+<script type="text/javascript">
+  (function() {
+    var appid = 'cytzRk6Ih';
+    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs = function(d, a) {
+        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+        var b = document.createElement("script");
+        b.setAttribute("type", "text/javascript");
+        b.setAttribute("charset", "UTF-8");
+        b.setAttribute("src", d);
+        if (typeof a === "function") {
+          if (window.attachEvent) {
+            b.onreadystatechange = function() {
+              var e = b.readyState;
+              if (e === "loaded" || e === "complete") {
+                b.onreadystatechange = null;
+                a()
+              }
+            }
+          } else {
+            b.onload = a
+          }
+        }
+        c.appendChild(b)
+      };
+      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
+        window.changyan.api.config({
+          appid: appid,
+          conf: conf
+        })
+      });
+    }
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license">License</a>
+					
+				</p>
+				
+				<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span>返回</span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
+</html>
+
