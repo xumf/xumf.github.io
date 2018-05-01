@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.32.2" />
+		<title>Vultr搭建vpn - 小蜜蜂</title>
+
+		<meta name="description" content="Vultr&#43;CentOS用l2tp协议搭建vpn">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+		
+		
+
+		
+		<link rel="stylesheet" href="/css/ui.min.css"/>
+		
+		<style>
+	a { color: #ff8181; }
+	blockquote {
+		border-left-color: #ff8181;
+		border-right-color: #ff8181; }
+	.bar a:hover {
+		color: #ff8181;
+		text-decoration: none; }
+	.sep {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		margin-left:0;
+		width: 24rem;
+		border-top: 2px solid #ff8181; }
+</style>
+
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Vultr搭建vpn</h1>
+	<h5>
+		
+		<time datetime="2018-04-30 22:39:17 &#43;0800 CST">2018年 4月 30日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Vultr">Vultr</a>
+				
+				<a href="/tags/vpn">vpn</a>
+				
+				<a href="/tags/l2tp">l2tp</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	
+
+<h2 id="1-注册-vultr-https-www-vultr-com-账号">1. 注册<a href="https://www.vultr.com/">vultr</a>账号</h2>
+
+<p><img src="https://s9.postimg.cc/fn6jn7qy7/accout.png" alt="account" /></p>
+
+<h2 id="2-登录完成后进入-个人中心-https-my-vultr-com">2. 登录完成后进入<a href="https://my.vultr.com/">个人中心</a></h2>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1CMRmpeuSBuNjy1Xc763YjFXa7.png" alt="personal" /></p>
+
+<h2 id="3-充钱-点击菜单右侧billing">3. 充钱，点击菜单右侧Billing</h2>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1hFGCeTCWBKNjSZFt761C3FXad.png" alt="Billing" /></p>
+
+<h2 id="4-选择-支付方式-推荐使用-支付宝-vultr-一次最少要充值10美元-大概63块人民币">4. 选择支付方式，推荐使用支付宝（vultr一次最少要充值10美元，大概63块人民币）</h2>
+
+<ul>
+<li>Credit Card 信用卡</li>
+<li>Paypal <a href="https://www.paypal.com">贝宝</a></li>
+<li>Bitcoin <a href="https://bitcoin.org/en/">比特币</a></li>
+<li>Gift Code 优惠码</li>
+</ul>
+
+<h2 id="5-冲完钱后-开始购买服务器-点击-菜单的servers-然后点击加号">5. 冲完钱后，开始购买服务器，点击菜单的Servers，然后点击加号</h2>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1tvkQoVuWBuNjSszb763S7FXaE.png" alt="Servers" /></p>
+
+<h2 id="6-选择购买服务器参数">6. 选择购买服务器参数</h2>
+
+<p>
+    _ 选择服务地区（本人选择的是日本的，vpn速度非常棒）
+      <img src="http://ae01.alicdn.com/kf/HTB1ToPxgOCYBuNkSnaV763MsVXaF.png" alt="location" />
+    _ 选择服务器OS（本人选择的CentOS 7）
+      <img src="http://ae01.alicdn.com/kf/HTB1fcympmtYBeNjSspk762U8VXaB.png" alt="os" />
+    _ 选择服务器配置（一般做vpn的话，选$2.50/mo，就是2.5美元一个就可以，但是有时候会没有需要抢）
+      <img src="http://ae01.alicdn.com/kf/HTB1leHCgIyYBuNkSnfo763WgVXao.png" alt="size" />
+    _ 如下图的参数默认即可
+      <img src="http://ae01.alicdn.com/kf/HTB1exU1o1SSBuNjy0Fl762BpVXam.png" alt="params" />
+    * 如下图红框中可以填写你的域名，最后点击Deploy Now完成购买
+      <img src="http://ae01.alicdn.com/kf/HTB1hsNiePQnBKNjSZSg760HGXXaT.png" alt="host" /></p>
+
+<h2 id="7-购买完成后-在servers菜单下就会有-vpc的实例-下图中-红圈里面的是-你vpc服务器的外网ip">7. 购买完成后，在Servers菜单下就会有vpc的实例，下图中红圈里面的是你vpc服务器的外网ip，</h2>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1DqvwgOCYBuNkHFCc763HtVXac.png" alt="instance" /></p>
+
+<h2 id="8-单击上图红色矩形区域进入-服务器管理界面">8. 单击上图红色矩形区域进入服务器管理界面</h2>
+
+<blockquote>
+<p>下面可以看到root用户的密码</p>
+</blockquote>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1uaw4oYSYBuNjSspi760NzpXaq.png" alt="info" /></p>
+
+<h2 id="9-进入服务器-安装tcp-bbr提速工具">9. 进入服务器，安装TCP BBR提速工具</h2>
+
+<ul>
+<li>通过ssh进入服务器，密码可以通过上一个步获取</li>
+</ul>
+
+<pre><code class="language-bash">$ ssh root@&lt;你服务器的ip&gt;
+</code></pre>
+
+<ul>
+<li>下载bbr</li>
+</ul>
+
+<pre><code class="language-bash">$ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh
+</code></pre>
+
+<ul>
+<li>添加执行权限</li>
+</ul>
+
+<pre><code class="language-bash">$ chmod +x bbr.sh
+</code></pre>
+
+<ul>
+<li>执行bbr.sh</li>
+</ul>
+
+<pre><code class="language-bash">$ ./bbr.sh
+</code></pre>
+
+<ul>
+<li>执行后会有此 <strong>Press any key start &hellip; or Press Ctrl+C to cancel</strong> 提示点击回车就可以</li>
+<li>最有会有此 <strong>Info: The system  needs to be restart. Do you want to reboot? [y/n]</strong> 提示，要求重启，输入y，重启电脑</li>
+<li>输入命令测试是否安装成功</li>
+</ul>
+
+<pre><code class="language-bash">$ sysctl net.ipv4.tcp_available_congestion_control
+# 返回net.ipv4.tcp_available_congestion_control = reno cubic bbr
+$ lsmod | grep bbr
+# 返回tcp_bbr                20480  9
+</code></pre>
+
+<h2 id="10-安装l2tp-vpn">10. 安装l2tp vpn</h2>
+
+<ul>
+<li>获取vpn</li>
+</ul>
+
+<pre><code class="language-bash">$ wget --no-check-certificate https://raw.githubusercontent.com/teddysun/across/master/l2tp.sh
+</code></pre>
+
+<ul>
+<li>给l2tp.sh添加执行权限</li>
+</ul>
+
+<blockquote>
+<p>记住下面步骤的 <strong><em>密钥</em></strong> ，客户端连接vpn的时候要用</p>
+</blockquote>
+
+<pre><code class="language-bash"># 执行后会提示叫你输入用户名，密码，密钥的提示，你可以自己填写也可以直接回车选择默认。
+$ chmod +x l2tp.sh
+</code></pre>
+
+<ul>
+<li>重启ipsec和xl2tpd服务</li>
+</ul>
+
+<pre><code class="language-bash">$ systemctl restart ipsec
+$ systemctl restart xl2tpd
+</code></pre>
+
+<ul>
+<li>验证是否成功</li>
+</ul>
+
+<pre><code class="language-bash">$ ipsec verify
+</code></pre>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1P31cpf1TBuNjy0Fj761jyXXav.png" alt="success" /></p>
+
+<ul>
+<li><p>使用 <em>l2tp</em> 命令</p>
+
+<ul>
+<li><p><code>l2tp -a</code>添加vpn用户</p>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1FqRppXGWBuNjy0Fb7624sXXaF.png" alt="add-user" /></p></li>
+
+<li><p><code>l2tp -l</code>查看所有vpn用户与用户的密码，可以看到新添加的用户 <em>zhangsan</em></p>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1zRiTeOMnBKNjSZFz763_qVXaP.png" alt="list-user" /></p></li>
+
+<li><p><code>l2tp -m</code>修改vpn用户密码</p>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB1eFNqpXGWBuNjy0Fb7624sXXa0.png" alt="mod-user" /></p></li>
+
+<li><p><code>l2tp -d</code>删除vpn用户</p>
+
+<p><img src="http://ae01.alicdn.com/kf/HTB14nCweRjTBKNjSZFD762VgVXaF.png" alt="del-user" /></p></li>
+
+<li><p><code>l2tp -h</code>命令帮助文档</p></li>
+</ul></li>
+</ul>
+
+<h2 id="11-mac-os客户端连接-vpn">11.  Mac OS客户端连接vpn</h2>
+
+<ul>
+<li><p>依次进入 <em>系统偏好设置</em> &gt; _网络_，点击加号
+<img src="http://ae01.alicdn.com/kf/HTB12DOSeFooBKNjSZFP760a2XXaZ.png" alt="add" /></p>
+
+<ul>
+<li>接口：选择vpn</li>
+<li>vpn类型：选择L2TP</li>
+<li>服务名称：可以随意填</li>
+</ul></li>
+
+<li><p>点击创建，选择刚创建的vpn，填写参数
+<img src="http://ae01.alicdn.com/kf/HTB1VTT9gRyWBuNkSmFP760guVXaz.png" alt="setting" /></p>
+
+<ul>
+<li>服务器地址：填写你购买vurtl的ip</li>
+<li>账户名称：填写刚刚l2tp创建用户（例：zhangsan)</li>
+</ul></li>
+
+<li><p>点击鉴定设置，设置完成后点按钮 <strong>好</strong>
+<img src="http://ae01.alicdn.com/kf/HTB1mW1WeScqBKNjSZFg760_kXXaT.png" alt="two-step" /></p>
+
+<ul>
+<li>密码：填写vpn账户的密码</li>
+<li>共享密钥：填写步骤10中的密钥</li>
+</ul></li>
+
+<li><p>点击 <strong><em>连接</em></strong> 完成vpn连接</p></li>
+</ul>
+
+<h2 id="12-windows-7-系统连接vpn">12. Windows 7 系统连接vpn</h2>
+
+<p>参考<a href="https://jingyan.baidu.com/article/455a99508833cca166277831.html">https://jingyan.baidu.com/article/455a99508833cca166277831.html</a></p>
+
+	<nav class="no-print post-nav">
+	
+		<a class="prev-post" href="https://xumf.github.io/blog/github-page/">
+			<img class="icon-text" src="/img/prev.svg"/>github静态网页</a>
+	
+	
+	</nav>
+</article>
+
+
+
+
+
+<div id="SOHUCS"></div>
+<script type="text/javascript">
+  (function() {
+    var appid = 'cytzRk6Ih';
+    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs = function(d, a) {
+        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+        var b = document.createElement("script");
+        b.setAttribute("type", "text/javascript");
+        b.setAttribute("charset", "UTF-8");
+        b.setAttribute("src", d);
+        if (typeof a === "function") {
+          if (window.attachEvent) {
+            b.onreadystatechange = function() {
+              var e = b.readyState;
+              if (e === "loaded" || e === "complete") {
+                b.onreadystatechange = null;
+                a()
+              }
+            }
+          } else {
+            b.onload = a
+          }
+        }
+        c.appendChild(b)
+      };
+      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
+        window.changyan.api.config({
+          appid: appid,
+          conf: conf
+        })
+      });
+    }
+  })();
+</script>
+
+
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-118288238-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<hr class="sep" />
+</main>
+<footer class="container no-print">
+	<div class="u-footer">
+		
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+		<p>
+			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			
+		</p>
+		
+		<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span>返回</span>
+				</a> 
+	</div>
+</footer>
+
+<script>
+	hljs.initHighlightingOnLoad();
+</script>
+
+</body>
+
+</html>
+
