@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.32.2" />
+		<title>Docker离线安装 - 小蜜蜂</title>
+
+		<meta name="description" content=" &emsp;&emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  ">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+		
+		
+
+		
+		<link rel="stylesheet" href="/css/ui.min.css"/>
+		
+		<style>
+	a { color: #ff8181; }
+	blockquote {
+		border-left-color: #ff8181;
+		border-right-color: #ff8181; }
+	.bar a:hover {
+		color: #ff8181;
+		text-decoration: none; }
+	.sep {
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+		margin-left:0;
+		width: 24rem;
+		border-top: 2px solid #ff8181; }
+</style>
+
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Docker离线安装</h1>
+	<h5>
+		
+		<time datetime="2018-05-03 20:54:29 &#43;0800 CST">2018年 5月 03日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Docker">Docker</a>
+				
+				<a href="/tags/centos7">centos7</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	
+
+<p>&emsp;&emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题</p>
+
+<h2 id="在-可访问外网的电脑上-下载docker所需文件">在可访问外网的电脑上下载docker所需文件</h2>
+
+<ul>
+<li><a href="https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm">docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm</a></li>
+<li><a href="https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm">docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm</a></li>
+</ul>
+
+<h2 id="将-下载的两个文件传送到-centos7服务器上">将下载的两个文件传送到centos7服务器上</h2>
+
+<pre><code class="language-bash">$ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;
+$ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;
+</code></pre>
+
+<h2 id="使用-yum-install-先后执行-两个文件">使用<code>yum install</code>先后执行两个文件</h2>
+
+<pre><code class="language-bash"># 依次执行
+$ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm
+$ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm
+</code></pre>
+
+<h2 id="启动-docker服务">启动Docker服务</h2>
+
+<pre><code class="language-bash">$ sudo systemctl start docker
+</code></pre>
+
+<h2 id="去掉-执行docker-必须sudo">去掉执行docker必须sudo</h2>
+
+<ul>
+<li>添加docker用户组<code>$ sudo groupadd docker</code></li>
+<li>将系统用户加入<code>$ sudo gpasswd -a ${USER} docke</code></li>
+</ul>
+
+	<nav class="no-print post-nav">
+	
+		<a class="prev-post" href="https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/">
+			<img class="icon-text" src="/img/prev.svg"/>Vultr搭建vpn</a>
+	
+	
+		<a class="next-post" href="https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/">Docker&#43;centos7&#43;jira7.3.6&#43;postgre Sql破解搭建<img class="icon-text" src="/img/next.svg"/>
+		</a>
+	
+	</nav>
+</article>
+
+
+
+
+
+<div id="SOHUCS"></div>
+<script type="text/javascript">
+  (function() {
+    var appid = 'cytzRk6Ih';
+    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs = function(d, a) {
+        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+        var b = document.createElement("script");
+        b.setAttribute("type", "text/javascript");
+        b.setAttribute("charset", "UTF-8");
+        b.setAttribute("src", d);
+        if (typeof a === "function") {
+          if (window.attachEvent) {
+            b.onreadystatechange = function() {
+              var e = b.readyState;
+              if (e === "loaded" || e === "complete") {
+                b.onreadystatechange = null;
+                a()
+              }
+            }
+          } else {
+            b.onload = a
+          }
+        }
+        c.appendChild(b)
+      };
+      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
+        window.changyan.api.config({
+          appid: appid,
+          conf: conf
+        })
+      });
+    }
+  })();
+</script>
+
+
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-118288238-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+<hr class="sep" />
+</main>
+<footer class="container no-print">
+	<div class="u-footer">
+		
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+		<p>
+			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			
+		</p>
+		
+		<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span>返回</span>
+				</a> 
+	</div>
+</footer>
+
+<script>
+	hljs.initHighlightingOnLoad();
+</script>
+
+</body>
+
+</html>
+

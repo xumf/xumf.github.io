@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Centos on 小蜜蜂</title>
-    <link>https://xumf.github.io/tags/centos/</link>
-    <description>Recent content in Centos on 小蜜蜂</description>
+    <title>Docker on 小蜜蜂</title>
+    <link>https://xumf.github.io/tags/docker/</link>
+    <description>Recent content in Docker on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Thu, 03 May 2018 22:19:24 +0800</lastBuildDate>
     
-	<atom:link href="https://xumf.github.io/tags/centos/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://xumf.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -22,21 +22,13 @@
     </item>
     
     <item>
-      <title>Centos Download Rabbitmq</title>
-      <link>https://xumf.github.io/blog/centos-download-rabbitmq/</link>
-      <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
+      <title>Docker离线安装</title>
+      <link>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
       
-      <guid>https://xumf.github.io/blog/centos-download-rabbitmq/</guid>
-      <description>到erlang官网下载erlang
- 到rabbitMQ官网下载mq
- 安装依赖包
-$ yum install -y gcc gcc-c++ unixODBC-devel openssl-devel ncurses-devel  将下载好的两个包传送到centos服务器上
-$ scp otp_src_20.1.tar.gz root@www.xumingfa.com:/usr/src/ $ scp rabbitmq-server-generic-unix-3.7.4.tar.xz root@www.xumingfa.com:/usr/src/  解压erlang包
-$ tar xf otp_src_20.1.tar.gz  切换到目录otp_src_20.1
-$ cd otp_src_20.1  配置.configure（安装到 /usr/local/erlang20 目录 , 忽略 javac 编译器）
-$ ./configure --prefix=/usr/local/erlang20 --without-javac  编译
-$ make -j 4 $ make install  解压mq包
-$ cd .. $ xz -d rabbitmq-server-generic-unix-3.7.4.tar.xz $ tar xf rabbitmq-server-generic-unix-3.7.4.tar  安装依赖</description>
+      <guid>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</guid>
+      <description> &amp;emsp;&amp;emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  </description>
     </item>
     
   </channel>

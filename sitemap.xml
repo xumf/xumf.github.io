@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2018-05-03T20:54:29+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/</loc>
     <lastmod>2018-04-30T22:39:17+08:00</lastmod>
   </url>
@@ -85,7 +95,19 @@
   
   <url>
     <loc>https://xumf.github.io/tags/centos/</loc>
-    <lastmod>2018-04-22T22:21:04+08:00</lastmod>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/centos7/</loc>
+    <lastmod>2018-05-03T20:54:29+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/docker/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -102,6 +124,12 @@
   </url>
   
   <url>
+    <loc>https://xumf.github.io/tags/jira/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/tags/l2tp/</loc>
     <lastmod>2018-04-30T22:39:17+08:00</lastmod>
     <priority>0</priority>
@@ -110,6 +138,12 @@
   <url>
     <loc>https://xumf.github.io/tags/maven/</loc>
     <lastmod>2018-04-22T13:42:22+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/postgresql/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -168,7 +202,7 @@
   
   <url>
     <loc>https://xumf.github.io/</loc>
-    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
     <priority>0</priority>
   </url>
   
