@@ -9,7 +9,7 @@
 		<meta name="description" content="在pom.xml的build标签中添加
 &lt;resources&gt; &lt;resource&gt; &lt;!- 配置文件夹 -&gt; &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt; &lt;excludes&gt; &lt;!— 打包时忽略的文件 —&gt; &lt;exclude&gt;.jsp&lt;/exclude&gt; &lt;/excludes&gt; &lt;/resource&gt; &lt;!- 公共资源文件文件夹 -&gt; &lt;resource&gt; &lt;directory&gt;src/main/resources&lt;/directory&gt; &lt;/resource&gt; &lt;/resources&gt;  在pom.xml的build标签下添加
 &lt;profiles&gt; &lt;profile&gt; &lt;!- 开发环境 -&gt; &lt;id&gt;dev&lt;/id&gt; &lt;activation&gt; &lt;!- 默认环境 -&gt; &lt;activeByDefault&gt;true&lt;/activeByDefault&gt; &lt;/activation&gt; &lt;properties&gt; &lt;deploy.type&gt;dev&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!- 测试环境 -&gt; &lt;id&gt;beta&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;beta&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!- 生产环境 -&gt; &lt;id&gt;prod&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;prod&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;/profiles&gt;  添加资源文件夹
-* resource共享配置 * resource.beta 测试环境配置 * resource.dev 开发环境配置 * resource.">
+* resource共享配置 * resource.beta 测试环境配置 * resource.dev 开发环境配置 * resource.">
 
 
 		
@@ -130,7 +130,7 @@
 
 <li><p>添加资源文件夹</p>
 
-<pre><code>* resource共享配置
+<pre><code>* resource共享配置
 * resource.beta 测试环境配置
 * resource.dev 开发环境配置
 * resource.prod 生产环境配置
@@ -141,7 +141,7 @@
 <li><p>打包</p>
 
 <blockquote>
-<p>-P后面对应需要打包的环境，dev开发环境，beta测试环境，prod生产环境</p>
+<p>-P后面对应需要打包的环境，dev开发环境，beta测试环境，prod生产环境</p>
 </blockquote>
 
 <pre><code class="language-bash">$ mvn clean package -Dmaven.test.skip=true -Pdev

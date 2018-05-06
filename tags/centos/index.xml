@@ -17,8 +17,8 @@
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</guid>
-      <description>准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
-jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 $ docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 $ docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 $ mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 $ touch jira_dockerfile $ vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 $ touch docker-compose.yml $ vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.</description>
+      <description>准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
+jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 $ docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 $ docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 $ mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 $ touch jira_dockerfile $ vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 $ touch docker-compose.yml $ vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.</description>
     </item>
     
     <item>

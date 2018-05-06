@@ -17,8 +17,8 @@
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</guid>
-      <description>准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
-jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 $ docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 $ docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 $ mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 $ touch jira_dockerfile $ vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 $ touch docker-compose.yml $ vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.</description>
+      <description>准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
+jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 $ docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 $ docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 $ mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 $ touch jira_dockerfile $ vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 $ touch docker-compose.yml $ vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.</description>
     </item>
     
     <item>
@@ -27,8 +27,8 @@
       <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</guid>
-      <description> &amp;emsp;&amp;emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
-在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  </description>
+      <description> &amp;emsp;&amp;emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  </description>
     </item>
     
     <item>
@@ -37,8 +37,8 @@
       <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/</guid>
-      <description>1. 注册vultr账号 2. 登录完成后进入个人中心 3. 充钱，点击菜单右侧Billing 4. 选择支付方式，推荐使用支付宝（vultr一次最少要充值10美元，大概63块人民币）  Credit Card 信用卡 Paypal 贝宝 Bitcoin 比特币 Gift Code 优惠码  5. 冲完钱后，开始购买服务器，点击菜单的Servers，然后点击加号 6. 选择购买服务器参数  _ 选择服务地区（本人选择的是日本的，vpn速度非常棒） _ 选择服务器OS（本人选择的CentOS 7） _ 选择服务器配置（一般做vpn的话，选$2.50/mo，就是2.5美元一个就可以，但是有时候会没有需要抢） _ 如下图的参数默认即可 * 如下图红框中可以填写你的域名，最后点击Deploy Now完成购买 7. 购买完成后，在Servers菜单下就会有vpc的实例，下图中红圈里面的是你vpc服务器的外网ip， 8. 单击上图红色矩形区域进入服务器管理界面  下面可以看到root用户的密码
- 9. 进入服务器，安装TCP BBR提速工具  通过ssh进入服务器，密码可以通过上一个步获取  $ ssh root@&amp;lt;你服务器的ip&amp;gt;   下载bbr  $ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh   添加执行权限  $ chmod +x bbr.sh   执行bbr.</description>
+      <description>1. 注册vultr账号 2. 登录完成后进入个人中心 3. 充钱，点击菜单右侧Billing 4. 选择支付方式，推荐使用支付宝（vultr一次最少要充值10美元，大概63块人民币）  Credit Card 信用卡 Paypal 贝宝 Bitcoin 比特币 Gift Code 优惠码  5. 冲完钱后，开始购买服务器，点击菜单的Servers，然后点击加号 6. 选择购买服务器参数 _ 选择服务地区（本人选择的是日本的，vpn速度非常棒） ![location](http://ae01.alicdn.com/kf/HTB1ToPxgOCYBuNkSnaV763MsVXaF.png) _ 选择服务器OS（本人选择的CentOS 7） ![os](http://ae01.alicdn.com/kf/HTB1fcympmtYBeNjSspk762U8VXaB.png) _ 选择服务器配置（一般做vpn的话，选$2.50/mo，就是2.5美元一个就可以，但是有时候会没有需要抢） ![size](http://ae01.alicdn.com/kf/HTB1leHCgIyYBuNkSnfo763WgVXao.png) _ 如下图的参数默认即可 ![params](http://ae01.alicdn.com/kf/HTB1exU1o1SSBuNjy0Fl762BpVXam.png) \* 如下图红框中可以填写你的域名，最后点击Deploy Now完成购买 ![host](http://ae01.alicdn.com/kf/HTB1hsNiePQnBKNjSZSg760HGXXaT.png)  7. 购买完成后，在Servers菜单下就会有vpc的实例，下图中红圈里面的是你vpc服务器的外网ip， 8. 单击上图红色矩形区域进入服务器管理界面  下面可以看到root用户的密码
+ 9. 进入服务器，安装TCP BBR提速工具  通过ssh进入服务器，密码可以通过上一个步获取  $ ssh root@&amp;lt;你服务器的ip&amp;gt;   下载bbr  $ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh   添加执行权限  $ chmod +x bbr.</description>
     </item>
     
     <item>
@@ -47,13 +47,13 @@
       <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/github-page/</guid>
-      <description>  文章下的 xumf 都要换成你的 github用户名
- 第一步：创建一个repository  xumf.github.io改为你的github用户名.github.io Description(可以不填)添加备注 点击Create repository   
-第二步：上传index.html到刚刚创建的repository上  clone repository到本地，$ git clone git@github.com:xumf/xumf.github.io.git 
- 进入到xumf.github.io.git目录，$ cd xumf.github.io.git 
- 添加一个文件并编辑，$ vim index.html，编辑完成后:wq，保存退出。
- 添加，上传index.html文件到github
-$ git add index.html $ git commit index.html -m &#39;init&#39; $ git push origin master  在浏览器打开https://xumf.github.io/，就能看到刚刚index.html的内容。 
+      <description>  文章下的 xumf 都要换成你的 github用户名
+ 第一步：创建一个repository  xumf.github.io改为你的github用户名.github.io Description(可以不填)添加备注 点击Create repository   
+第二步：上传index.html到刚刚创建的repository上  clone repository到本地，$ git clone git@github.com:xumf/xumf.github.io.git 
+ 进入到xumf.github.io.git目录，$ cd xumf.github.io.git 
+ 添加一个文件并编辑，$ vim index.html，编辑完成后:wq，保存退出。
+ 添加，上传index.html文件到github
+$ git add index.html $ git commit index.html -m &#39;init&#39; $ git push origin master  在浏览器打开https://xumf.github.io/，就能看到刚刚index.html的内容。 
   </description>
     </item>
     
@@ -63,13 +63,13 @@ $ git add index.html $ git commit index.html -m &#39;init&#39; $ git push origin
       <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/java-controller-param/</guid>
-      <description> WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
- SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
- 文中的@Data是使用了lombok插件
+      <description>WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
+ SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
+ 文中的@Data是使用了lombok插件
   编写User类
-@Data public class User { private int id; private String name; }  创建对象UserContext负责存取User的实例对象，容器使用的是ThreadLocal ， ThreadLocal 的关键每个线程都会拥有一个 ThreadLocal 的对象独享，线程之间不会共享一个 ThreadLocal ，换句话说就是一个 ThreadLocal 实例对象当且仅当属于某条线程。
-public class UserContext { private static ThreadLocal&amp;lt;User&amp;gt; userHolder = new ThreadLocal&amp;lt;&amp;gt;(); // 存储user对象 public static void setUser(User user) { userHolder.set(user); } // 获取user对象 public static User getUser() { return userHolder.get(); } }  编写常量类
-public class Consts { // 获取cookie中或者参数中token的标识 public static final String TOKEN_NAME = &amp;quot;token_name&amp;quot;; }  实现拦截器HandlerInterceptorAdapter，实现方法preHandle，以便于在请求处理前将User的实例对象存储在UserContext中。</description>
+@Data public class User { private int id; private String name; }  创建对象UserContext负责存取User的实例对象，容器使用的是ThreadLocal ， ThreadLocal 的关键每个线程都会拥有一个 ThreadLocal 的对象独享，线程之间不会共享一个 ThreadLocal ，换句话说就是一个 ThreadLocal 实例对象当且仅当属于某条线程。
+public class UserContext { private static ThreadLocal&amp;lt;User&amp;gt; userHolder = new ThreadLocal&amp;lt;&amp;gt;(); // 存储user对象 public static void setUser(User user) { userHolder.set(user); } // 获取user对象 public static User getUser() { return userHolder.get(); } }  编写常量类
+public class Consts { // 获取cookie中或者参数中token的标识 public static final String TOKEN_NAME = &amp;quot;token_name&amp;quot;; }  实现拦截器HandlerInterceptorAdapter，实现方法preHandle，以便于在请求处理前将User的实例对象存储在UserContext中。</description>
     </item>
     
     <item>
@@ -126,7 +126,7 @@ $ cd .. $ xz -d rabbitmq-server-generic-unix-3.7.4.tar.xz $ tar xf rabbitmq-serv
       <description>在pom.xml的build标签中添加
 &amp;lt;resources&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;!- 配置文件夹 -&amp;gt; &amp;lt;directory&amp;gt;src/main/resources.${deploy.type}&amp;lt;/directory&amp;gt; &amp;lt;excludes&amp;gt; &amp;lt;!— 打包时忽略的文件 —&amp;gt; &amp;lt;exclude&amp;gt;.jsp&amp;lt;/exclude&amp;gt; &amp;lt;/excludes&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;!- 公共资源文件文件夹 -&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;directory&amp;gt;src/main/resources&amp;lt;/directory&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;/resources&amp;gt;  在pom.xml的build标签下添加
 &amp;lt;profiles&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!- 开发环境 -&amp;gt; &amp;lt;id&amp;gt;dev&amp;lt;/id&amp;gt; &amp;lt;activation&amp;gt; &amp;lt;!- 默认环境 -&amp;gt; &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt; &amp;lt;/activation&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;dev&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!- 测试环境 -&amp;gt; &amp;lt;id&amp;gt;beta&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;beta&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!- 生产环境 -&amp;gt; &amp;lt;id&amp;gt;prod&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;prod&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;/profiles&amp;gt;  添加资源文件夹
-* resource共享配置 * resource.beta 测试环境配置 * resource.dev 开发环境配置 * resource.</description>
+* resource共享配置 * resource.beta 测试环境配置 * resource.dev 开发环境配置 * resource.</description>
     </item>
     
     <item>

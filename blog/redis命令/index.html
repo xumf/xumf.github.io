@@ -178,7 +178,7 @@ $ keys *  持久化">
 <ul>
 <li><p>添加一个key</p>
 
-<pre><code class="language-bash">$ set 键 值
+<pre><code class="language-bash">$ set 键 值
 </code></pre></li>
 
 <li><p>删除一个key</p>
@@ -258,12 +258,12 @@ $ keys *  持久化">
 
 <li><p>批量获取读个键的值（mget 键 键 键  …）</p>
 
-<pre><code class="language-bash">$ mget 键1 键2 键3
+<pre><code class="language-bash">$ mget 键1 键2 键3
 </code></pre></li>
 
 <li><p>设置键，如果已存在则不做操作（setnx 键 值）</p>
 
-<pre><code class="language-bash">$ setnx 键 值
+<pre><code class="language-bash">$ setnx 键 值
 </code></pre></li>
 
 <li><p>获取键对应值得长度</p>
@@ -273,7 +273,7 @@ $ keys *  持久化">
 
 <li><p>批量设置键值，如果有其中一个已经存在，则全部设置失败）</p>
 
-<pre><code class="language-bash">$ msetnx 键 值 键 值 键 值
+<pre><code class="language-bash">$ msetnx 键 值 键 值 键 值
 </code></pre></li>
 
 <li><p>给键对应值是integer类型的加一（键对应的值要为数值类型）</p>
@@ -298,7 +298,7 @@ $ keys *  持久化">
 
 <li><p>给键对应值追加内容</p>
 
-<pre><code class="language-bash">$ append 键 追加的值
+<pre><code class="language-bash">$ append 键 追加的值
 </code></pre></li>
 </ul>
 
@@ -337,12 +337,12 @@ $ keys *  持久化">
 
 <li><p>批量设置键中的字段对应值（hmset 键 字段 值 字段 值 字段 值 …）</p>
 
-<pre><code class="language-bash">$ hmset 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3
+<pre><code class="language-bash">$ hmset 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3
 </code></pre></li>
 
 <li><p>批量设置键中的字段对应值，如果对应字段已经存在则失败（hmsetnx 键 字段 值 字段 值 字段 值 …）</p>
 
-<pre><code class="language-bash">$ hmsetnx 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3
+<pre><code class="language-bash">$ hmsetnx 键 哈希类型的键1 值1 哈希类型的键2 值2 哈希类型的键3 值3
 </code></pre></li>
 </ul>
 
@@ -351,7 +351,7 @@ $ keys *  持久化">
 <ul>
 <li><p>设置集合类型（lpush 键 值 值 值 值 …）</p>
 
-<pre><code class="language-bash">$ lpush 键 值1 值2 值3 值4 值5 值6
+<pre><code class="language-bash">$ lpush 键 值1 值2 值3 值4 值5 值6
 </code></pre></li>
 
 <li><p>查看集合的长度</p>
@@ -433,9 +433,9 @@ $ keys *  持久化">
 
 <h2 id="sortedset-有序集合类型操作">（sortedset）有序集合类型操作</h2></li>
 
-<li><p>添加集合（zadd 键 值 集合中的键 值 集合中的键 值 集合中的键 &hellip;）</p>
+<li><p>添加集合（zadd 键 值 集合中的键 值 集合中的键 值 集合中的键 &hellip;）</p>
 
-<pre><code class="language-bash">$ zadd 键 值 集合中的键 值 集合中的键 值 集合中的键
+<pre><code class="language-bash">$ zadd 键 值 集合中的键 值 集合中的键 值 集合中的键
 </code></pre></li>
 
 <li><p>查看集合长度</p>
@@ -445,7 +445,7 @@ $ keys *  持久化">
 
 <li><p>获取对应元素的值（zscore 集合 字段）</p>
 
-<pre><code class="language-bash">$ zscore 键 集合中的键
+<pre><code class="language-bash">$ zscore 键 集合中的键
 </code></pre></li>
 
 <li><p>查看符合区间条件的元素数量（zcount 集合 开始 结束）</p>
@@ -455,12 +455,12 @@ $ keys *  持久化">
 
 <li><p>查看元素的索引</p>
 
-<pre><code class="language-bash">$ zrank 集合 集合中的键
+<pre><code class="language-bash">$ zrank 集合 集合中的键
 </code></pre></li>
 
 <li><p>给某个元素增加一定的增量（zincrby sortedset 增量值 元素）</p>
 
-<pre><code class="language-bash">$ zincrby 键 1000 集合中的键
+<pre><code class="language-bash">$ zincrby 键 1000 集合中的键
 </code></pre></li>
 
 <li><p>获取集合中范围的元素值（zrange 集合 开始 结束）</p>

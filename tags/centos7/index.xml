@@ -17,8 +17,8 @@
       <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</guid>
-      <description> &amp;emsp;&amp;emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
-在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  </description>
+      <description> &amp;emsp;&amp;emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  </description>
     </item>
     
   </channel>

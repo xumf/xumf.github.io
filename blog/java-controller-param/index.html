@@ -77,12 +77,12 @@
 </hgroup>
 <hr class="sep" />
 </header>
-	<p>  WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
+	<p>WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
 
-<p>  SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
+<p>  SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
 
 <blockquote>
-<p>文中的<code>@Data</code>是使用了<a href="https://www.projectlombok.org/">lombok</a>插件</p>
+<p>文中的<code>@Data</code>是使用了<a href="https://www.projectlombok.org/">lombok</a>插件</p>
 </blockquote>
 
 <ol>
@@ -97,13 +97,13 @@ public class User {
 }
 </code></pre></li>
 
-<li><p>创建对象<code>UserContext</code>负责存取<code>User</code>的实例对象，容器使用的是<em>ThreadLocal</em> ， <em>ThreadLocal</em> 的关键每个线程都会拥有一个 <em>ThreadLocal</em> 的对象独享，线程之间不会共享一个 <em>ThreadLocal</em> ，换句话说就是一个 <em>ThreadLocal</em> 实例对象当且仅当属于某条线程。</p>
+<li><p>创建对象<code>UserContext</code>负责存取<code>User</code>的实例对象，容器使用的是<em>ThreadLocal</em> ， <em>ThreadLocal</em> 的关键每个线程都会拥有一个 <em>ThreadLocal</em> 的对象独享，线程之间不会共享一个 <em>ThreadLocal</em> ，换句话说就是一个 <em>ThreadLocal</em> 实例对象当且仅当属于某条线程。</p>
 
 <pre><code class="language-java">public class UserContext {
 
     private static ThreadLocal&lt;User&gt; userHolder = new ThreadLocal&lt;&gt;();
 
-    // 存储user对象
+    // 存储user对象
     public static void setUser(User user) {
         userHolder.set(user);
     }
@@ -115,19 +115,19 @@ public class User {
 }
 </code></pre></li>
 
-<li><p>编写常量类</p>
+<li><p>编写常量类</p>
 
 <pre><code class="language-java">public class Consts {
 
-  // 获取cookie中或者参数中token的标识
+  // 获取cookie中或者参数中token的标识
   public static final String TOKEN_NAME = &quot;token_name&quot;;
 }
 </code></pre></li>
 
-<li><p>实现拦截器<code>HandlerInterceptorAdapter</code>，实现方法<code>preHandle</code>，以便于在请求处理前将<code>User</code>的实例对象存储在<code>UserContext</code>中。</p>
+<li><p>实现拦截器<code>HandlerInterceptorAdapter</code>，实现方法<code>preHandle</code>，以便于在请求处理前将<code>User</code>的实例对象存储在<code>UserContext</code>中。</p>
 
 <blockquote>
-<p><code>preHandle</code>：方法将在请求处理之前进行调用</p>
+<p><code>preHandle</code>：方法将在请求处理之前进行调用</p>
 </blockquote>
 
 <pre><code class="language-java">@Component
@@ -139,35 +139,35 @@ public class UserParamInterceptor extends HandlerInterceptorAdapter{
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
-          // 获取user对象
+          // 获取user对象
           User user = getUser(request, response);
-          // 用UserContext储存user对象
+          // 用UserContext储存user对象
           UserContext.setUser(user);
         }
-        // 返回值为true请求继续执行，返回值为false的时候请求结束
+        // 返回值为true请求继续执行，返回值为false的时候请求结束
         return true;
     }
 
     /**
      * 通过参数或者cookie中的token，获取user
      */
-    private User getUser(HttpServletRequest request, HttpServletResponse response) {
+    private User getUser(HttpServletRequest request, HttpServletResponse response) {
 
-        // 通过参数获取token
+        // 通过参数获取token
         String paramToken = request.getParameter(Consts.TOKEN_NAME);
         // 通过cookie获取token
         String cookieToken = getCookieValue(request, Consts.TOKEN_NAME);
-        // 如果cookie和param中都不存在token，说明用户还没登录，所以返回空
+        // 如果cookie和param中都不存在token，说明用户还没登录，所以返回空
         if (StringUtils.isEmpty(cookieToken) &amp;&amp; StringUtils.isEmpty(paramToken)) {
             return null;
         }
         String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
-        // 用户通过token获取用户对象，具体逻辑，可以自己实现UserService编写逻辑，一般是通过session或者redis获取，这取决于你在登录的时候user对象存在哪里
+        // 用户通过token获取用户对象，具体逻辑，可以自己实现UserService编写逻辑，一般是通过session或者redis获取，这取决于你在登录的时候user对象存在哪里
         return userService.getUserByToken(token);
     }
 
     /**
-     * 通过客户端传来的cookie获取token
+     * 通过客户端传来的cookie获取token
      */
     private String getCookieValue(HttpServletRequest request, String cookieNameToken) {
 
@@ -187,11 +187,11 @@ public class UserParamInterceptor extends HandlerInterceptorAdapter{
 }
 </code></pre></li>
 
-<li><p>实现Spring自定义参数解析器<code>HandlerMethodArgumentResolver</code>接口，并且实现接口的两个方法<code>supportsParameter</code>、<code>resolveArgument</code>。</p>
+<li><p>实现Spring自定义参数解析器<code>HandlerMethodArgumentResolver</code>接口，并且实现接口的两个方法<code>supportsParameter</code>、<code>resolveArgument</code>。</p>
 
 <blockquote>
-<p><code>supportsParameter</code>：用来判断参数需不需要被解析，如果是返回true则需要，false则相反。
- <code>resolveArgument</code>：当 <em>supportsParameter</em> 方法返回true时，就会调用此方法，返回的对象就是Controller方法上的需要注入参数</p>
+<p><code>supportsParameter</code>：用来判断参数需不需要被解析，如果是返回true则需要，false则相反。
+ <code>resolveArgument</code>：当 <em>supportsParameter</em> 方法返回true时，就会调用此方法，返回的对象就是Controller方法上的需要注入参数</p>
 </blockquote>
 
 <pre><code class="language-java">@Component
@@ -199,7 +199,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
-        // methodParameter.getParameterType()获取方法上的所有参数类型，当参数类型等于User对象的时候返回true，以调用resolveArgument
+        // methodParameter.getParameterType()获取方法上的所有参数类型，当参数类型等于User对象的时候返回true，以调用resolveArgument
         Class&lt;?&gt; clazz = methodParameter.getParameterType();
         return clazz == User.class;
     }
@@ -212,7 +212,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 }
 </code></pre></li>
 
-<li><p>配置<code>WebMvcConfigurerAdapter</code></p>
+<li><p>配置<code>WebMvcConfigurerAdapter</code></p>
 
 <pre><code class="language-java">@Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -221,12 +221,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private UserArgumentResolver userArgumentResolver;
 
-    // 注入刚刚编写的userParamInterceptor
+    // 注入刚刚编写的userParamInterceptor
     @Autowired
     private UserParamInterceptor userParamInterceptor;
 
     /**
-     * 给spring添加参数解析器userArgumentResolver
+     * 给spring添加参数解析器userArgumentResolver
      */
     @Override
     public void addArgumentResolvers(List&lt;HandlerMethodArgumentResolver&gt; argumentResolvers) {
@@ -243,8 +243,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 }
 </code></pre></li>
 
-<li><p>以上就完成了springMVC参数的注入，下面举个使用的栗子，当登录完成后，客户端调用<code>host:port/demo/user/get</code>
-不需要传任何参数，就会返回用户对象user</p>
+<li><p>以上就完成了springMVC参数的注入，下面举个使用的栗子，当登录完成后，客户端调用<code>host:port/demo/user/get</code>
+不需要传任何参数，就会返回用户对象user</p>
 
 <pre><code>```java
 @Controller
