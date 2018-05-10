@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on 小蜜蜂</title>
+    <link>https://xumf.github.io/tags/linux/</link>
+    <description>Recent content in Linux on 小蜜蜂</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
+    <lastBuildDate>Mon, 07 May 2018 23:04:30 +0800</lastBuildDate>
+    
+	<atom:link href="https://xumf.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linux软连接与硬连接</title>
+      <link>https://xumf.github.io/blog/linux%E8%BD%AF%E8%BF%9E%E6%8E%A5%E4%B8%8E%E7%A1%AC%E8%BF%9E%E6%8E%A5/</link>
+      <pubDate>Mon, 07 May 2018 23:04:30 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/blog/linux%E8%BD%AF%E8%BF%9E%E6%8E%A5%E4%B8%8E%E7%A1%AC%E8%BF%9E%E6%8E%A5/</guid>
+      <description>软连接在源文件删除后，无法再对源文件信息访问 硬连接在源文件删除后，能正常对源文件信息访问   一个源文件有n个硬连接那么源文件的引用计算等于(n + 1)
+ &amp;emsp;&amp;emsp;说说我对这几点的理解，其实我们可以把它想象成生活中的场景，假设A地点有一条狗，狗被铁链锁着，狗身上有10条绳子（此时文件的引用计数为11），分别有10大胸dei拉着（相当于一个文件有是个硬连接），然而在遥远的他方有个大胸dei知道A地点有这条狗（相当于有文件有一个软连接），假设有前面10个大胸dei中有9个跑路了(相当于unlink或者rm了9个硬链接)，还有一个大胸dei拉着（此时引用计数为2），此时这条狗还在这里走不了，这位拉着的大兄弟还是可以找到这只狗（相当于剩下的这个硬链接还可以访问文件的内容），而在遥远他方的那位大胸dei只要他想要找这条狗，还是可以找到，因为狗还在这（相当于软连接还可以访问），有个偷狗的大胸dei，拿了个大钳子来剪断了狗身上的铁链，但发现狗身边还有为大胸dei拿着这只狗，落荒而逃（相当于rm了文件，但是硬链接还是可以访问文件内容，此时的引用计算为1），拉狗的大胸dei发现这里不安全，就把它抱回家了，所以此时遥远他方的大胸dei，如果想要在来找狗狗就找不到了（相当于文件被删除，软连接就无法访问文件信息），最后一位拉着的大胸dei，突然不喜欢这条狗了，就放开了拉着狗的狗绳子，狗就冲冲的跑掉了（此时引用计算为0，文件对应的存储block被回收），突然有一天不知道谁又把一个条狗，在同一个地方，锁上了铁链（此时引用计算为1），在遥远他方的大胸dei想要来看狗狗的话，就可以如愿看到（相当于只要在同一个位置建立了同样文件名的文件，软连接就可以再访问对应位置的文件信息）。</description>
+    </item>
+    
+  </channel>
+</rss>

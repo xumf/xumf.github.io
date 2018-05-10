@@ -3,17 +3,11 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.32.2" />
+		<meta name="generator" content="Hugo 0.38.1" />
 		<title>Tomcat单机部署多应用（Mac/Linux） - 小蜜蜂</title>
 
 		<meta name="description" content=" 按照以下步骤依次执行：  ${tomcat}tomcat的根目录
-  修改/etc/profile增加tomcat环境变量
-export CATALINA_BASE=/Users/xumf/tomcat1 export CATALINA_HOME=/Users/xumf/tomcat1 export TOMCAT_HOME=/Users/xumf/tomcat1 export CATALINA_2_BASE=/Users/xumf/tomcat2 export CATALINA_2_HOME=/Users/xumf/tomcat2 export TOMCAT_2_HOME=/Users/xumf/tomcat2  保存退出，输入esc然后:wq
- 执行
-$ source /etc/profile  第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh
-$ vim ${tomcat}/bin/catalina.sh  找到# OS specific support. $var must be set to either true or false.在这行下面编辑，新增配置，保存退出
-export CATALINA_BASE=$CATALINA_2_BASE export CATALINA_HOME=$CATALINA_2_HOME  打开第二个tomcat的conf目录下server.xml,$ vim ${tomcat}/conf/server.xml
- 8005改为9005  8080改为9080  8009改为9009    ">
+ 1. 修改/etc/profile增加tomcat环境变量 export CATALINA_BASE=/Users/xumf/tomcat1 export CATALINA_HOME=/Users/xumf/tomcat1 export TOMCAT_HOME=/Users/xumf/tomcat1 export CATALINA_2_BASE=/Users/xumf/tomcat2 export CATALINA_2_HOME=/Users/xumf/tomcat2 export TOMCAT_2_HOME=/Users/xumf/tomcat2  2. 保存退出，输入esc然后:wq 3. 执行 source /etc/profile  4. 第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh vim ${tomcat}/bin/catalina.sh  5. 找到# OS specific support. $var must be set to either true or false.在这行下面编辑，新增配置，保存退出 export CATALINA_BASE=$CATALINA_2_BASE export CATALINA_HOME=$CATALINA_2_HOME  6. 打开第二个tomcat的conf目录下server.xml vim ${tomcat}/conf/server.xml   8005改为9005  8080改为9080  8009改为9009   ">
 
 
 		
@@ -84,54 +78,53 @@ export CATALINA_BASE=$CATALINA_2_BASE export CATALINA_HOME=$CATALINA_2_HOME  打
 </header>
 	
 
-<h3 id="按照以下步骤依次执行">按照以下步骤依次执行：</h3>
+<h1 id="按照以下步骤依次执行">按照以下步骤依次执行：</h1>
 
 <blockquote>
 <p><code>${tomcat}</code>tomcat的根目录</p>
 </blockquote>
 
-<ol>
-<li><p>修改<code>/etc/profile</code>增加tomcat环境变量</p>
+<h2 id="1-修改-etc-profile-增加tomcat环境变量">1.  修改<code>/etc/profile</code>增加tomcat环境变量</h2>
 
-<pre><code class="language-bash">export CATALINA_BASE=/Users/xumf/tomcat1
+<pre><code>export CATALINA_BASE=/Users/xumf/tomcat1
 export CATALINA_HOME=/Users/xumf/tomcat1
 export TOMCAT_HOME=/Users/xumf/tomcat1
 export CATALINA_2_BASE=/Users/xumf/tomcat2
 export CATALINA_2_HOME=/Users/xumf/tomcat2
 export TOMCAT_2_HOME=/Users/xumf/tomcat2
-</code></pre></li>
+</code></pre>
 
-<li><p>保存退出，输入esc然后<code>:wq</code></p></li>
+<h2 id="2-保存退出-输入esc然后-wq">2.  保存退出，输入esc然后<code>:wq</code></h2>
 
-<li><p>执行</p>
+<h2 id="3-执行">3.  执行</h2>
 
-<pre><code class="language-bash">$ source /etc/profile
-</code></pre></li>
+<pre><code class="language-bash">source /etc/profile
+</code></pre>
 
-<li><p>第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh</p>
+<h2 id="4-第一个tomcat不变-打开第二个tomcat目录bin下catalina-sh">4.  第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh</h2>
 
-<pre><code class="language-bash">$ vim ${tomcat}/bin/catalina.sh
-</code></pre></li>
+<pre><code class="language-bash">vim ${tomcat}/bin/catalina.sh
+</code></pre>
 
-<li><p>找到# OS specific support. $var <em>must</em> be set to either true or false.在这行下面编辑，新增配置，保存退出</p>
+<h2 id="5-找到-os-specific-support-var-must-be-set-to-either-true-or-false-在这行下面编辑-新增配置-保存退出">5.  找到# OS specific support. $var <em>must</em> be set to either true or false.在这行下面编辑，新增配置，保存退出</h2>
 
-<pre><code class="language-bash">export CATALINA_BASE=$CATALINA_2_BASE
+<pre><code>export CATALINA_BASE=$CATALINA_2_BASE
 export CATALINA_HOME=$CATALINA_2_HOME
-</code></pre></li>
+</code></pre>
 
-<li><p>打开第二个tomcat的conf目录下server.xml,<code>$ vim ${tomcat}/conf/server.xml</code></p>
+<h2 id="6-打开第二个tomcat的conf目录下server-xml">6.  打开第二个tomcat的conf目录下server.xml</h2>
+
+<pre><code class="language-bash">vim ${tomcat}/conf/server.xml
+</code></pre>
 
 <ul>
-<li><p>8005改为9005
-<img src="https://i.imgur.com/rpuceXa.png" alt="0AE3D7B7-F96A-4FAE-A13A-94B836BCD4DF" /></p></li>
-
-<li><p>8080改为9080
-<img src="https://i.imgur.com/IiW7hgv.png" alt="05F4A861-6CD4-453C-B12F-3F83ACA24D35" /></p></li>
-
-<li><p>8009改为9009
-<img src="https://i.imgur.com/1MGeszj.png" alt="8359A2A1-9443-4829-841F-70100348C9C9" /></p></li>
-</ul></li>
-</ol>
+<li>8005改为9005
+<img src="https://i.imgur.com/rpuceXa.png" alt="0AE3D7B7-F96A-4FAE-A13A-94B836BCD4DF" /></li>
+<li>8080改为9080
+<img src="https://i.imgur.com/IiW7hgv.png" alt="05F4A861-6CD4-453C-B12F-3F83ACA24D35" /></li>
+<li>8009改为9009
+<img src="https://i.imgur.com/1MGeszj.png" alt="8359A2A1-9443-4829-841F-70100348C9C9" /></li>
+</ul>
 
 	<nav class="no-print post-nav">
 	
@@ -204,15 +197,22 @@ ga('send', 'pageview');
 </main>
 <footer class="container no-print">
 	<div class="u-footer">
-		
-<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+		<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
 
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
 
-
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
-<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 		<p>
 			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			

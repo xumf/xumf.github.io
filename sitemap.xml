@@ -3,7 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</loc>
+    <loc>https://xumf.github.io/blog/%E5%8E%BB%E6%8E%89%E6%96%87%E4%B8%AD%E7%9A%84h%E5%AD%97%E7%AC%A6/</loc>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/blog/linux%E8%BD%AF%E8%BF%9E%E6%8E%A5%E4%B8%8E%E7%A1%AC%E8%BF%9E%E6%8E%A5/</loc>
+    <lastmod>2018-05-07T23:04:30+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/</loc>
     <lastmod>2018-05-03T22:19:24+08:00</lastmod>
   </url>
   
@@ -84,7 +94,7 @@
   
   <url>
     <loc>https://xumf.github.io/tags/blog/</loc>
-    <lastmod>2018-04-28T13:54:50+08:00</lastmod>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -136,8 +146,20 @@
   </url>
   
   <url>
+    <loc>https://xumf.github.io/tags/linux/</loc>
+    <lastmod>2018-05-07T23:04:30+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/tags/maven/</loc>
     <lastmod>2018-04-22T13:42:22+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/opini/</loc>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -167,13 +189,19 @@
   
   <url>
     <loc>https://xumf.github.io/tags/</loc>
-    <lastmod>2018-04-28T13:54:50+08:00</lastmod>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://xumf.github.io/tags/tomcat/</loc>
     <lastmod>2018-04-22T13:16:53+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/tutorial/</loc>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -202,7 +230,7 @@
   
   <url>
     <loc>https://xumf.github.io/</loc>
-    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
     <priority>0</priority>
   </url>
   

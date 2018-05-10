@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.32.2" />
+		<meta name="generator" content="Hugo 0.38.1" />
 		<title>Spring Controller方法自定义参数 - 小蜜蜂</title>
 
 		<meta name="description" content="给controller方法添加自定义参数">
@@ -77,9 +77,9 @@
 </hgroup>
 <hr class="sep" />
 </header>
-	<p>WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
+	<p>&emsp;&emsp;WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
 
-<p>  SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
+<p>&emsp;&emsp;SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
 
 <blockquote>
 <p>文中的<code>@Data</code>是使用了<a href="https://www.projectlombok.org/">lombok</a>插件</p>
@@ -341,15 +341,22 @@ ga('send', 'pageview');
 </main>
 <footer class="container no-print">
 	<div class="u-footer">
-		
-<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+		<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
 
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
 
-
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
-<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 		<p>
 			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			

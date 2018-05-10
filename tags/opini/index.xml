@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Opini on 小蜜蜂</title>
+    <link>https://xumf.github.io/tags/opini/</link>
+    <description>Recent content in Opini on 小蜜蜂</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
+    <lastBuildDate>Wed, 09 May 2018 23:36:22 +0800</lastBuildDate>
+    
+	<atom:link href="https://xumf.github.io/tags/opini/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>去掉文中的^H字符</title>
+      <link>https://xumf.github.io/blog/%E5%8E%BB%E6%8E%89%E6%96%87%E4%B8%AD%E7%9A%84h%E5%AD%97%E7%AC%A6/</link>
+      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/blog/%E5%8E%BB%E6%8E%89%E6%96%87%E4%B8%AD%E7%9A%84h%E5%AD%97%E7%AC%A6/</guid>
+      <description>注意这里的^H不是普通的^H，要通过按着Control，点v，然后点h，就会自动想形成，同理如果出现了^M的特殊符号，也要通过按着Control，点v，在点m，来去除，其它符号以此类推。
+ 用vim打开文件，输入:%s/^H//g，回车</description>
+    </item>
+    
+  </channel>
+</rss>

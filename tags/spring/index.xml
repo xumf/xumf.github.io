@@ -17,8 +17,8 @@
       <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/java-controller-param/</guid>
-      <description>WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
- SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
+      <description>&amp;emsp;&amp;emsp;WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
+&amp;emsp;&amp;emsp;SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
  文中的@Data是使用了lombok插件
   编写User类
 @Data public class User { private int id; private String name; }  创建对象UserContext负责存取User的实例对象，容器使用的是ThreadLocal ， ThreadLocal 的关键每个线程都会拥有一个 ThreadLocal 的对象独享，线程之间不会共享一个 ThreadLocal ，换句话说就是一个 ThreadLocal 实例对象当且仅当属于某条线程。

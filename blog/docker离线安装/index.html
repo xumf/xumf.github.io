@@ -3,11 +3,11 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.32.2" />
+		<meta name="generator" content="Hugo 0.38.1" />
 		<title>Docker离线安装 - 小蜜蜂</title>
 
-		<meta name="description" content=" &emsp;&emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
-在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  ">
+		<meta name="description" content=" 安装docker与docker-compose  本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+ 在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt; scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;  使用yum install先后执行两个文件 # 依次执行 yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  docker-compose安装  在能连接外网的linux下下载docker-compose  sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose   用scp将docker-compose文件传送到无法连接外网的linux上  scp /usr/local/bin/docker-compose &lt;user&gt;@&lt;ip&gt;:/home/&lt;user&gt;/bin/   ssh进入无法连接外网的服务器  ssh &lt;user&gt;@&lt;ip&gt;   给用户添加执行权限  sudo chmod &#43;x /usr/local/bin/docker-compose   测试是否成功  $ docker-compose --version # 成功允许会有版本信息输出  ">
 
 
 		
@@ -80,7 +80,11 @@
 </header>
 	
 
-<p>&emsp;&emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题</p>
+<h1 id="安装docker与docker-compose">安装docker与docker-compose</h1>
+
+<blockquote>
+<p>本文主要解决在centos7服务器无法访问外网的时候安装docker的问题</p>
+</blockquote>
 
 <h2 id="在可访问外网的电脑上下载docker所需文件">在可访问外网的电脑上下载docker所需文件</h2>
 
@@ -91,20 +95,20 @@
 
 <h2 id="将下载的两个文件传送到centos7服务器上">将下载的两个文件传送到centos7服务器上</h2>
 
-<pre><code class="language-bash">$ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;
-$ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;
+<pre><code class="language-bash">scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;
+scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &lt;用户名&gt;@&lt;服务器ip或者域名&gt;:&lt;存放路径&gt;
 </code></pre>
 
 <h2 id="使用-yum-install-先后执行两个文件">使用<code>yum install</code>先后执行两个文件</h2>
 
 <pre><code class="language-bash"># 依次执行
-$ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm
-$ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm
+yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm
+yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm
 </code></pre>
 
 <h2 id="启动docker服务">启动Docker服务</h2>
 
-<pre><code class="language-bash">$ sudo systemctl start docker
+<pre><code class="language-bash">sudo systemctl start docker
 </code></pre>
 
 <h2 id="去掉执行docker必须sudo">去掉执行docker必须sudo</h2>
@@ -114,13 +118,51 @@ $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm
 <li>将系统用户加入<code>$ sudo gpasswd -a ${USER} docke</code></li>
 </ul>
 
+<h2 id="docker-compose安装">docker-compose安装</h2>
+
+<ul>
+<li>在能连接外网的linux下下载docker-compose</li>
+</ul>
+
+<pre><code class="language-bash">  sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+</code></pre>
+
+<ul>
+<li>用scp将docker-compose文件传送到无法连接外网的linux上</li>
+</ul>
+
+<pre><code class="language-bash">  scp /usr/local/bin/docker-compose &lt;user&gt;@&lt;ip&gt;:/home/&lt;user&gt;/bin/
+</code></pre>
+
+<ul>
+<li>ssh进入无法连接外网的服务器</li>
+</ul>
+
+<pre><code class="language-bash">  ssh &lt;user&gt;@&lt;ip&gt;
+</code></pre>
+
+<ul>
+<li>给用户添加执行权限</li>
+</ul>
+
+<pre><code class="language-bash">  sudo chmod +x /usr/local/bin/docker-compose
+</code></pre>
+
+<ul>
+<li>测试是否成功</li>
+</ul>
+
+<pre><code class="language-bash">  $ docker-compose --version
+  # 成功允许会有版本信息输出
+</code></pre>
+
 	<nav class="no-print post-nav">
 	
 		<a class="prev-post" href="https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/">
 			<img class="icon-text" src="/img/prev.svg"/>Vultr搭建vpn</a>
 	
 	
-		<a class="next-post" href="https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/">Docker&#43;centos7&#43;jira7.3.6&#43;postgre Sql破解搭建<img class="icon-text" src="/img/next.svg"/>
+		<a class="next-post" href="https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/">Docker&#43;centos7&#43;jira7.3.6&#43;postgre Sql破解搭建<img class="icon-text" src="/img/next.svg"/>
 		</a>
 	
 	</nav>
@@ -185,15 +227,22 @@ ga('send', 'pageview');
 </main>
 <footer class="container no-print">
 	<div class="u-footer">
-		
-<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+		<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
 
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
 
-
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
-<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 		<p>
 			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			

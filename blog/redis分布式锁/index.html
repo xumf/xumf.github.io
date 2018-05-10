@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.32.2" />
+		<meta name="generator" content="Hugo 0.38.1" />
 		<title>Redis分布式锁 - 小蜜蜂</title>
 
 		<meta name="description" content="package com.xumf.service; import lombok.extern.slf4j.Slf4j; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Component; import org.springframework.util.StringUtils; @Component @Slf4j public class RedisLock { @Autowired private StringRedisTemplate redisTemplate; /** * 加锁 * @param key * @param value 当前时间&#43;超时时间 * @return */ public boolean lock(String key, String value) { if (redisTemplate.opsForValue().setIfAbsent(key, value)) { return true; } String currentValue = redisTemplate.opsForValue().get(key); // 如果锁过期 if (!StringUtils.isEmpty(currentValue) &amp;&amp; Long.parseLong(currentValue) &lt; System.currentTimeMillis()) { String oldValue = redisTemplate.opsForValue().getAndSet(key, value); if (!StringUtils.isEmpty(oldValue) &amp;&amp; oldValue.">
@@ -207,15 +207,22 @@ ga('send', 'pageview');
 </main>
 <footer class="container no-print">
 	<div class="u-footer">
-		
-<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+		<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
 
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
 
-
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
-<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 		<p>
 			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			

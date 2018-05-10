@@ -13,12 +13,12 @@
     
     <item>
       <title>Docker&#43;centos7&#43;jira7.3.6&#43;postgre Sql破解搭建</title>
-      <link>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</link>
+      <link>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/</link>
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
       
-      <guid>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</guid>
-      <description>准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
-jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 $ docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 $ docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 $ mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 $ touch jira_dockerfile $ vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 $ touch docker-compose.yml $ vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.</description>
+      <guid>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/</guid>
+      <description>依次操作 准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
+jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 touch jira_dockerfile vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 touch docker-compose.yml vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.3 ports: - &amp;quot;5432:5432&amp;quot; environment: POSTGRES_PASSWORD: rootroot  使用docker-compose执行 docker-compose build docker-compose up -d  查看镜像运行状态 docker ps  看到cptactionhank/atlassian-jira:6.</description>
     </item>
     
     <item>
@@ -27,8 +27,8 @@ jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # 
       <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</guid>
-      <description> &amp;emsp;&amp;emsp;本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
-在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 $ scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; $ scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 $ yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm $ yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 $ sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  </description>
+      <description> 安装docker与docker-compose  本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+ 在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  docker-compose安装  在能连接外网的linux下下载docker-compose  sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose   用scp将docker-compose文件传送到无法连接外网的linux上  scp /usr/local/bin/docker-compose &amp;lt;user&amp;gt;@&amp;lt;ip&amp;gt;:/home/&amp;lt;user&amp;gt;/bin/   ssh进入无法连接外网的服务器  ssh &amp;lt;user&amp;gt;@&amp;lt;ip&amp;gt;   给用户添加执行权限  sudo chmod +x /usr/local/bin/docker-compose   测试是否成功  $ docker-compose --version # 成功允许会有版本信息输出  </description>
     </item>
     
   </channel>
