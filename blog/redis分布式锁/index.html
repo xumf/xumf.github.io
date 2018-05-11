@@ -151,46 +151,22 @@ public class RedisLock {
 
 
 
-
-<div id="SOHUCS"></div>
+	<div id="disqus_thread" class="no-print"></div>
 <script type="text/javascript">
-  (function() {
-    var appid = 'cytzRk6Ih';
-    var conf = 'prod_5fac309232e591ceb3e014d0144ce89b';
-    var width = window.innerWidth || document.documentElement.clientWidth;
-    if (width < 960) {
-      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
-    } else {
-      var loadJs = function(d, a) {
-        var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
-        var b = document.createElement("script");
-        b.setAttribute("type", "text/javascript");
-        b.setAttribute("charset", "UTF-8");
-        b.setAttribute("src", d);
-        if (typeof a === "function") {
-          if (window.attachEvent) {
-            b.onreadystatechange = function() {
-              var e = b.readyState;
-              if (e === "loaded" || e === "complete") {
-                b.onreadystatechange = null;
-                a()
-              }
-            }
-          } else {
-            b.onload = a
-          }
-        }
-        c.appendChild(b)
-      };
-      loadJs("https://changyan.sohu.com/upload/changyan.js", function() {
-        window.changyan.api.config({
-          appid: appid,
-          conf: conf
-        })
-      });
-    }
-  })();
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
 </script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
 
@@ -208,22 +184,14 @@ ga('send', 'pageview');
 <footer class="container no-print">
 	<div class="u-footer">
 		
-		<div id="disqus_thread" class="no-print"></div>
-<script type="text/javascript">
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
 
-(function() {
-    
-    
-    if (window.location.hostname == "localhost")
-        return;
 
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-    var disqus_shortname = 'xumf';
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
+
+
+<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
 
 		<p>
 			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			
