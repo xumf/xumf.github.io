@@ -6,10 +6,10 @@
 		<meta name="generator" content="Hugo 0.38.1" />
 		<title>Redis分布式锁 - 小蜜蜂</title>
 
-		<meta name="description" content="springboot依赖 &lt;!-- StringRedisTemplate需要 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- @slf4j注解使用 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.projectlombok&lt;/groupId&gt; &lt;artifactId&gt;lombok&lt;/artifactId&gt; &lt;version&gt;1.16.6&lt;/version&gt; &lt;/dependency&gt;  实现逻辑  方法：返回值true代表获取锁成功，返回值false则相反
+		<meta name="description" content="代码实现分布式锁 springboot依赖 &lt;!-- StringRedisTemplate需要 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- @slf4j注解使用 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.projectlombok&lt;/groupId&gt; &lt;artifactId&gt;lombok&lt;/artifactId&gt; &lt;version&gt;1.16.6&lt;/version&gt; &lt;/dependency&gt;  实现逻辑  方法：返回值true代表获取锁成功，返回值false则相反
 方法：参数value=当前时间&#43;超时时间
 方法：参数key为redis的键
-  判断key是否已存在，不存在就新增，返回true，已存在不改变原有key的value，返回false 获取key对应的cuurentValue（设value时间&#43;超时时间） 判断锁是否超过有效期， 是否有效 = 有效期（value） &lt; 系统当前时间 如果没有过期证明锁还在被使用，直接返回false，如果已经过期，说明锁还在被使用，并且超过了有效期，所以执行第五步 通过 getAndSet 先返回key的值，并且给key设置新的值 判断旧的值与过了有效期的值是否相等，如果等于就返回true，否则返回false  实现代码 package com.xumf.service; import lombok.extern.slf4j.Slf4j; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Component; import org.springframework.util.StringUtils; @Component @Slf4j public class RedisLock { @Autowired private StringRedisTemplate redisTemplate; /** * 加锁 * @param key * @param value 当前时间&#43;超时时间 * @return */ public boolean lock(String key, String value) { if (redisTemplate.">
+  判断key是否已存在，不存在就新增，返回true，已存在不改变原有key的value，返回false 获取key对应的cuurentValue（设value时间&#43;超时时间） 判断锁是否超过有效期， 是否有效 = 有效期（value） &lt; 系统当前时间 如果没有过期证明锁还在被使用，直接返回false，如果已经过期，说明锁还在被使用，并且超过了有效期，所以执行第五步 通过 getAndSet 先返回key的值，并且给key设置新的值 判断旧的值与过了有效期的值是否相等，如果等于就返回true，否则返回false  代码 package com.xumf.service; import lombok.extern.slf4j.Slf4j; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Component; import org.springframework.util.StringUtils; @Component @Slf4j public class RedisLock { @Autowired private StringRedisTemplate redisTemplate; /** * 加锁 * @param key * @param value 当前时间&#43;超时时间 * @return */ public boolean lock(String key, String value) { if (redisTemplate.">
 
 
 		
@@ -80,7 +80,9 @@
 </header>
 	
 
-<h2 id="springboot依赖">springboot依赖</h2>
+<h2 id="代码实现分布式锁">代码实现分布式锁</h2>
+
+<h3 id="springboot依赖">springboot依赖</h3>
 
 <pre><code class="language-xml">&lt;!-- StringRedisTemplate需要 --&gt;
 &lt;dependency&gt;
@@ -95,7 +97,7 @@
 &lt;/dependency&gt;
 </code></pre>
 
-<h2 id="实现逻辑">实现逻辑</h2>
+<h3 id="实现逻辑">实现逻辑</h3>
 
 <blockquote>
 <p>方法：返回值true代表获取锁成功，返回值false则相反</p>
@@ -116,7 +118,7 @@
 
 <p><img src="https://s7.postimg.cc/faep2jybf/flow.png" alt="flow" /></p>
 
-<h2 id="实现代码">实现代码</h2>
+<h3 id="代码">代码</h3>
 
 <pre><code class="language-java">package com.xumf.service;
 
@@ -171,6 +173,28 @@ public class RedisLock {
         }
     }
 }
+</code></pre>
+
+<h2 id="redisson框架实现">redisson框架实现</h2>
+
+<p></p>
+
+<h3 id="maven依赖">maven依赖</h3>
+
+<pre><code class="language-xml">
+&lt;!-- JDK 1.8+ 依赖 --&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;org.redisson&lt;/groupId&gt;
+   &lt;artifactId&gt;redisson&lt;/artifactId&gt;
+   &lt;version&gt;3.6.5&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- JDK 1.6+ 依赖 --&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;org.redisson&lt;/groupId&gt;
+   &lt;artifactId&gt;redisson&lt;/artifactId&gt;
+   &lt;version&gt;2.11.5&lt;/version&gt;
+&lt;/dependency&gt;&lt;!--
 </code></pre>
 
 	<nav class="no-print post-nav">

@@ -6,7 +6,7 @@
 		<meta name="generator" content="Hugo 0.38.1" />
 		<title>Maven环境隔离 - 小蜜蜂</title>
 
-		<meta name="description" content="1. 在pom.xml的build标签中添加 ```xml &lt;resources&gt; &lt;resource&gt; &lt;!- 配置文件夹 -&gt; &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt; &lt;excludes&gt; &lt;!— 打包时忽略的文件 —&gt; &lt;exclude&gt;.jsp&lt;/exclude&gt; &lt;/excludes&gt; &lt;/resource&gt; &lt;!- 公共资源文件文件夹 -&gt; &lt;resource&gt; &lt;directory&gt;src/main/resources&lt;/directory&gt; &lt;/resource&gt; &lt;/resources&gt; ```  2. 在pom.xml的build标签下添加 ```xml &lt;profiles&gt; &lt;profile&gt; &lt;!- 开发环境 -&gt; &lt;id&gt;dev&lt;/id&gt; &lt;activation&gt; &lt;!- 默认环境 -&gt; &lt;activeByDefault&gt;true&lt;/activeByDefault&gt; &lt;/activation&gt; &lt;properties&gt; &lt;deploy.type&gt;dev&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!- 测试环境 -&gt; &lt;id&gt;beta&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;beta&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!- 生产环境 -&gt; &lt;id&gt;prod&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;prod&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;/profiles&gt; ```  3. 添加资源文件夹  resource：共享配置 resource.">
+		<meta name="description" content="1. 在pom.xml的build标签中添加 &lt;build&gt; &lt;resources&gt; &lt;resource&gt; &lt;!-- 配置文件夹 --&gt; &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt; &lt;excludes&gt; &lt;!-- 打包时忽略的文件 --&gt; &lt;exclude&gt;.jsp&lt;/exclude&gt; &lt;/excludes&gt; &lt;/resource&gt; &lt;!-- 公共资源文件文件夹 --&gt; &lt;resource&gt; &lt;directory&gt;src/main/resources&lt;/directory&gt; &lt;/resource&gt; &lt;/resources&gt; &lt;/build&gt;  2. 在pom.xml的build标签下添加 &lt;profiles&gt; &lt;profile&gt; &lt;!-- 开发环境 --&gt; &lt;id&gt;dev&lt;/id&gt; &lt;activation&gt; &lt;!-- 默认环境 --&gt; &lt;activeByDefault&gt;true&lt;/activeByDefault&gt; &lt;/activation&gt; &lt;properties&gt; &lt;deploy.type&gt;dev&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!-- 测试环境 --&gt; &lt;id&gt;beta&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;beta&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;profile&gt; &lt;!-- 生产环境 --&gt; &lt;id&gt;prod&lt;/id&gt; &lt;properties&gt; &lt;deploy.type&gt;prod&lt;/deploy.type&gt; &lt;/properties&gt; &lt;/profile&gt; &lt;/profiles&gt;  3. 添加资源文件夹  resource：共享配置 resource.beta：测试环境配置 resource.dev：开发环境配置 resource.">
 
 
 		
@@ -79,33 +79,32 @@
 
 <h3 id="1-在pom-xml的build标签中添加">1. 在pom.xml的build标签中添加</h3>
 
-<pre><code>```xml
-&lt;resources&gt;
-    &lt;resource&gt;
-        &lt;!- 配置文件夹 -&gt;
-        &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt;
-        &lt;excludes&gt;
-            &lt;!— 打包时忽略的文件 —&gt;
-            &lt;exclude&gt;.jsp&lt;/exclude&gt;
-        &lt;/excludes&gt;
-    &lt;/resource&gt;
-    &lt;!- 公共资源文件文件夹 -&gt;
-    &lt;resource&gt;
-        &lt;directory&gt;src/main/resources&lt;/directory&gt;
-    &lt;/resource&gt;
-&lt;/resources&gt;
-```
+<pre><code class="language-xml">&lt;build&gt;
+  &lt;resources&gt;
+      &lt;resource&gt;
+           &lt;!-- 配置文件夹  --&gt;
+          &lt;directory&gt;src/main/resources.${deploy.type}&lt;/directory&gt;
+          &lt;excludes&gt;
+                   &lt;!-- 打包时忽略的文件  --&gt;
+              &lt;exclude&gt;.jsp&lt;/exclude&gt;
+          &lt;/excludes&gt;
+      &lt;/resource&gt;
+       &lt;!-- 公共资源文件文件夹  --&gt;
+      &lt;resource&gt;
+          &lt;directory&gt;src/main/resources&lt;/directory&gt;
+      &lt;/resource&gt;
+  &lt;/resources&gt;
+&lt;/build&gt;
 </code></pre>
 
 <h3 id="2-在pom-xml的build标签下添加">2. 在pom.xml的build标签下添加</h3>
 
-<pre><code>```xml
-&lt;profiles&gt;
+<pre><code class="language-xml">&lt;profiles&gt;
     &lt;profile&gt;
-        &lt;!- 开发环境 -&gt;
+        &lt;!-- 开发环境  --&gt;
         &lt;id&gt;dev&lt;/id&gt;
         &lt;activation&gt;
-            &lt;!- 默认环境 -&gt;
+             &lt;!-- 默认环境  --&gt;
             &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
         &lt;/activation&gt;
         &lt;properties&gt;
@@ -113,21 +112,20 @@
         &lt;/properties&gt;
     &lt;/profile&gt;
     &lt;profile&gt;
-        &lt;!- 测试环境 -&gt;
+         &lt;!-- 测试环境  --&gt;
         &lt;id&gt;beta&lt;/id&gt;
         &lt;properties&gt;
             &lt;deploy.type&gt;beta&lt;/deploy.type&gt;
         &lt;/properties&gt;
     &lt;/profile&gt;
     &lt;profile&gt;
-        &lt;!- 生产环境 -&gt;
+         &lt;!-- 生产环境  --&gt;
         &lt;id&gt;prod&lt;/id&gt;
         &lt;properties&gt;
             &lt;deploy.type&gt;prod&lt;/deploy.type&gt;
         &lt;/properties&gt;
     &lt;/profile&gt;
 &lt;/profiles&gt;
-```
 </code></pre>
 
 <h3 id="3-添加资源文件夹">3. 添加资源文件夹</h3>
