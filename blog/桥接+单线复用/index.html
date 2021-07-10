@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.68.3" />
+		<title>桥接&#43;单线复用 - 小蜜蜂</title>
+
+		<meta name="description" content="路由光猫配置">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>桥接&#43;单线复用</h1>
+	<h5>
+		
+		<time datetime="2021-07-09 23:36:22 &#43;0800 CST">2021年 7月 09日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/net">net</a>
+				
+				<a href="/tags/iptv">iptv</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h1 id="iptv桥接--上网桥接单线复用教程">IPTV桥接 + 上网桥接+单线复用教程</h1>
+<h2 id="1-用超级管理员登录光猫管理页面">1. 用超级管理员登录光猫管理页面</h2>
+<blockquote>
+<p>超级管理账号密码可能不同光猫不一致，需要找电信工作人员获取</p>
+</blockquote>
+<p>链接：http://192.168.1.1</p>
+<p>账号：<code>telecomadmin</code></p>
+<p>密码：<code>nE7jA%5m</code></p>
+<h2 id="2-上网配置桥接">2. 上网配置桥接</h2>
+<p><a href="https://postimg.cc/0MWZQXFL"><img src="https://i.postimg.cc/j2K1MGXd/1.png" alt="1.png"></a></p>
+<h2 id="3-iptv配置桥接">3. IPTV配置桥接</h2>
+<p><a href="https://postimg.cc/2qT7cXkV"><img src="https://i.postimg.cc/zBY2f94S/2.png" alt="2.png"></a></p>
+<h2 id="4-配置-vlan">4. 配置 vlan</h2>
+<p><a href="https://postimg.cc/N2XTcNc8"><img src="https://i.postimg.cc/rsn95bZH/3.png" alt="3.png"></a></p>
+<h2 id="5华为路由配置">5.华为路由配置</h2>
+<ol>
+<li>网络拨号配置</li>
+</ol>
+<p><a href="https://postimg.cc/dkyDkLxw"><img src="https://i.postimg.cc/63HZPZV2/4.png" alt="4.png"></a></p>
+<ol start="2">
+<li>IPTV 配置</li>
+</ol>
+<p><a href="https://postimg.cc/NyrQbZ7x"><img src="https://i.postimg.cc/QMfVN3Fv/5.png" alt="5.png"></a></p>
+<h2 id="结束语">结束语</h2>
+<p>每个地区的 vlanID 不一致，要根据自己的地区配置</p>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="https://xumf.github.io/blog/%E5%8E%BB%E6%8E%89%E6%96%87%E4%B8%AD%E7%9A%84h%E5%AD%97%E7%AC%A6/">
+		<img class="icon-text" src="/img/prev.svg"/>去掉文中的^H字符</a>
+
+
+</nav>
+
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
+<a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
+
+
+<a href="https://github.com/xumf/"><img class="icon-social" src="/img/github.svg" alt="Github"/></a>
+
+
+<a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
+
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license"></a>
+					
+				</p>
+				
+				<a href="#brand">
+					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
+					<span></span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
+</html>
+

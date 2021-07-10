@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Maven on 小蜜蜂</title>
+    <title>maven on 小蜜蜂</title>
     <link>https://xumf.github.io/tags/maven/</link>
-    <description>Recent content in Maven on 小蜜蜂</description>
+    <description>Recent content in maven on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 22 Apr 2018 13:42:22 +0800</lastBuildDate>
@@ -17,7 +17,7 @@
       <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</guid>
-      <description>1. 在pom.xml的build标签中添加 &amp;lt;build&amp;gt; &amp;lt;resources&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;!-- 配置文件夹 --&amp;gt; &amp;lt;directory&amp;gt;src/main/resources.${deploy.type}&amp;lt;/directory&amp;gt; &amp;lt;excludes&amp;gt; &amp;lt;!-- 打包时忽略的文件 --&amp;gt; &amp;lt;exclude&amp;gt;.jsp&amp;lt;/exclude&amp;gt; &amp;lt;/excludes&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;!-- 公共资源文件文件夹 --&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;directory&amp;gt;src/main/resources&amp;lt;/directory&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;/resources&amp;gt; &amp;lt;/build&amp;gt;  2. 在pom.xml的build标签下添加 &amp;lt;profiles&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 开发环境 --&amp;gt; &amp;lt;id&amp;gt;dev&amp;lt;/id&amp;gt; &amp;lt;activation&amp;gt; &amp;lt;!-- 默认环境 --&amp;gt; &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt; &amp;lt;/activation&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;dev&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 测试环境 --&amp;gt; &amp;lt;id&amp;gt;beta&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;beta&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 生产环境 --&amp;gt; &amp;lt;id&amp;gt;prod&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;prod&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;/profiles&amp;gt;  3. 添加资源文件夹  resource：共享配置 resource.beta：测试环境配置 resource.dev：开发环境配置 resource.</description>
+      <description>1. 在pom.xml的build标签中添加 &amp;lt;build&amp;gt; &amp;lt;resources&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;!-- 配置文件夹 --&amp;gt; &amp;lt;directory&amp;gt;src/main/resources.${deploy.type}&amp;lt;/directory&amp;gt; &amp;lt;excludes&amp;gt; &amp;lt;!-- 打包时忽略的文件 --&amp;gt; &amp;lt;exclude&amp;gt;.jsp&amp;lt;/exclude&amp;gt; &amp;lt;/excludes&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;!-- 公共资源文件文件夹 --&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;directory&amp;gt;src/main/resources&amp;lt;/directory&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;/resources&amp;gt; &amp;lt;/build&amp;gt; 2. 在pom.xml的build标签下添加 &amp;lt;profiles&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 开发环境 --&amp;gt; &amp;lt;id&amp;gt;dev&amp;lt;/id&amp;gt; &amp;lt;activation&amp;gt; &amp;lt;!-- 默认环境 --&amp;gt; &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt; &amp;lt;/activation&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;dev&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 测试环境 --&amp;gt; &amp;lt;id&amp;gt;beta&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;beta&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 生产环境 --&amp;gt; &amp;lt;id&amp;gt;prod&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;prod&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;/profiles&amp;gt; 3. 添加资源文件夹  resource：共享配置 resource.beta：测试环境配置 resource.dev：开发环境配置 resource.prod：生产环境配置  4. 打包  -P后面对应需要打包的环境，dev开发环境，beta测试环境，prod生产环境</description>
     </item>
     
   </channel>

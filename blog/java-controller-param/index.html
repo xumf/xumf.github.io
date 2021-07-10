@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.38.1" />
+		<meta name="generator" content="Hugo 0.68.3" />
 		<title>Spring Controller方法自定义参数 - 小蜜蜂</title>
 
 		<meta name="description" content="给controller方法添加自定义参数">
@@ -11,6 +11,16 @@
 
 		
 		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
 		
 
 		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
@@ -22,26 +32,6 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
 		
 		
-
-		
-		<link rel="stylesheet" href="/css/ui.min.css"/>
-		
-		<style>
-	a { color: #99CCCC; }
-	blockquote {
-		border-left-color: #99CCCC;
-		border-right-color: #99CCCC; }
-	.bar a:hover {
-		color: #99CCCC;
-		text-decoration: none; }
-	.sep {
-		margin-top: 2rem;
-		margin-bottom: 1rem;
-		margin-left:0;
-		width: 24rem;
-		border-top: 2px solid #99CCCC; }
-</style>
-
 	</head>
 
 <body>
@@ -77,211 +67,202 @@
 </hgroup>
 <hr class="sep" />
 </header>
-	<p>&emsp;&emsp;WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
-
-<p>&emsp;&emsp;SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
-
+	<p>  WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.</p>
+<p>  SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。</p>
 <blockquote>
 <p>文中的<code>@Data</code>是使用了<a href="https://www.projectlombok.org/">lombok</a>插件</p>
 </blockquote>
-
 <ol>
-<li><p>编写User类</p>
+<li>
+<p>编写User类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Data</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> <span style="color:#f92672">{</span>
 
-<pre><code class="language-java">@Data
-public class User {
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> id<span style="color:#f92672">;</span>
 
-    private int id;
+    <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+<li>
+<p>创建对象<code>UserContext</code>负责存取<code>User</code>的实例对象，容器使用的是_ThreadLocal_ ， _ThreadLocal_ 的关键每个线程都会拥有一个 _ThreadLocal_ 的对象独享，线程之间不会共享一个 _ThreadLocal_ ，换句话说就是一个 _ThreadLocal_ 实例对象当且仅当属于某条线程。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserContext</span> <span style="color:#f92672">{</span>
 
-    private String name;
-}
-</code></pre></li>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> ThreadLocal<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> userHolder <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadLocal<span style="color:#f92672">&lt;&gt;();</span>
 
-<li><p>创建对象<code>UserContext</code>负责存取<code>User</code>的实例对象，容器使用的是<em>ThreadLocal</em> ， <em>ThreadLocal</em> 的关键每个线程都会拥有一个 <em>ThreadLocal</em> 的对象独享，线程之间不会共享一个 <em>ThreadLocal</em> ，换句话说就是一个 <em>ThreadLocal</em> 实例对象当且仅当属于某条线程。</p>
+    <span style="color:#75715e">// 存储user对象
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setUser</span><span style="color:#f92672">(</span>User user<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        userHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>user<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
 
-<pre><code class="language-java">public class UserContext {
+    <span style="color:#75715e">// 获取user对象
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> User <span style="color:#a6e22e">getUser</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> userHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+<li>
+<p>编写常量类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Consts</span> <span style="color:#f92672">{</span>
 
-    private static ThreadLocal&lt;User&gt; userHolder = new ThreadLocal&lt;&gt;();
-
-    // 存储user对象
-    public static void setUser(User user) {
-        userHolder.set(user);
-    }
-
-    // 获取user对象
-    public static User getUser() {
-        return userHolder.get();
-    }
-}
-</code></pre></li>
-
-<li><p>编写常量类</p>
-
-<pre><code class="language-java">public class Consts {
-
-  // 获取cookie中或者参数中token的标识
-  public static final String TOKEN_NAME = &quot;token_name&quot;;
-}
-</code></pre></li>
-
-<li><p>实现拦截器<code>HandlerInterceptorAdapter</code>，实现方法<code>preHandle</code>，以便于在请求处理前将<code>User</code>的实例对象存储在<code>UserContext</code>中。</p>
-
+  <span style="color:#75715e">// 获取cookie中或者参数中token的标识
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String TOKEN_NAME <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;token_name&#34;</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+<li>
+<p>实现拦截器<code>HandlerInterceptorAdapter</code>，实现方法<code>preHandle</code>，以便于在请求处理前将<code>User</code>的实例对象存储在<code>UserContext</code>中。</p>
 <blockquote>
 <p><code>preHandle</code>：方法将在请求处理之前进行调用</p>
 </blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserParamInterceptor</span> <span style="color:#66d9ef">extends</span> HandlerInterceptorAdapter<span style="color:#f92672">{</span>
 
-<pre><code class="language-java">@Component
-public class UserParamInterceptor extends HandlerInterceptorAdapter{
+    <span style="color:#a6e22e">@Autowired</span>
+    <span style="color:#66d9ef">private</span> User miaoshaUserService<span style="color:#f92672">;</span>
 
-    @Autowired
-    private User miaoshaUserService;
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">preHandle</span><span style="color:#f92672">(</span>HttpServletRequest request<span style="color:#f92672">,</span> HttpServletResponse response<span style="color:#f92672">,</span> Object handler<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>handler <span style="color:#66d9ef">instanceof</span> HandlerMethod<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+          <span style="color:#75715e">// 获取user对象
+</span><span style="color:#75715e"></span>          User user <span style="color:#f92672">=</span> getUser<span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> response<span style="color:#f92672">);</span>
+          <span style="color:#75715e">// 用UserContext储存user对象
+</span><span style="color:#75715e"></span>          UserContext<span style="color:#f92672">.</span><span style="color:#a6e22e">setUser</span><span style="color:#f92672">(</span>user<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// 返回值为true请求继续执行，返回值为false的时候请求结束
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (handler instanceof HandlerMethod) {
-          // 获取user对象
-          User user = getUser(request, response);
-          // 用UserContext储存user对象
-          UserContext.setUser(user);
-        }
-        // 返回值为true请求继续执行，返回值为false的时候请求结束
-        return true;
-    }
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 通过参数或者cookie中的token，获取user
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> User <span style="color:#a6e22e">getUser</span><span style="color:#f92672">(</span>HttpServletRequest request<span style="color:#f92672">,</span> HttpServletResponse response<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 
-    /**
-     * 通过参数或者cookie中的token，获取user
-     */
-    private User getUser(HttpServletRequest request, HttpServletResponse response) {
+        <span style="color:#75715e">// 通过参数获取token
+</span><span style="color:#75715e"></span>        String paramToken <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getParameter</span><span style="color:#f92672">(</span>Consts<span style="color:#f92672">.</span><span style="color:#a6e22e">TOKEN_NAME</span><span style="color:#f92672">);</span>
+        <span style="color:#75715e">// 通过cookie获取token
+</span><span style="color:#75715e"></span>        String cookieToken <span style="color:#f92672">=</span> getCookieValue<span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> Consts<span style="color:#f92672">.</span><span style="color:#a6e22e">TOKEN_NAME</span><span style="color:#f92672">);</span>
+        <span style="color:#75715e">// 如果cookie和param中都不存在token，说明用户还没登录，所以返回空
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>cookieToken<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>paramToken<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        String token <span style="color:#f92672">=</span> StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>paramToken<span style="color:#f92672">)</span> <span style="color:#f92672">?</span> cookieToken <span style="color:#f92672">:</span> paramToken<span style="color:#f92672">;</span>
+        <span style="color:#75715e">// 用户通过token获取用户对象，具体逻辑，可以自己实现UserService编写逻辑，一般是通过session或者redis获取，这取决于你在登录的时候user对象存在哪里
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> userService<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserByToken</span><span style="color:#f92672">(</span>token<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
 
-        // 通过参数获取token
-        String paramToken = request.getParameter(Consts.TOKEN_NAME);
-        // 通过cookie获取token
-        String cookieToken = getCookieValue(request, Consts.TOKEN_NAME);
-        // 如果cookie和param中都不存在token，说明用户还没登录，所以返回空
-        if (StringUtils.isEmpty(cookieToken) &amp;&amp; StringUtils.isEmpty(paramToken)) {
-            return null;
-        }
-        String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
-        // 用户通过token获取用户对象，具体逻辑，可以自己实现UserService编写逻辑，一般是通过session或者redis获取，这取决于你在登录的时候user对象存在哪里
-        return userService.getUserByToken(token);
-    }
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 通过客户端传来的cookie获取token
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> String <span style="color:#a6e22e">getCookieValue</span><span style="color:#f92672">(</span>HttpServletRequest request<span style="color:#f92672">,</span> String cookieNameToken<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 
-    /**
-     * 通过客户端传来的cookie获取token
-     */
-    private String getCookieValue(HttpServletRequest request, String cookieNameToken) {
+        Cookie<span style="color:#f92672">[]</span> cookies <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getCookies</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>cookies<span style="color:#f92672">))</span> <span style="color:#f92672">{</span> <span style="color:#75715e">// 判断cookies是否为空
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Cookie cookie <span style="color:#f92672">:</span>
+                cookies<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cookie<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">().</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>cookieNameToken<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> cookie<span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
 
-        Cookie[] cookies = request.getCookies();
-        if (StringUtils.isEmpty(cookies)) { // 判断cookies是否为空
-            return null;
-        }
-        for (Cookie cookie :
-                cookies) {
-            if (cookie.getName().equals(cookieNameToken)) {
-                return cookie.getValue();
-            }
-
-        }
-        return null;
-    }
-}
-</code></pre></li>
-
-<li><p>实现Spring自定义参数解析器<code>HandlerMethodArgumentResolver</code>接口，并且实现接口的两个方法<code>supportsParameter</code>、<code>resolveArgument</code>。</p>
-
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+<li>
+<p>实现Spring自定义参数解析器<code>HandlerMethodArgumentResolver</code>接口，并且实现接口的两个方法<code>supportsParameter</code>、<code>resolveArgument</code>。</p>
 <blockquote>
 <p><code>supportsParameter</code>：用来判断参数需不需要被解析，如果是返回true则需要，false则相反。
- <code>resolveArgument</code>：当 <em>supportsParameter</em> 方法返回true时，就会调用此方法，返回的对象就是Controller方法上的需要注入参数</p>
+<code>resolveArgument</code>：当 <em>supportsParameter</em> 方法返回true时，就会调用此方法，返回的对象就是Controller方法上的需要注入参数</p>
 </blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserArgumentResolver</span> <span style="color:#66d9ef">implements</span> HandlerMethodArgumentResolver <span style="color:#f92672">{</span>
 
-<pre><code class="language-java">@Component
-public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">supportsParameter</span><span style="color:#f92672">(</span>MethodParameter methodParameter<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// methodParameter.getParameterType()获取方法上的所有参数类型，当参数类型等于User对象的时候返回true，以调用resolveArgument
+</span><span style="color:#75715e"></span>        Class<span style="color:#f92672">&lt;?&gt;</span> clazz <span style="color:#f92672">=</span> methodParameter<span style="color:#f92672">.</span><span style="color:#a6e22e">getParameterType</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">return</span> clazz <span style="color:#f92672">==</span> User<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
 
-    @Override
-    public boolean supportsParameter(MethodParameter methodParameter) {
-        // methodParameter.getParameterType()获取方法上的所有参数类型，当参数类型等于User对象的时候返回true，以调用resolveArgument
-        Class&lt;?&gt; clazz = methodParameter.getParameterType();
-        return clazz == User.class;
-    }
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">resolveArgument</span><span style="color:#f92672">(</span>MethodParameter methodParameter<span style="color:#f92672">,</span> ModelAndViewContainer modelAndViewContainer<span style="color:#f92672">,</span> NativeWebRequest nativeWebRequest<span style="color:#f92672">,</span> WebDataBinderFactory webDataBinderFactory<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
 
-    @Override
-    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
+        <span style="color:#66d9ef">return</span> UserContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getUser</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+<li>
+<p>配置<code>WebMvcConfigurerAdapter</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Configuration</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WebConfig</span> <span style="color:#66d9ef">extends</span> WebMvcConfigurerAdapter <span style="color:#f92672">{</span>
 
-        return UserContext.getUser();
-    }
-}
-</code></pre></li>
+    <span style="color:#75715e">// 注入刚刚编写的userArgumentResolver
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Autowired</span>
+    <span style="color:#66d9ef">private</span> UserArgumentResolver userArgumentResolver<span style="color:#f92672">;</span>
 
-<li><p>配置<code>WebMvcConfigurerAdapter</code></p>
+    <span style="color:#75715e">// 注入刚刚编写的userParamInterceptor
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Autowired</span>
+    <span style="color:#66d9ef">private</span> UserParamInterceptor userParamInterceptor<span style="color:#f92672">;</span>
 
-<pre><code class="language-java">@Configuration
-public class WebConfig extends WebMvcConfigurerAdapter {
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 给spring添加参数解析器userArgumentResolver
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addArgumentResolvers</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>HandlerMethodArgumentResolver<span style="color:#f92672">&gt;</span> argumentResolvers<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        argumentResolvers<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>userArgumentResolver<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
 
-    // 注入刚刚编写的userArgumentResolver
-    @Autowired
-    private UserArgumentResolver userArgumentResolver;
-
-    // 注入刚刚编写的userParamInterceptor
-    @Autowired
-    private UserParamInterceptor userParamInterceptor;
-
-    /**
-     * 给spring添加参数解析器userArgumentResolver
-     */
-    @Override
-    public void addArgumentResolvers(List&lt;HandlerMethodArgumentResolver&gt; argumentResolvers) {
-        argumentResolvers.add(userArgumentResolver);
-    }
-
-    /**
-     * 给spring添加拦截器userParamInterceptor
-     */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userParamInterceptor);
-    }
-}
-</code></pre></li>
-
-<li><p>以上就完成了springMVC参数的注入，下面举个使用的栗子，当登录完成后，客户端调用<code>host:port/demo/user/get</code>
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 给spring添加拦截器userParamInterceptor
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addInterceptors</span><span style="color:#f92672">(</span>InterceptorRegistry registry<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addInterceptor</span><span style="color:#f92672">(</span>userParamInterceptor<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+<li>
+<p>以上就完成了springMVC参数的注入，下面举个使用的栗子，当登录完成后，客户端调用<code>host:port/demo/user/get</code>
 不需要传任何参数，就会返回用户对象user</p>
+<pre><code> ```java
+ @Controller
+    @RequestMapping(&quot;/demo&quot;)
+    public class DemoController {
 
-<pre><code>```java
-@Controller
-   @RequestMapping(&quot;/demo&quot;)
-   public class DemoController {
-
-       @RequestMapping(&quot;/user/get&quot;)
-       @ResponseBody
-       public User getUser(User user) {
-           return user;
-       }
-   }
-```
-</code></pre></li>
+        @RequestMapping(&quot;/user/get&quot;)
+        @ResponseBody
+        public User getUser(User user) {
+            return user;
+        }
+    }
+ ```
+</code></pre>
+</li>
 </ol>
 
-	<nav class="no-print post-nav">
-	
-		<a class="prev-post" href="https://xumf.github.io/blog/centos-download-rabbitmq/">
-			<img class="icon-text" src="/img/prev.svg"/>Centos Download Rabbitmq</a>
-	
-	
-		<a class="next-post" href="https://xumf.github.io/blog/github-page/">github静态网页<img class="icon-text" src="/img/next.svg"/>
-		</a>
-	
-	</nav>
 </article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="https://xumf.github.io/blog/centos-download-rabbitmq/">
+		<img class="icon-text" src="/img/prev.svg"/>Centos Download Rabbitmq</a>
+
+
+	<a class="next-post" href="https://xumf.github.io/blog/github-page/">github静态网页<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
 
 
 <section id="related">
-  <h4>另请参见</h4>
+  <h4></h4>
   <ul>
     
   	<li><a href="/blog/java%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81/">Java生成图片验证码</a></li>
   	
   </ul>
 </section>
+
 
 
 
@@ -303,48 +284,40 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
-
-
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-118288238-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-<hr class="sep" />
-</main>
-<footer class="container no-print">
-	<div class="u-footer">
-		
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
 <a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
 
 
 <a href="https://github.com/xumf/"><img class="icon-social" src="/img/github.svg" alt="Github"/></a>
 
 
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
 <a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
 
-		<p>
-			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			
-		</p>
-		
-		<a href="#brand">
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license"></a>
+					
+				</p>
+				
+				<a href="#brand">
 					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
-					<span>返回</span>
-				</a> 
-	</div>
-</footer>
-
-<script>
-	hljs.initHighlightingOnLoad();
-</script>
-
-</body>
-
+					<span></span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
 </html>
 

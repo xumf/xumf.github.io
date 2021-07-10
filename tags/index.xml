@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 小蜜蜂</title>
@@ -6,17 +6,62 @@
     <description>Recent content in Tags on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 09 May 2018 23:36:22 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 09 Jul 2021 23:36:22 +0800</lastBuildDate>
     
 	<atom:link href="https://xumf.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Blog</title>
+      <title>iptv</title>
+      <link>https://xumf.github.io/tags/iptv/</link>
+      <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/iptv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>net</title>
+      <link>https://xumf.github.io/tags/net/</link>
+      <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/net/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>blog</title>
       <link>https://xumf.github.io/tags/blog/</link>
       <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
       
       <guid>https://xumf.github.io/tags/blog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>opini</title>
+      <link>https://xumf.github.io/tags/opini/</link>
+      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/opini/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tutorial</title>
+      <link>https://xumf.github.io/tags/tutorial/</link>
+      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/tutorial/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://xumf.github.io/tags/linux/</link>
+      <pubDate>Mon, 07 May 2018 23:04:30 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/linux/</guid>
       <description></description>
     </item>
     
@@ -30,15 +75,6 @@
     </item>
     
     <item>
-      <title>Centos7</title>
-      <link>https://xumf.github.io/tags/centos7/</link>
-      <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/centos7/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Docker</title>
       <link>https://xumf.github.io/tags/docker/</link>
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
@@ -48,25 +84,7 @@
     </item>
     
     <item>
-      <title>Github</title>
-      <link>https://xumf.github.io/tags/github/</link>
-      <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/github/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Java</title>
-      <link>https://xumf.github.io/tags/java/</link>
-      <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/java/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Jira</title>
+      <title>JIRA</title>
       <link>https://xumf.github.io/tags/jira/</link>
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
       
@@ -75,43 +93,7 @@
     </item>
     
     <item>
-      <title>L2tp</title>
-      <link>https://xumf.github.io/tags/l2tp/</link>
-      <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/l2tp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Linux</title>
-      <link>https://xumf.github.io/tags/linux/</link>
-      <pubDate>Mon, 07 May 2018 23:04:30 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Maven</title>
-      <link>https://xumf.github.io/tags/maven/</link>
-      <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/maven/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Opini</title>
-      <link>https://xumf.github.io/tags/opini/</link>
-      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/opini/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Postgresql</title>
+      <title>postgresql</title>
       <link>https://xumf.github.io/tags/postgresql/</link>
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
       
@@ -120,52 +102,25 @@
     </item>
     
     <item>
-      <title>Rabbitmq</title>
-      <link>https://xumf.github.io/tags/rabbitmq/</link>
-      <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
+      <title>centos7</title>
+      <link>https://xumf.github.io/tags/centos7/</link>
+      <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/rabbitmq/</guid>
+      <guid>https://xumf.github.io/tags/centos7/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Redis</title>
-      <link>https://xumf.github.io/tags/redis/</link>
-      <pubDate>Sun, 22 Apr 2018 15:43:54 +0800</pubDate>
+      <title>l2tp</title>
+      <link>https://xumf.github.io/tags/l2tp/</link>
+      <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
       
-      <guid>https://xumf.github.io/tags/redis/</guid>
+      <guid>https://xumf.github.io/tags/l2tp/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Spring</title>
-      <link>https://xumf.github.io/tags/spring/</link>
-      <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/spring/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tomcat</title>
-      <link>https://xumf.github.io/tags/tomcat/</link>
-      <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/tomcat/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tutorial</title>
-      <link>https://xumf.github.io/tags/tutorial/</link>
-      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/tutorial/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Vpn</title>
+      <title>vpn</title>
       <link>https://xumf.github.io/tags/vpn/</link>
       <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
       
@@ -183,7 +138,70 @@
     </item>
     
     <item>
-      <title>Work</title>
+      <title>github</title>
+      <link>https://xumf.github.io/tags/github/</link>
+      <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/github/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>java</title>
+      <link>https://xumf.github.io/tags/java/</link>
+      <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>spring</title>
+      <link>https://xumf.github.io/tags/spring/</link>
+      <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/spring/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Rabbitmq</title>
+      <link>https://xumf.github.io/tags/rabbitmq/</link>
+      <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/rabbitmq/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>redis</title>
+      <link>https://xumf.github.io/tags/redis/</link>
+      <pubDate>Sun, 22 Apr 2018 15:43:54 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>maven</title>
+      <link>https://xumf.github.io/tags/maven/</link>
+      <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/maven/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tomcat</title>
+      <link>https://xumf.github.io/tags/tomcat/</link>
+      <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/tags/tomcat/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>work</title>
       <link>https://xumf.github.io/tags/work/</link>
       <pubDate>Thu, 19 Apr 2018 21:09:25 +0800</pubDate>
       

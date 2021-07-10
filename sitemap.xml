@@ -1,10 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://xumf.github.io/tags/iptv/</loc>
+    <lastmod>2021-07-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/net/</loc>
+    <lastmod>2021-07-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/</loc>
+    <lastmod>2021-07-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/</loc>
+    <lastmod>2021-07-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/blog/%E6%A1%A5%E6%8E%A5&#43;%E5%8D%95%E7%BA%BF%E5%A4%8D%E7%94%A8/</loc>
+    <lastmod>2021-07-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/blog/</loc>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/opini/</loc>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/tutorial/</loc>
+    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/%E5%8E%BB%E6%8E%89%E6%96%87%E4%B8%AD%E7%9A%84h%E5%AD%97%E7%AC%A6/</loc>
     <lastmod>2018-05-09T23:36:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/linux/</loc>
+    <lastmod>2018-05-07T23:04:30+08:00</lastmod>
   </url>
   
   <url>
@@ -13,8 +58,33 @@
   </url>
   
   <url>
-    <loc>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/</loc>
+    <loc>https://xumf.github.io/tags/centos/</loc>
     <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/docker/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/jira/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/postgresql/</loc>
+    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/centos7/</loc>
+    <lastmod>2018-05-03T20:54:29+08:00</lastmod>
   </url>
   
   <url>
@@ -23,13 +93,43 @@
   </url>
   
   <url>
+    <loc>https://xumf.github.io/tags/l2tp/</loc>
+    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/vpn/</loc>
+    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/vultr/</loc>
+    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/</loc>
     <lastmod>2018-04-30T22:39:17+08:00</lastmod>
   </url>
   
   <url>
+    <loc>https://xumf.github.io/tags/github/</loc>
+    <lastmod>2018-04-28T13:54:50+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/github-page/</loc>
     <lastmod>2018-04-28T13:54:50+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/java/</loc>
+    <lastmod>2018-04-26T23:13:45+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/spring/</loc>
+    <lastmod>2018-04-26T23:13:45+08:00</lastmod>
   </url>
   
   <url>
@@ -43,8 +143,18 @@
   </url>
   
   <url>
+    <loc>https://xumf.github.io/tags/rabbitmq/</loc>
+    <lastmod>2018-04-22T22:21:04+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/java%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81/</loc>
     <lastmod>2018-04-22T15:49:23+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/redis/</loc>
+    <lastmod>2018-04-22T15:43:54+08:00</lastmod>
   </url>
   
   <url>
@@ -58,8 +168,18 @@
   </url>
   
   <url>
+    <loc>https://xumf.github.io/tags/maven/</loc>
+    <lastmod>2018-04-22T13:42:22+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</loc>
     <lastmod>2018-04-22T13:42:22+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/tomcat/</loc>
+    <lastmod>2018-04-22T13:16:53+08:00</lastmod>
   </url>
   
   <url>
@@ -73,7 +193,17 @@
   </url>
   
   <url>
+    <loc>https://xumf.github.io/about/</loc>
+    <lastmod>2018-04-20T20:50:41+07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://xumf.github.io/blog/redis%E5%91%BD%E4%BB%A4/</loc>
+    <lastmod>2018-04-19T21:09:25+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://xumf.github.io/tags/work/</loc>
     <lastmod>2018-04-19T21:09:25+08:00</lastmod>
   </url>
   
@@ -93,145 +223,7 @@
   </url>
   
   <url>
-    <loc>https://xumf.github.io/tags/blog/</loc>
-    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://xumf.github.io/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/centos/</loc>
-    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/centos7/</loc>
-    <lastmod>2018-05-03T20:54:29+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/docker/</loc>
-    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/github/</loc>
-    <lastmod>2018-04-28T13:54:50+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/java/</loc>
-    <lastmod>2018-04-26T23:13:45+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/jira/</loc>
-    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/l2tp/</loc>
-    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/linux/</loc>
-    <lastmod>2018-05-07T23:04:30+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/maven/</loc>
-    <lastmod>2018-04-22T13:42:22+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/opini/</loc>
-    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/postgresql/</loc>
-    <lastmod>2018-05-03T22:19:24+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/rabbitmq/</loc>
-    <lastmod>2018-04-22T22:21:04+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/redis/</loc>
-    <lastmod>2018-04-22T15:43:54+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/spring/</loc>
-    <lastmod>2018-04-26T23:13:45+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/</loc>
-    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/tomcat/</loc>
-    <lastmod>2018-04-22T13:16:53+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/tutorial/</loc>
-    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/vpn/</loc>
-    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/vultr/</loc>
-    <lastmod>2018-04-30T22:39:17+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/tags/work/</loc>
-    <lastmod>2018-04-19T21:09:25+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/about/</loc>
-    <lastmod>2018-04-20T20:50:41+07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://xumf.github.io/</loc>
-    <lastmod>2018-05-09T23:36:22+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
 </urlset>
