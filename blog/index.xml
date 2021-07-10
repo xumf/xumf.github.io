@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>博客 on 小蜜蜂</title>
@@ -10,6 +10,24 @@
     
 	<atom:link href="https://xumf.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>桥接&#43;单线复用</title>
+      <link>https://xumf.github.io/blog/%E6%A1%A5%E6%8E%A5&#43;%E5%8D%95%E7%BA%BF%E5%A4%8D%E7%94%A8/</link>
+      <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/blog/%E6%A1%A5%E6%8E%A5&#43;%E5%8D%95%E7%BA%BF%E5%A4%8D%E7%94%A8/</guid>
+      <description>IPTV桥接 + 上网桥接+单线复用教程 1. 用超级管理员登录光猫管理页面  超级管理账号密码可能不同光猫不一致，需要找电信工作人员获取
+ 链接：http://192.168.1.1
+账号：telecomadmin
+密码：nE7jA%5m
+2. 上网配置桥接 
+3. IPTV配置桥接 
+4. 配置 vlan 
+5.华为路由配置  网络拨号配置  
+IPTV 配置  
+结束语 每个地区的 vlanID 不一致，要根据自己的地区配置</description>
+    </item>
     
     <item>
       <title>去掉文中的^H字符</title>
@@ -28,17 +46,17 @@
       
       <guid>https://xumf.github.io/blog/linux%E8%BD%AF%E8%BF%9E%E6%8E%A5%E4%B8%8E%E7%A1%AC%E8%BF%9E%E6%8E%A5/</guid>
       <description>软连接在源文件删除后，无法再对源文件信息访问 硬连接在源文件删除后，能正常对源文件信息访问   一个源文件有n个硬连接那么源文件的引用计算等于(n + 1)
- &amp;emsp;&amp;emsp;说说我对这几点的理解，其实我们可以把它想象成生活中的场景，假设A地点有一条狗，狗被铁链锁着，狗身上有10条绳子（此时文件的引用计数为11），分别有10大胸dei拉着（相当于一个文件有是个硬连接），然而在遥远的他方有个大胸dei知道A地点有这条狗（相当于有文件有一个软连接），假设有前面10个大胸dei中有9个跑路了(相当于unlink或者rm了9个硬链接)，还有一个大胸dei拉着（此时引用计数为2），此时这条狗还在这里走不了，这位拉着的大兄弟还是可以找到这只狗（相当于剩下的这个硬链接还可以访问文件的内容），而在遥远他方的那位大胸dei只要他想要找这条狗，还是可以找到，因为狗还在这（相当于软连接还可以访问），有个偷狗的大胸dei，拿了个大钳子来剪断了狗身上的铁链，但发现狗身边还有为大胸dei拿着这只狗，落荒而逃（相当于rm了文件，但是硬链接还是可以访问文件内容，此时的引用计算为1），拉狗的大胸dei发现这里不安全，就把它抱回家了，所以此时遥远他方的大胸dei，如果想要在来找狗狗就找不到了（相当于文件被删除，软连接就无法访问文件信息），最后一位拉着的大胸dei，突然不喜欢这条狗了，就放开了拉着狗的狗绳子，狗就冲冲的跑掉了（此时引用计算为0，文件对应的存储block被回收），突然有一天不知道谁又把一个条狗，在同一个地方，锁上了铁链（此时引用计算为1），在遥远他方的大胸dei想要来看狗狗的话，就可以如愿看到（相当于只要在同一个位置建立了同样文件名的文件，软连接就可以再访问对应位置的文件信息）。</description>
+  说说我对这几点的理解，其实我们可以把它想象成生活中的场景，假设A地点有一条狗，狗被铁链锁着，狗身上有10条绳子（此时文件的引用计数为11），分别有10大胸dei拉着（相当于一个文件有是个硬连接），然而在遥远的他方有个大胸dei知道A地点有这条狗（相当于有文件有一个软连接），假设有前面10个大胸dei中有9个跑路了(相当于unlink或者rm了9个硬链接)，还有一个大胸dei拉着（此时引用计数为2），此时这条狗还在这里走不了，这位拉着的大兄弟还是可以找到这只狗（相当于剩下的这个硬链接还可以访问文件的内容），而在遥远他方的那位大胸dei只要他想要找这条狗，还是可以找到，因为狗还在这（相当于软连接还可以访问），有个偷狗的大胸dei，拿了个大钳子来剪断了狗身上的铁链，但发现狗身边还有为大胸dei拿着这只狗，落荒而逃（相当于rm了文件，但是硬链接还是可以访问文件内容，此时的引用计算为1），拉狗的大胸dei发现这里不安全，就把它抱回家了，所以此时遥远他方的大胸dei，如果想要在来找狗狗就找不到了（相当于文件被删除，软连接就无法访问文件信息），最后一位拉着的大胸dei，突然不喜欢这条狗了，就放开了拉着狗的狗绳子，狗就冲冲的跑掉了（此时引用计算为0，文件对应的存储block被回收），突然有一天不知道谁又把一个条狗，在同一个地方，锁上了铁链（此时引用计算为1），在遥远他方的大胸dei想要来看狗狗的话，就可以如愿看到（相当于只要在同一个位置建立了同样文件名的文件，软连接就可以再访问对应位置的文件信息）。</description>
     </item>
     
     <item>
       <title>Docker&#43;centos7&#43;jira7.3.6&#43;postgre Sql破解搭建</title>
-      <link>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/</link>
+      <link>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</link>
       <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
       
-      <guid>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3/</guid>
+      <guid>https://xumf.github.io/blog/docker&#43;centos7&#43;jira7.3.6&#43;postgre-sql%E7%A0%B4%E8%A7%A3%E6%90%AD%E5%BB%BA/</guid>
       <description>依次操作 准备必要文件 百度盘https://pan.baidu.com/s/1brXZBvfhUCZA0RBGOsMP0w
-jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 docker pull postgres:9.3  运行镜像 创建文件夹jira，并进入文件夹目录 mkdir jira &amp;amp;&amp;amp; cd jira  创建jira_dockerfile文件，并且编辑保存 touch jira_dockerfile vim jira_dockerfile  添加内容 FROM cptactionhank/atlassian-jira:7.3.6 COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/  创建docker-compose.yml文件，编辑保存 touch docker-compose.yml vim docker-compose.yml  添加内容 version: &#39;3&#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;quot;9090:8080&amp;quot; links: - db depends_on: - db db: image: postgres:9.3 ports: - &amp;quot;5432:5432&amp;quot; environment: POSTGRES_PASSWORD: rootroot  使用docker-compose执行 docker-compose build docker-compose up -d  查看镜像运行状态 docker ps  看到cptactionhank/atlassian-jira:6.</description>
+jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # jira镜像 docker pull cptactionhank/atlassian-jira:7.3.6 # postgresql镜像 docker pull postgres:9.3 运行镜像 创建文件夹jira，并进入文件夹目录 mkdir jira &amp;amp;&amp;amp; cd jira 创建jira_dockerfile文件，并且编辑保存 touch jira_dockerfile vim jira_dockerfile 添加内容 FROMcptactionhank/atlassian-jira:7.3.6COPY atlassian-extras-3.2.jar /opt/atlassian/jira/atlassian-jira/WEB-INF/lib/创建docker-compose.yml文件，编辑保存 touch docker-compose.yml vim docker-compose.yml 添加内容 version: &amp;#39;3&amp;#39; services: jira: build: context: . dockerfile: jira-dockerfile ports: - &amp;#34;9090:8080&amp;#34; links: - db depends_on: - db db: image: postgres:9.3 ports: - &amp;#34;5432:5432&amp;#34; environment: POSTGRES_PASSWORD: rootroot 使用docker-compose执行 docker-compose build docker-compose up -d 查看镜像运行状态 docker ps 看到cptactionhank/atlassian-jira:6.</description>
     </item>
     
     <item>
@@ -47,8 +65,11 @@ jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # 
       <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/docker%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85/</guid>
-      <description> 安装docker与docker-compose  本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
- 在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt;  使用yum install先后执行两个文件 # 依次执行 yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  启动Docker服务 sudo systemctl start docker  去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  docker-compose安装  在能连接外网的linux下下载docker-compose  sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose   用scp将docker-compose文件传送到无法连接外网的linux上  scp /usr/local/bin/docker-compose &amp;lt;user&amp;gt;@&amp;lt;ip&amp;gt;:/home/&amp;lt;user&amp;gt;/bin/   ssh进入无法连接外网的服务器  ssh &amp;lt;user&amp;gt;@&amp;lt;ip&amp;gt;   给用户添加执行权限  sudo chmod +x /usr/local/bin/docker-compose   测试是否成功  $ docker-compose --version # 成功允许会有版本信息输出  </description>
+      <description>安装docker与docker-compose  本文主要解决在centos7服务器无法访问外网的时候安装docker的问题
+ 在可访问外网的电脑上下载docker所需文件  docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm  将下载的两个文件传送到centos7服务器上 scp docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; scp docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm &amp;lt;用户名&amp;gt;@&amp;lt;服务器ip或者域名&amp;gt;:&amp;lt;存放路径&amp;gt; 使用yum install先后执行两个文件 # 依次执行 yum install docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm yum install docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm 启动Docker服务 sudo systemctl start docker 去掉执行docker必须sudo  添加docker用户组$ sudo groupadd docker 将系统用户加入$ sudo gpasswd -a ${USER} docke  docker-compose安装   在能连接外网的linux下下载docker-compose
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose   用scp将docker-compose文件传送到无法连接外网的linux上
+scp /usr/local/bin/docker-compose &amp;lt;user&amp;gt;@&amp;lt;ip&amp;gt;:/home/&amp;lt;user&amp;gt;/bin/   ssh进入无法连接外网的服务器
+ssh &amp;lt;user&amp;gt;@&amp;lt;ip&amp;gt;   给用户添加执行权限</description>
     </item>
     
     <item>
@@ -58,7 +79,7 @@ jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # 
       
       <guid>https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/</guid>
       <description>1. 注册vultr账号 2. 登录完成后进入个人中心 3. 充钱，点击菜单右侧Billing 4. 选择支付方式，推荐使用支付宝（vultr一次最少要充值10美元，大概63块人民币）  Credit Card 信用卡 Paypal 贝宝 Bitcoin 比特币 Gift Code 优惠码  5. 冲完钱后，开始购买服务器，点击菜单的Servers，然后点击加号 6. 选择购买服务器参数  选择服务地区（本人选择的是日本的，vpn速度非常棒）  选择服务器OS（本人选择的CentOS 7）  选择服务器配置（一般做vpn的话，选$2.50/mo，就是2.5美元一个就可以，但是有时候会没有需要抢）  如下图的参数默认即可 * 如下图红框中可以填写你的域名，最后点击Deploy Now完成购买   7. 购买完成后，在Servers菜单下就会有vpc的实例，下图中红圈里面的是你vpc服务器的外网ip， 8. 单击上图红色矩形区域进入服务器管理界面  下面可以看到root用户的密码
- 9. 进入服务器，安装TCP BBR提速工具  通过ssh进入服务器，密码可以通过上一个步获取  $ ssh root@&amp;lt;你服务器的ip&amp;gt;   下载bbr  $ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh   添加执行权限  $ chmod +x bbr.</description>
+ 9. 进入服务器，安装TCP BBR提速工具  通过ssh进入服务器，密码可以通过上一个步获取  $ ssh root@&amp;lt;你服务器的ip&amp;gt;  下载bbr  $ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh  添加执行权限  $ chmod +x bbr.sh  执行bbr.sh  $ .</description>
     </item>
     
     <item>
@@ -67,13 +88,13 @@ jar包准备  jira破解所需：atlassian-extras-3.2.jar  docker镜像准备 # 
       <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/github-page/</guid>
-      <description>  文章下的 xumf 都要换成你的 github用户名
+      <description> 文章下的 xumf 都要换成你的 github用户名
  第一步：创建一个repository  xumf.github.io改为你的github用户名.github.io Description(可以不填)添加备注 点击Create repository   
-第二步：上传index.html到刚刚创建的repository上  clone repository到本地，$ git clone git@github.com:xumf/xumf.github.io.git 
- 进入到xumf.github.io.git目录，$ cd xumf.github.io.git 
- 添加一个文件并编辑，$ vim index.html，编辑完成后:wq，保存退出。
- 添加，上传index.html文件到github
-$ git add index.html $ git commit index.html -m &#39;init&#39; $ git push origin master  在浏览器打开https://xumf.github.io/，就能看到刚刚index.html的内容。 
+第二步：上传index.html到刚刚创建的repository上   clone repository到本地，$ git clone git@github.com:xumf/xumf.github.io.git 
+  进入到xumf.github.io.git目录，$ cd xumf.github.io.git 
+  添加一个文件并编辑，$ vim index.html，编辑完成后:wq，保存退出。
+  添加，上传index.html文件到github
+$ git add index.html $ git commit index.html -m &amp;#39;init&amp;#39; $ git push origin master   在浏览器打开https://xumf.github.io/，就能看到刚刚index.html的内容。 
   </description>
     </item>
     
@@ -83,13 +104,12 @@ $ git add index.html $ git commit index.html -m &#39;init&#39; $ git push origin
       <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/java-controller-param/</guid>
-      <description>&amp;emsp;&amp;emsp;WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
-&amp;emsp;&amp;emsp;SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
+      <description>WEB应用一般在用户登录后，我们都会保存用户信息到session里面或者到redis里面，如果在请求方法中想使用就要通过session或者redis的获取，每个一个请求需要都需要重复编写这样的代码，造成代码冗余.
+ SpringMVC给我提供了一个接口能给Controller层的接口方法注入自定义参数，我们就可以在这里做文章，给接口参数注入用户的实例。
  文中的@Data是使用了lombok插件
-  编写User类
-@Data public class User { private int id; private String name; }  创建对象UserContext负责存取User的实例对象，容器使用的是ThreadLocal ， ThreadLocal 的关键每个线程都会拥有一个 ThreadLocal 的对象独享，线程之间不会共享一个 ThreadLocal ，换句话说就是一个 ThreadLocal 实例对象当且仅当属于某条线程。
-public class UserContext { private static ThreadLocal&amp;lt;User&amp;gt; userHolder = new ThreadLocal&amp;lt;&amp;gt;(); // 存储user对象 public static void setUser(User user) { userHolder.set(user); } // 获取user对象 public static User getUser() { return userHolder.get(); } }  编写常量类
-public class Consts { // 获取cookie中或者参数中token的标识 public static final String TOKEN_NAME = &amp;quot;token_name&amp;quot;; }  实现拦截器HandlerInterceptorAdapter，实现方法preHandle，以便于在请求处理前将User的实例对象存储在UserContext中。</description>
+   编写User类
+@Data public class User { private int id; private String name; }   创建对象UserContext负责存取User的实例对象，容器使用的是_ThreadLocal_ ， _ThreadLocal_ 的关键每个线程都会拥有一个 _ThreadLocal_ 的对象独享，线程之间不会共享一个 _ThreadLocal_ ，换句话说就是一个 _ThreadLocal_ 实例对象当且仅当属于某条线程。
+public class UserContext { private static ThreadLocal&amp;lt;User&amp;gt; userHolder = new ThreadLocal&amp;lt;&amp;gt;(); // 存储user对象  public static void setUser(User user) { userHolder.set(user); } // 获取user对象  public static User getUser() { return userHolder.get(); } }   编写常量类</description>
     </item>
     
     <item>
@@ -99,16 +119,15 @@ public class Consts { // 获取cookie中或者参数中token的标识 public sta
       
       <guid>https://xumf.github.io/blog/centos-download-rabbitmq/</guid>
       <description>到erlang官网下载erlang
- 到rabbitMQ官网下载mq
- 安装依赖包
-yum install -y gcc gcc-c++ unixODBC-devel openssl-devel ncurses-devel  将下载好的两个包传送到centos服务器上
-scp otp_src_20.1.tar.gz root@www.xumingfa.com:/usr/src/ scp rabbitmq-server-generic-unix-3.7.4.tar.xz root@www.xumingfa.com:/usr/src/  解压erlang包
-tar xf otp_src_20.1.tar.gz  切换到目录otp_src_20.1
-cd otp_src_20.1  配置.configure（安装到 /usr/local/erlang20 目录 , 忽略 javac 编译器）
-./configure --prefix=/usr/local/erlang20 --without-javac  编译
-make -j 4 make install  解压mq包
-cd .. xz -d rabbitmq-server-generic-unix-3.7.4.tar.xz tar xf rabbitmq-server-generic-unix-3.7.4.tar  安装依赖
-yum install python -y yum install xmlto -y pip install simplejson  将mq放到/usr/local/rabbitmq</description>
+  到rabbitMQ官网下载mq
+  安装依赖包
+yum install -y gcc gcc-c++ unixODBC-devel openssl-devel ncurses-devel   将下载好的两个包传送到centos服务器上
+scp otp_src_20.1.tar.gz root@www.xumingfa.com:/usr/src/ scp rabbitmq-server-generic-unix-3.7.4.tar.xz root@www.xumingfa.com:/usr/src/   解压erlang包
+tar xf otp_src_20.1.tar.gz   切换到目录otp_src_20.1
+cd otp_src_20.1   配置.configure（安装到 /usr/local/erlang20 目录 , 忽略 javac 编译器）
+./configure --prefix=/usr/local/erlang20 --without-javac   编译
+make -j 4 make install   解压mq包
+cd .. xz -d rabbitmq-server-generic-unix-3.7.4.tar.xz tar xf rabbitmq-server-generic-unix-3.7.4.tar   安装依赖</description>
     </item>
     
     <item>
@@ -117,7 +136,7 @@ yum install python -y yum install xmlto -y pip install simplejson  将mq放到/u
       <pubDate>Sun, 22 Apr 2018 15:49:23 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/java%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81/</guid>
-      <description>public BufferedImage createVerifyCode() { int width = 80; int height = 32; // 创建图片 BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); Graphics g = image.getGraphics(); // 设置背景颜色 g.setColor(new Color(0xDCDCDC)); g.fillRect(0, 0, width, height); // 边框 g.setColor(Color.BLACK); g.drawRect(0, 0, width - 1, height - 1); // 生成随机数 Random rdm = new Random(); // 生成50个点 for (int i = 0; i &amp;lt; 50; i++) { int x = rdm.nextInt(width); int y = rdm.</description>
+      <description>public BufferedImage createVerifyCode() { int width = 80; int height = 32; // 创建图片  BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); Graphics g = image.getGraphics(); // 设置背景颜色  g.setColor(new Color(0xDCDCDC)); g.fillRect(0, 0, width, height); // 边框  g.setColor(Color.BLACK); g.drawRect(0, 0, width - 1, height - 1); // 生成随机数  Random rdm = new Random(); // 生成50个点  for (int i = 0; i &amp;lt; 50; i++) { int x = rdm.</description>
     </item>
     
     <item>
@@ -126,9 +145,9 @@ yum install python -y yum install xmlto -y pip install simplejson  将mq放到/u
       <pubDate>Sun, 22 Apr 2018 15:43:54 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</guid>
-      <description>代码实现分布式锁 springboot依赖 &amp;lt;!-- StringRedisTemplate需要 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-boot-starter-data-redis&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- @slf4j注解使用 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.projectlombok&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;lombok&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.16.6&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;  实现逻辑  方法：返回值true代表获取锁成功，返回值false则相反
-方法：参数value=当前时间+超时时间
-方法：参数key为redis的键
+      <description>代码实现分布式锁 springboot依赖 &amp;lt;!-- StringRedisTemplate需要 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-boot-starter-data-redis&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- @slf4j注解使用 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.projectlombok&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;lombok&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.16.6&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 实现逻辑  方法：返回值true代表获取锁成功，返回值false则相反
+  方法：参数value=当前时间+超时时间
+  方法：参数key为redis的键
   判断key是否已存在，不存在就新增，返回true，已存在不改变原有key的value，返回false 获取key对应的cuurentValue（设value时间+超时时间） 判断锁是否超过有效期， 是否有效 = 有效期（value） &amp;lt; 系统当前时间 如果没有过期证明锁还在被使用，直接返回false，如果已经过期，说明锁还在被使用，并且超过了有效期，所以执行第五步 通过 getAndSet 先返回key的值，并且给key设置新的值 判断旧的值与过了有效期的值是否相等，如果等于就返回true，否则返回false  代码 package com.xumf.service; import lombok.extern.slf4j.Slf4j; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Component; import org.springframework.util.StringUtils; @Component @Slf4j public class RedisLock { @Autowired private StringRedisTemplate redisTemplate; /** * 加锁 * @param key * @param value 当前时间+超时时间 * @return */ public boolean lock(String key, String value) { if (redisTemplate.</description>
     </item>
     
@@ -138,7 +157,7 @@ yum install python -y yum install xmlto -y pip install simplejson  将mq放到/u
       <pubDate>Sun, 22 Apr 2018 15:40:53 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/redis-pressure-test/</guid>
-      <description>#（100个并发连接，100000个请求） $ redis-benchmark -h 127.0.0.1 -p 6379 -c 100 -n 100000  #（-d 存取大小为100字节的数据包, -q 简单输出） $ redis-benchmark -h 127.0.0.1 -p 6379 -q -d 100  #（-t 测试的类别） $ redis-benchmark -t set,lpush -q -n 100000  #（script local 指的是就执行script local跟着的命令） redis-benchmark -n 100000 -q script load &amp;quot;redis.call(‘set’,’foo’,’bar’)&amp;quot;  </description>
+      <description>#（100个并发连接，100000个请求） $ redis-benchmark -h 127.0.0.1 -p 6379 -c 100 -n 100000 #（-d 存取大小为100字节的数据包, -q 简单输出） $ redis-benchmark -h 127.0.0.1 -p 6379 -q -d 100 #（-t 测试的类别） $ redis-benchmark -t set,lpush -q -n 100000 #（script local 指的是就执行script local跟着的命令） redis-benchmark -n 100000 -q script load &amp;#34;redis.call(‘set’,’foo’,’bar’)&amp;#34; </description>
     </item>
     
     <item>
@@ -147,7 +166,7 @@ yum install python -y yum install xmlto -y pip install simplejson  将mq放到/u
       <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/</guid>
-      <description>1. 在pom.xml的build标签中添加 &amp;lt;build&amp;gt; &amp;lt;resources&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;!-- 配置文件夹 --&amp;gt; &amp;lt;directory&amp;gt;src/main/resources.${deploy.type}&amp;lt;/directory&amp;gt; &amp;lt;excludes&amp;gt; &amp;lt;!-- 打包时忽略的文件 --&amp;gt; &amp;lt;exclude&amp;gt;.jsp&amp;lt;/exclude&amp;gt; &amp;lt;/excludes&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;!-- 公共资源文件文件夹 --&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;directory&amp;gt;src/main/resources&amp;lt;/directory&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;/resources&amp;gt; &amp;lt;/build&amp;gt;  2. 在pom.xml的build标签下添加 &amp;lt;profiles&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 开发环境 --&amp;gt; &amp;lt;id&amp;gt;dev&amp;lt;/id&amp;gt; &amp;lt;activation&amp;gt; &amp;lt;!-- 默认环境 --&amp;gt; &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt; &amp;lt;/activation&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;dev&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 测试环境 --&amp;gt; &amp;lt;id&amp;gt;beta&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;beta&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 生产环境 --&amp;gt; &amp;lt;id&amp;gt;prod&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;prod&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;/profiles&amp;gt;  3. 添加资源文件夹  resource：共享配置 resource.beta：测试环境配置 resource.dev：开发环境配置 resource.</description>
+      <description>1. 在pom.xml的build标签中添加 &amp;lt;build&amp;gt; &amp;lt;resources&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;!-- 配置文件夹 --&amp;gt; &amp;lt;directory&amp;gt;src/main/resources.${deploy.type}&amp;lt;/directory&amp;gt; &amp;lt;excludes&amp;gt; &amp;lt;!-- 打包时忽略的文件 --&amp;gt; &amp;lt;exclude&amp;gt;.jsp&amp;lt;/exclude&amp;gt; &amp;lt;/excludes&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;!-- 公共资源文件文件夹 --&amp;gt; &amp;lt;resource&amp;gt; &amp;lt;directory&amp;gt;src/main/resources&amp;lt;/directory&amp;gt; &amp;lt;/resource&amp;gt; &amp;lt;/resources&amp;gt; &amp;lt;/build&amp;gt; 2. 在pom.xml的build标签下添加 &amp;lt;profiles&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 开发环境 --&amp;gt; &amp;lt;id&amp;gt;dev&amp;lt;/id&amp;gt; &amp;lt;activation&amp;gt; &amp;lt;!-- 默认环境 --&amp;gt; &amp;lt;activeByDefault&amp;gt;true&amp;lt;/activeByDefault&amp;gt; &amp;lt;/activation&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;dev&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 测试环境 --&amp;gt; &amp;lt;id&amp;gt;beta&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;beta&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;profile&amp;gt; &amp;lt;!-- 生产环境 --&amp;gt; &amp;lt;id&amp;gt;prod&amp;lt;/id&amp;gt; &amp;lt;properties&amp;gt; &amp;lt;deploy.type&amp;gt;prod&amp;lt;/deploy.type&amp;gt; &amp;lt;/properties&amp;gt; &amp;lt;/profile&amp;gt; &amp;lt;/profiles&amp;gt; 3. 添加资源文件夹  resource：共享配置 resource.beta：测试环境配置 resource.dev：开发环境配置 resource.prod：生产环境配置  4. 打包  -P后面对应需要打包的环境，dev开发环境，beta测试环境，prod生产环境</description>
     </item>
     
     <item>
@@ -156,8 +175,8 @@ yum install python -y yum install xmlto -y pip install simplejson  将mq放到/u
       <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/tomcat%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2%E5%A4%9A%E5%BA%94%E7%94%A8/</guid>
-      <description> 按照以下步骤依次执行：  ${tomcat}tomcat的根目录
- 1. 修改/etc/profile增加tomcat环境变量 export CATALINA_BASE=/Users/xumf/tomcat1 export CATALINA_HOME=/Users/xumf/tomcat1 export TOMCAT_HOME=/Users/xumf/tomcat1 export CATALINA_2_BASE=/Users/xumf/tomcat2 export CATALINA_2_HOME=/Users/xumf/tomcat2 export TOMCAT_2_HOME=/Users/xumf/tomcat2  2. 保存退出，输入esc然后:wq 3. 执行 source /etc/profile  4. 第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh vim ${tomcat}/bin/catalina.sh  5. 找到# OS specific support. $var must be set to either true or false.在这行下面编辑，新增配置，保存退出 export CATALINA_BASE=$CATALINA_2_BASE export CATALINA_HOME=$CATALINA_2_HOME  6. 打开第二个tomcat的conf目录下server.xml vim ${tomcat}/conf/server.xml   8005改为9005  8080改为9080  8009改为9009   </description>
+      <description>按照以下步骤依次执行：  ${tomcat}tomcat的根目录
+ 1. 修改/etc/profile增加tomcat环境变量 export CATALINA_BASE=/Users/xumf/tomcat1 export CATALINA_HOME=/Users/xumf/tomcat1 export TOMCAT_HOME=/Users/xumf/tomcat1 export CATALINA_2_BASE=/Users/xumf/tomcat2 export CATALINA_2_HOME=/Users/xumf/tomcat2 export TOMCAT_2_HOME=/Users/xumf/tomcat2  2. 保存退出，输入esc然后:wq 3. 执行 source /etc/profile 4. 第一个tomcat不变，打开第二个tomcat目录bin下catalina.sh vim ${tomcat}/bin/catalina.sh 5. 找到# OS specific support. $var must be set to either true or false.在这行下面编辑，新增配置，保存退出 export CATALINA_BASE=$CATALINA_2_BASE export CATALINA_HOME=$CATALINA_2_HOME  6. 打开第二个tomcat的conf目录下server.xml vim ${tomcat}/conf/server.xml  8005改为9005  8080改为9080  8009改为9009   </description>
     </item>
     
     <item>
@@ -166,20 +185,17 @@ yum install python -y yum install xmlto -y pip install simplejson  将mq放到/u
       <pubDate>Thu, 19 Apr 2018 21:09:25 +0800</pubDate>
       
       <guid>https://xumf.github.io/blog/redis%E5%91%BD%E4%BB%A4/</guid>
-      <description>redis的启动命令  启动客户端
-$ redis-cli  关闭客户端
-$ redis-cli shutdown  指定端口启动
-$ redis-cli -p 6380  指定端口关闭
-$ redis-cli -p 6380 shutdown  指定ip启动
-$ redis-cli -h 127.0.0.1  指定ip关闭
-$ redis-cli -h 127.0.0.1 shutdown  指定密码启动
-$ redis-cli -a 123456   redis基础命令  清除当前数据库所有的键
-$ flushdb  清除全部数据库所有的键
-$ flushall  测试数据库链接是否成功
-$ ping  当前数据库key的数量
-$ dbsize  切换数据库
-$ select 数据库编号  查看当前数据库所有的key
-$ keys *  持久化</description>
+      <description>redis的启动命令   启动客户端
+$ redis-cli   关闭客户端
+$ redis-cli shutdown   指定端口启动
+$ redis-cli -p 6380   指定端口关闭
+$ redis-cli -p 6380 shutdown   指定ip启动
+$ redis-cli -h 127.0.0.1   指定ip关闭
+$ redis-cli -h 127.0.0.1 shutdown   指定密码启动
+$ redis-cli -a 123456   redis基础命令   清除当前数据库所有的键
+$ flushdb   清除全部数据库所有的键
+$ flushall   测试数据库链接是否成功
+$ ping   当前数据库key的数量</description>
     </item>
     
   </channel>

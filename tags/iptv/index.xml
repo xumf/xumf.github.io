@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>iptv on 小蜜蜂</title>
+    <link>https://xumf.github.io/tags/iptv/</link>
+    <description>Recent content in iptv on 小蜜蜂</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
+    <lastBuildDate>Fri, 09 Jul 2021 23:36:22 +0800</lastBuildDate>
+    
+	<atom:link href="https://xumf.github.io/tags/iptv/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>桥接&#43;单线复用</title>
+      <link>https://xumf.github.io/blog/%E6%A1%A5%E6%8E%A5&#43;%E5%8D%95%E7%BA%BF%E5%A4%8D%E7%94%A8/</link>
+      <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
+      
+      <guid>https://xumf.github.io/blog/%E6%A1%A5%E6%8E%A5&#43;%E5%8D%95%E7%BA%BF%E5%A4%8D%E7%94%A8/</guid>
+      <description>IPTV桥接 + 上网桥接+单线复用教程 1. 用超级管理员登录光猫管理页面  超级管理账号密码可能不同光猫不一致，需要找电信工作人员获取
+ 链接：http://192.168.1.1
+账号：telecomadmin
+密码：nE7jA%5m
+2. 上网配置桥接 
+3. IPTV配置桥接 
+4. 配置 vlan 
+5.华为路由配置  网络拨号配置  
+IPTV 配置  
+结束语 每个地区的 vlanID 不一致，要根据自己的地区配置</description>
+    </item>
+    
+  </channel>
+</rss>

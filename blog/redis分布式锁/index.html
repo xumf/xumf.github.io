@@ -3,17 +3,27 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.38.1" />
+		<meta name="generator" content="Hugo 0.68.3" />
 		<title>Redis分布式锁 - 小蜜蜂</title>
 
-		<meta name="description" content="代码实现分布式锁 springboot依赖 &lt;!-- StringRedisTemplate需要 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- @slf4j注解使用 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.projectlombok&lt;/groupId&gt; &lt;artifactId&gt;lombok&lt;/artifactId&gt; &lt;version&gt;1.16.6&lt;/version&gt; &lt;/dependency&gt;  实现逻辑  方法：返回值true代表获取锁成功，返回值false则相反
-方法：参数value=当前时间&#43;超时时间
-方法：参数key为redis的键
+		<meta name="description" content="代码实现分布式锁 springboot依赖 &lt;!-- StringRedisTemplate需要 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- @slf4j注解使用 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.projectlombok&lt;/groupId&gt; &lt;artifactId&gt;lombok&lt;/artifactId&gt; &lt;version&gt;1.16.6&lt;/version&gt; &lt;/dependency&gt; 实现逻辑  方法：返回值true代表获取锁成功，返回值false则相反
+  方法：参数value=当前时间&#43;超时时间
+  方法：参数key为redis的键
   判断key是否已存在，不存在就新增，返回true，已存在不改变原有key的value，返回false 获取key对应的cuurentValue（设value时间&#43;超时时间） 判断锁是否超过有效期， 是否有效 = 有效期（value） &lt; 系统当前时间 如果没有过期证明锁还在被使用，直接返回false，如果已经过期，说明锁还在被使用，并且超过了有效期，所以执行第五步 通过 getAndSet 先返回key的值，并且给key设置新的值 判断旧的值与过了有效期的值是否相等，如果等于就返回true，否则返回false  代码 package com.xumf.service; import lombok.extern.slf4j.Slf4j; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Component; import org.springframework.util.StringUtils; @Component @Slf4j public class RedisLock { @Autowired private StringRedisTemplate redisTemplate; /** * 加锁 * @param key * @param value 当前时间&#43;超时时间 * @return */ public boolean lock(String key, String value) { if (redisTemplate.">
 
 
 		
 		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
 		
 
 		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
@@ -25,26 +35,6 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
 		
 		
-
-		
-		<link rel="stylesheet" href="/css/ui.min.css"/>
-		
-		<style>
-	a { color: #99CCCC; }
-	blockquote {
-		border-left-color: #99CCCC;
-		border-right-color: #99CCCC; }
-	.bar a:hover {
-		color: #99CCCC;
-		text-decoration: none; }
-	.sep {
-		margin-top: 2rem;
-		margin-bottom: 1rem;
-		margin-left:0;
-		width: 24rem;
-		border-top: 2px solid #99CCCC; }
-</style>
-
 	</head>
 
 <body>
@@ -78,35 +68,29 @@
 </hgroup>
 <hr class="sep" />
 </header>
-	
-
-<h2 id="代码实现分布式锁">代码实现分布式锁</h2>
-
+	<h2 id="代码实现分布式锁">代码实现分布式锁</h2>
 <h3 id="springboot依赖">springboot依赖</h3>
-
-<pre><code class="language-xml">&lt;!-- StringRedisTemplate需要 --&gt;
-&lt;dependency&gt;
-  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-  &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
-&lt;/dependency&gt;
-&lt;!-- @slf4j注解使用 --&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
-    &lt;artifactId&gt;lombok&lt;/artifactId&gt;
-    &lt;version&gt;1.16.6&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-
-<h3 id="实现逻辑">实现逻辑</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;!-- StringRedisTemplate需要 --&gt;</span>
+<span style="color:#f92672">&lt;dependency&gt;</span>
+  <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+  <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span style="color:#f92672">&lt;/artifactId&gt;</span>
+<span style="color:#f92672">&lt;/dependency&gt;</span>
+<span style="color:#75715e">&lt;!-- @slf4j注解使用 --&gt;</span>
+<span style="color:#f92672">&lt;dependency&gt;</span>
+    <span style="color:#f92672">&lt;groupId&gt;</span>org.projectlombok<span style="color:#f92672">&lt;/groupId&gt;</span>
+    <span style="color:#f92672">&lt;artifactId&gt;</span>lombok<span style="color:#f92672">&lt;/artifactId&gt;</span>
+    <span style="color:#f92672">&lt;version&gt;</span>1.16.6<span style="color:#f92672">&lt;/version&gt;</span>
+<span style="color:#f92672">&lt;/dependency&gt;</span>
+</code></pre></div><h3 id="实现逻辑">实现逻辑</h3>
 <blockquote>
 <p>方法：返回值true代表获取锁成功，返回值false则相反</p>
-
+</blockquote>
+<blockquote>
 <p>方法：参数value=当前时间+超时时间</p>
-
+</blockquote>
+<blockquote>
 <p>方法：参数key为redis的键</p>
 </blockquote>
-
 <ol>
 <li>判断key是否已存在，不存在就新增，返回true，已存在不改变原有key的value，返回false</li>
 <li>获取key对应的cuurentValue（设value时间+超时时间）</li>
@@ -115,103 +99,94 @@
 <li>通过 <strong>getAndSet</strong> 先返回key的值，并且给key设置新的值</li>
 <li>判断旧的值与过了有效期的值是否相等，如果等于就返回true，否则返回false</li>
 </ol>
-
-<p><img src="https://s7.postimg.cc/faep2jybf/flow.png" alt="flow" /></p>
-
+<p><img src="https://s7.postimg.cc/faep2jybf/flow.png" alt="flow"></p>
 <h3 id="代码">代码</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.xumf.service<span style="color:#f92672">;</span>
 
-<pre><code class="language-java">package com.xumf.service;
+<span style="color:#f92672">import</span> lombok.extern.slf4j.Slf4j<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.beans.factory.annotation.Autowired<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.data.redis.core.StringRedisTemplate<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.stereotype.Component<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.util.StringUtils<span style="color:#f92672">;</span>
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#a6e22e">@Slf4j</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisLock</span> <span style="color:#f92672">{</span>
 
-@Component
-@Slf4j
-public class RedisLock {
+    <span style="color:#a6e22e">@Autowired</span>
+    <span style="color:#66d9ef">private</span> StringRedisTemplate redisTemplate<span style="color:#f92672">;</span>
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 加锁
+</span><span style="color:#75715e">     * @param key
+</span><span style="color:#75715e">     * @param value 当前时间+超时时间
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">lock</span><span style="color:#f92672">(</span>String key<span style="color:#f92672">,</span> String value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setIfAbsent</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> value<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
 
-    /**
-     * 加锁
-     * @param key
-     * @param value 当前时间+超时时间
-     * @return
-     */
-    public boolean lock(String key, String value) {
-        if (redisTemplate.opsForValue().setIfAbsent(key, value)) {
-            return true;
-        }
+        String currentValue <span style="color:#f92672">=</span> redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">().</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+        <span style="color:#75715e">// 如果锁过期
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>currentValue<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">parseLong</span><span style="color:#f92672">(</span>currentValue<span style="color:#f92672">)</span> <span style="color:#f92672">&lt;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+            String oldValue <span style="color:#f92672">=</span> redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getAndSet</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> value<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>oldValue<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> oldValue<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>currentValue<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
 
-        String currentValue = redisTemplate.opsForValue().get(key);
-        // 如果锁过期
-        if (!StringUtils.isEmpty(currentValue) &amp;&amp; Long.parseLong(currentValue) &lt; System.currentTimeMillis()) {
-            String oldValue = redisTemplate.opsForValue().getAndSet(key, value);
-            if (!StringUtils.isEmpty(oldValue) &amp;&amp; oldValue.equals(currentValue)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 解锁
-     * @param key
-     * @param value 当前时间+超时时间
-     */
-    public void unlock(String key, String value) {
-        try {
-            String currentValue = redisTemplate.opsForValue().get(key);
-            if (!StringUtils.isEmpty(currentValue) &amp;&amp; currentValue.equals(value)) {
-                redisTemplate.opsForValue().getOperations().delete(key);
-            }
-        } catch (Exception e) {
-            log.error(&quot;解锁异常，{}&quot;, e);
-        }
-    }
-}
-</code></pre>
-
-<h2 id="redisson框架实现">redisson框架实现</h2>
-
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 解锁
+</span><span style="color:#75715e">     * @param key
+</span><span style="color:#75715e">     * @param value 当前时间+超时时间
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">unlock</span><span style="color:#f92672">(</span>String key<span style="color:#f92672">,</span> String value<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            String currentValue <span style="color:#f92672">=</span> redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">().</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>currentValue<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> currentValue<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>value<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+                redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getOperations</span><span style="color:#f92672">().</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;解锁异常，{}&#34;</span><span style="color:#f92672">,</span> e<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="redisson框架实现">redisson框架实现</h2>
 <p></p>
-
 <h3 id="maven依赖">maven依赖</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">
+<span style="color:#75715e">&lt;!-- JDK 1.8+ 依赖 --&gt;</span>
+<span style="color:#f92672">&lt;dependency&gt;</span>
+   <span style="color:#f92672">&lt;groupId&gt;</span>org.redisson<span style="color:#f92672">&lt;/groupId&gt;</span>
+   <span style="color:#f92672">&lt;artifactId&gt;</span>redisson<span style="color:#f92672">&lt;/artifactId&gt;</span>
+   <span style="color:#f92672">&lt;version&gt;</span>3.6.5<span style="color:#f92672">&lt;/version&gt;</span>
+<span style="color:#f92672">&lt;/dependency&gt;</span>
 
-<pre><code class="language-xml">
-&lt;!-- JDK 1.8+ 依赖 --&gt;
-&lt;dependency&gt;
-   &lt;groupId&gt;org.redisson&lt;/groupId&gt;
-   &lt;artifactId&gt;redisson&lt;/artifactId&gt;
-   &lt;version&gt;3.6.5&lt;/version&gt;
-&lt;/dependency&gt;
-
-&lt;!-- JDK 1.6+ 依赖 --&gt;
-&lt;dependency&gt;
-   &lt;groupId&gt;org.redisson&lt;/groupId&gt;
-   &lt;artifactId&gt;redisson&lt;/artifactId&gt;
-   &lt;version&gt;2.11.5&lt;/version&gt;
-&lt;/dependency&gt;&lt;!--
-</code></pre>
-
-	<nav class="no-print post-nav">
-	
-		<a class="prev-post" href="https://xumf.github.io/blog/redis-pressure-test/">
-			<img class="icon-text" src="/img/prev.svg"/>Redis压测</a>
-	
-	
-		<a class="next-post" href="https://xumf.github.io/blog/java%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81/">Java生成图片验证码<img class="icon-text" src="/img/next.svg"/>
-		</a>
-	
-	</nav>
+<span style="color:#75715e">&lt;!-- JDK 1.6+ 依赖 --&gt;</span>
+<span style="color:#f92672">&lt;dependency&gt;</span>
+   <span style="color:#f92672">&lt;groupId&gt;</span>org.redisson<span style="color:#f92672">&lt;/groupId&gt;</span>
+   <span style="color:#f92672">&lt;artifactId&gt;</span>redisson<span style="color:#f92672">&lt;/artifactId&gt;</span>
+   <span style="color:#f92672">&lt;version&gt;</span>2.11.5<span style="color:#f92672">&lt;/version&gt;</span>
+<span style="color:#f92672">&lt;/dependency&gt;</span><span style="color:#75715e">&lt;!--
+</span></code></pre></div>
 </article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="https://xumf.github.io/blog/redis-pressure-test/">
+		<img class="icon-text" src="/img/prev.svg"/>Redis压测</a>
+
+
+	<a class="next-post" href="https://xumf.github.io/blog/java%E7%94%9F%E6%88%90%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81/">Java生成图片验证码<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
 
 
 <section id="related">
-  <h4>另请参见</h4>
+  <h4></h4>
   <ul>
     
   	<li><a href="/blog/redis-pressure-test/">Redis压测</a></li>
@@ -220,6 +195,7 @@ public class RedisLock {
   	
   </ul>
 </section>
+
 
 
 
@@ -241,48 +217,40 @@ public class RedisLock {
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
-
-
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-118288238-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-<hr class="sep" />
-</main>
-<footer class="container no-print">
-	<div class="u-footer">
-		
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
 <a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
 
 
 <a href="https://github.com/xumf/"><img class="icon-social" src="/img/github.svg" alt="Github"/></a>
 
 
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
 <a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
 
-		<p>
-			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			
-		</p>
-		
-		<a href="#brand">
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license"></a>
+					
+				</p>
+				
+				<a href="#brand">
 					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
-					<span>返回</span>
-				</a> 
-	</div>
-</footer>
-
-<script>
-	hljs.initHighlightingOnLoad();
-</script>
-
-</body>
-
+					<span></span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
 </html>
 

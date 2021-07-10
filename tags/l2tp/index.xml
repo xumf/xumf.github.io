@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>L2tp on 小蜜蜂</title>
+    <title>l2tp on 小蜜蜂</title>
     <link>https://xumf.github.io/tags/l2tp/</link>
-    <description>Recent content in L2tp on 小蜜蜂</description>
+    <description>Recent content in l2tp on 小蜜蜂</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Mon, 30 Apr 2018 22:39:17 +0800</lastBuildDate>
@@ -18,7 +18,7 @@
       
       <guid>https://xumf.github.io/blog/vultr%E6%90%AD%E5%BB%BAvpn/</guid>
       <description>1. 注册vultr账号 2. 登录完成后进入个人中心 3. 充钱，点击菜单右侧Billing 4. 选择支付方式，推荐使用支付宝（vultr一次最少要充值10美元，大概63块人民币）  Credit Card 信用卡 Paypal 贝宝 Bitcoin 比特币 Gift Code 优惠码  5. 冲完钱后，开始购买服务器，点击菜单的Servers，然后点击加号 6. 选择购买服务器参数  选择服务地区（本人选择的是日本的，vpn速度非常棒）  选择服务器OS（本人选择的CentOS 7）  选择服务器配置（一般做vpn的话，选$2.50/mo，就是2.5美元一个就可以，但是有时候会没有需要抢）  如下图的参数默认即可 * 如下图红框中可以填写你的域名，最后点击Deploy Now完成购买   7. 购买完成后，在Servers菜单下就会有vpc的实例，下图中红圈里面的是你vpc服务器的外网ip， 8. 单击上图红色矩形区域进入服务器管理界面  下面可以看到root用户的密码
- 9. 进入服务器，安装TCP BBR提速工具  通过ssh进入服务器，密码可以通过上一个步获取  $ ssh root@&amp;lt;你服务器的ip&amp;gt;   下载bbr  $ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh   添加执行权限  $ chmod +x bbr.</description>
+ 9. 进入服务器，安装TCP BBR提速工具  通过ssh进入服务器，密码可以通过上一个步获取  $ ssh root@&amp;lt;你服务器的ip&amp;gt;  下载bbr  $ wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh  添加执行权限  $ chmod +x bbr.sh  执行bbr.sh  $ .</description>
     </item>
     
   </channel>

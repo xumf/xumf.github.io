@@ -3,14 +3,24 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="generator" content="Hugo 0.38.1" />
+		<meta name="generator" content="Hugo 0.68.3" />
 		<title>Redis压测 - 小蜜蜂</title>
 
-		<meta name="description" content="#（100个并发连接，100000个请求） $ redis-benchmark -h 127.0.0.1 -p 6379 -c 100 -n 100000  #（-d 存取大小为100字节的数据包, -q 简单输出） $ redis-benchmark -h 127.0.0.1 -p 6379 -q -d 100  #（-t 测试的类别） $ redis-benchmark -t set,lpush -q -n 100000  #（script local 指的是就执行script local跟着的命令） redis-benchmark -n 100000 -q script load &quot;redis.call(‘set’,’foo’,’bar’)&quot;  ">
+		<meta name="description" content="#（100个并发连接，100000个请求） $ redis-benchmark -h 127.0.0.1 -p 6379 -c 100 -n 100000 #（-d 存取大小为100字节的数据包, -q 简单输出） $ redis-benchmark -h 127.0.0.1 -p 6379 -q -d 100 #（-t 测试的类别） $ redis-benchmark -t set,lpush -q -n 100000 #（script local 指的是就执行script local跟着的命令） redis-benchmark -n 100000 -q script load &#34;redis.call(‘set’,’foo’,’bar’)&#34; ">
 
 
 		
 		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
 		
 
 		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
@@ -22,26 +32,6 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
 		
 		
-
-		
-		<link rel="stylesheet" href="/css/ui.min.css"/>
-		
-		<style>
-	a { color: #99CCCC; }
-	blockquote {
-		border-left-color: #99CCCC;
-		border-right-color: #99CCCC; }
-	.bar a:hover {
-		color: #99CCCC;
-		text-decoration: none; }
-	.sep {
-		margin-top: 2rem;
-		margin-bottom: 1rem;
-		margin-left:0;
-		width: 24rem;
-		border-top: 2px solid #99CCCC; }
-</style>
-
 	</head>
 
 <body>
@@ -75,43 +65,37 @@
 </hgroup>
 <hr class="sep" />
 </header>
-	<pre><code class="language-bash">#（100个并发连接，100000个请求）
-$ redis-benchmark -h 127.0.0.1 -p 6379 -c 100 -n 100000
-</code></pre>
-
-<pre><code class="language-bash">#（-d 存取大小为100字节的数据包, -q 简单输出）
-$ redis-benchmark -h 127.0.0.1 -p 6379 -q -d 100
-</code></pre>
-
-<pre><code class="language-bash">#（-t 测试的类别）
-$ redis-benchmark -t set,lpush -q -n 100000
-</code></pre>
-
-<pre><code class="language-bash">#（script local 指的是就执行script local跟着的命令）
-redis-benchmark -n 100000 -q script load &quot;redis.call(‘set’,’foo’,’bar’)&quot;
-</code></pre>
-
-	<nav class="no-print post-nav">
-	
-		<a class="prev-post" href="https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/">
-			<img class="icon-text" src="/img/prev.svg"/>Maven环境隔离</a>
-	
-	
-		<a class="next-post" href="https://xumf.github.io/blog/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">Redis分布式锁<img class="icon-text" src="/img/next.svg"/>
-		</a>
-	
-	</nav>
+	<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#（100个并发连接，100000个请求）</span>
+$ redis-benchmark -h 127.0.0.1 -p <span style="color:#ae81ff">6379</span> -c <span style="color:#ae81ff">100</span> -n <span style="color:#ae81ff">100000</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#（-d 存取大小为100字节的数据包, -q 简单输出）</span>
+$ redis-benchmark -h 127.0.0.1 -p <span style="color:#ae81ff">6379</span> -q -d <span style="color:#ae81ff">100</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#（-t 测试的类别）</span>
+$ redis-benchmark -t set,lpush -q -n <span style="color:#ae81ff">100000</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#（script local 指的是就执行script local跟着的命令）</span>
+redis-benchmark -n <span style="color:#ae81ff">100000</span> -q script load <span style="color:#e6db74">&#34;redis.call(‘set’,’foo’,’bar’)&#34;</span>
+</code></pre></div>
 </article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="https://xumf.github.io/blog/maven%E7%8E%AF%E5%A2%83%E9%9A%94%E7%A6%BB/">
+		<img class="icon-text" src="/img/prev.svg"/>Maven环境隔离</a>
+
+
+	<a class="next-post" href="https://xumf.github.io/blog/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">Redis分布式锁<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
 
 
 <section id="related">
-  <h4>另请参见</h4>
+  <h4></h4>
   <ul>
     
   	<li><a href="/blog/redis%E5%91%BD%E4%BB%A4/">Redis命令</a></li>
   	
   </ul>
 </section>
+
 
 
 
@@ -133,48 +117,40 @@ redis-benchmark -n 100000 -q script load &quot;redis.call(‘set’,’foo’,�
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
-
-
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-118288238-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-
-<hr class="sep" />
-</main>
-<footer class="container no-print">
-	<div class="u-footer">
-		
+			<hr class="sep" />
+		</main>
+		<footer class="container no-print">
+			<div class="u-footer">
+				
 <a href="mailto:mail@xumf.net"><img class="icon-social" src="/img/email.svg" alt="Email Me!"/></a>
 
 
 <a href="https://github.com/xumf/"><img class="icon-social" src="/img/github.svg" alt="Github"/></a>
 
 
-<a href="http://gitlab.xumf.net"><img class="icon-social" src="/img/gitlab.svg" alt="GitLab"/></a>
-
-
 <a href="https://xumf.github.io/index.xml" target="_blank"><img class="icon-social" src="/img/feed.svg" alt="Feed"></a>
 
-		<p>
-			  &copy; 2018  xumf.net</a>   | <a href="/about/license">License </a>			
-		</p>
-		
-		<a href="#brand">
+
+				<p>
+					
+					
+					&copy; 2018  xumf.net</a>
+					
+					
+					| <a href="/about/license"></a>
+					
+				</p>
+				
+				<a href="#brand">
 					<img class="icon-text" src="/img/toup.svg" alt="To Up"/>
-					<span>返回</span>
-				</a> 
-	</div>
-</footer>
-
-<script>
-	hljs.initHighlightingOnLoad();
-</script>
-
-</body>
-
+					<span></span>
+				</a>
+				
+			</div>
+		</footer>
+		
+		<script>hljs.initHighlightingOnLoad();</script>
+		
+	</body>
 </html>
 
