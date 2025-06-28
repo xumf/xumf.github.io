@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Zipkin - 小蜜蜂</title>
+
+		<meta name="description" content="Zipkin 原理">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Zipkin</h1>
+	<h5>
+		
+		<time datetime="2018-05-03 22:19:24 &#43;0800 CST">2018年 5月 03日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Zipkin">Zipkin</a>
+				
+				<a href="/tags/Spring%20Cloud">Spring Cloud</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="zipkin-核心原理">Zipkin 核心原理</h2>
+<h3 id="1-架构组成">1. 架构组成</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>+-----------+     +-----------+     +-----------+
+</span></span><span style="display:flex;"><span>| Collector | &lt;-- | Reporter | &lt;-- | Instrument|
+</span></span><span style="display:flex;"><span>+-----------+     +-----------+     +-----------+
+</span></span><span style="display:flex;"><span>      |                  |
+</span></span><span style="display:flex;"><span>      v                  v
+</span></span><span style="display:flex;"><span>+-----------+     +-----------+
+</span></span><span style="display:flex;"><span>| Storage   |     | UI        |
+</span></span><span style="display:flex;"><span>+-----------+     +-----------+
+</span></span></code></pre></div><h3 id="2-核心概念">2. 核心概念</h3>
+<ul>
+<li>Trace：一次完整的请求链路</li>
+<li>span：一个工作单元</li>
+<li>Annotation：关键事件标记</li>
+<li>BinaryAnnotation：附加的键值信息</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>1. cs (Client Sent): 客户端发送请求的时间。
+</span></span><span style="display:flex;"><span>2. sr (Server Received): 服务器接收到请求的时间。
+</span></span><span style="display:flex;"><span>3. ss (Server Sent): 服务器发送响应的时间。
+</span></span><span style="display:flex;"><span>4. cr (Client Received): 客户端接收到响应的时间。
+</span></span><span style="display:flex;"><span>5. ca (Client Address): 客户端的地址信息。
+</span></span><span style="display:flex;"><span>6. sa (Server Address): 服务器的地址信息。
+</span></span><span style="display:flex;"><span>7. error (Error): 表示请求过程中是否发生了错误。
+</span></span><span style="display:flex;"><span>8. mvc.controller (MVC Controller): 与 Spring MVC 控制器相关的注解。
+</span></span><span style="display:flex;"><span>9. mvc.method (MVC Method): 与 Spring MVC 方法相关的注解。
+</span></span><span style="display:flex;"><span>10. http.method (HTTP Method): HTTP 请求的方法（如 GET, POST 等）。
+</span></span><span style="display:flex;"><span>11. http.path (HTTP Path): HTTP 请求的路径。
+</span></span><span style="display:flex;"><span>12. http.status_code (HTTP Status Code): HTTP 响应的状态码。
+</span></span><span style="display:flex;"><span>13. http.url (HTTP URL): HTTP 请求的完整 URL。
+</span></span><span style="display:flex;"><span>14. sql.query (SQL Query): 执行的 SQL 查询语句。
+</span></span><span style="display:flex;"><span>15. sql.statement (SQL Statement): 执行的 SQL 语句。
+</span></span><span style="display:flex;"><span>16. rabbitmq.message (RabbitMQ Message): 与 RabbitMQ 消息相关的注解。
+</span></span><span style="display:flex;"><span>17. redis.command (Redis Command): 执行的 Redis 命令。
+</span></span></code></pre></div><h3 id="3-数据流">3. 数据流</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>1. 应用通过 Reporter 发送追踪数据
+</span></span><span style="display:flex;"><span>2. Collector 接收并验证数据
+</span></span><span style="display:flex;"><span>3. 数据存储到 Storage
+</span></span><span style="display:flex;"><span>4. UI 从 Storage 查询并展示数据
+</span></span></code></pre></div><h2 id="源码分析">源码分析</h2>
+<h3 id="1-span-数据结构">1. Span 数据结构</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Span</span> <span style="color:#66d9ef">implements</span> Serializable {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Builder <span style="color:#a6e22e">newBuilder</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Builder();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Builder</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> String traceId;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> String parentId;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> String id;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> String name;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">long</span> timestamp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">long</span> duration;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> List<span style="color:#f92672">&lt;</span>Annotation<span style="color:#f92672">&gt;</span> annotations;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String, String<span style="color:#f92672">&gt;</span> tags;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ... other fields and methods ...</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>表示一个追踪单元</li>
+<li>包含 traceId、parentId、id 等关键信息</li>
+<li>支持添加注解和标签</li>
+</ul>
+<h3 id="2-reporter-接口">2. Reporter 接口</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Reporter</span><span style="color:#f92672">&lt;</span>S<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">report</span>(S span);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span>() <span style="color:#66d9ef">throws</span> IOException {}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>负责发送追踪数据</li>
+<li>支持异步报告</li>
+<li>内置多种实现（如 Kafka、RabbitMQ、HTTP）</li>
+</ul>
+<h3 id="3-collector-组件">3. Collector 组件</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Collector</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">accept</span>(List<span style="color:#f92672">&lt;</span>Span<span style="color:#f92672">&gt;</span> spans);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">storeSpans</span>(List<span style="color:#f92672">&lt;</span>Span<span style="color:#f92672">&gt;</span> spans) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 存储逻辑</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>负责接收和验证追踪数据</li>
+<li>调用存储组件持久化数据</li>
+</ul>
+<h3 id="4-storage-组件">4. Storage 组件</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">StorageComponent</span> {
+</span></span><span style="display:flex;"><span>    SpanConsumer <span style="color:#a6e22e">spanConsumer</span>();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    SpanStore <span style="color:#a6e22e">spanStore</span>();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    AutocompleteTags <span style="color:#a6e22e">autocompleteTags</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="5-ui-组件">5. UI 组件</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@RestController</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ZipkinUi</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GetMapping</span>(<span style="color:#e6db74">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">index</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;index&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GetMapping</span>(<span style="color:#e6db74">&#34;/traces/{id}&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">traceDetail</span>(<span style="color:#a6e22e">@PathVariable</span> String id) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 查询并返回追踪详情</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>提供 Web 界面展示追踪数据</li>
+<li>支持查询和可视化</li>
+</ul>
+<h2 id="重要知识点">重要知识点</h2>
+<h3 id="1-zipkin-的工作原理是什么">1. Zipkin 的工作原理是什么？</h3>
+<ul>
+<li>应用通过 Reporter 发送追踪数据</li>
+<li>Collector 接收并存储数据</li>
+<li>UI 提供查询和可视化界面</li>
+</ul>
+<h3 id="2-zipkin-支持哪些存储后端">2. Zipkin 支持哪些存储后端？</h3>
+<ul>
+<li>内存（默认）</li>
+<li>MySQL</li>
+<li>ElasticSearch</li>
+<li>Cassandra</li>
+</ul>
+<h3 id="3-如何集成-zipkin-和-spring-cloud-sleuth">3. 如何集成 Zipkin 和 Spring Cloud Sleuth</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">zipkin</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">base-url</span>: <span style="color:#ae81ff">http://localhost:9411</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sender</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">type</span>: <span style="color:#ae81ff">web</span> <span style="color:#75715e"># 使用HTTP发送</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sleuth</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sampler</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">probability</span>: <span style="color:#ae81ff">1.0</span> <span style="color:#75715e"># 采样率</span>
+</span></span></code></pre></div><h3 id="4-zipkin-的数据模型怎么的">4. ZipKin 的数据模型怎么的？</h3>
+<ul>
+<li>Trace：一次性完整的请求链路</li>
+<li>Span：一个工作单元</li>
+<li>Annotation：关键事件标记</li>
+<li>BinaryAnnotation：附加的键值对信息</li>
+</ul>
+<h3 id="5-如何自定义-zipkin-的-reporter">5. 如何自定义 Zipkin 的 Reporter？</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>Reporter<span style="color:#f92672">&lt;</span>Span<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">myReporter</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> AsyncReporter<span style="color:#f92672">&lt;&gt;</span>(URLConnectionSender.<span style="color:#a6e22e">create</span>(<span style="color:#e6db74">&#34;http://localhost:9411/api/v2/spans&#34;</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span></code></pre></div><h3 id="6-zipkin-的新优化策略有哪些">6. Zipkin 的新优化策略有哪些？</h3>
+<ul>
+<li>使用异步 Reporter</li>
+<li>配置合适的采样率</li>
+<li>选择合适的存储后端</li>
+<li>批量发送追踪数据</li>
+</ul>
+<h3 id="7-如何实现-zipkin-的高可用">7. 如何实现 Zipkin 的高可用</h3>
+<ul>
+<li>部署多个 Collector 实例</li>
+<li>使用负载均衡</li>
+<li>配置持久化存储</li>
+<li>设置合理的存储清理策略</li>
+</ul>
+<h3 id="8--zipkin-的-ui-有哪一些">8.  Zipkin 的 UI 有哪一些？</h3>
+<ul>
+<li>查看追踪列表</li>
+<li>查看单个追踪详情</li>
+<li>依赖关系图</li>
+<li>服务调用统计</li>
+</ul>
+<h3 id="9-如何处理-zipkin-的数据存储问题">9. 如何处理 Zipkin 的数据存储问题？</h3>
+<ul>
+<li>定期清理旧数据</li>
+<li>使用 TTL（Time To Live）</li>
+<li>配置合适的存储容量</li>
+<li>监控存储性能</li>
+</ul>
+<h3 id="10-zipkin-如何支持多语言">10. Zipkin 如何支持多语言？</h3>
+<ul>
+<li>提供统一的 API 接口</li>
+<li>支持多种 Reporter 实现</li>
+<li>提供多种语言的客户端库</li>
+<li>使用通用的数据格式（如 JSON）</li>
+</ul>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/nacos/">
+		<img class="icon-text" src="/img/prev.svg"/>Nacos</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/zuul/">Zuul<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/nacos/">Nacos</a></li>
+  	
+  	<li><a href="/blog/springcloudsleuth/">Spring Cloud Sleuth</a></li>
+  	
+  	<li><a href="/blog/springcloudgateway/">Spring Cloud Gateway</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Kubernetes 深入浅出 - 小蜜蜂</title>
+
+		<meta name="description" content="Kubernetes Kubernetes 核心概念 1. 基本概念 Pod：最小的部署单元，包含一个或多个容器 Node：工作节点，运行 Pod Cluster：由多个 Node 组成的集群 Namespace：资源隔离和分组 2. 核心组件 Master 组件： API Server：提供 Restful API，是集群的前端接口 Scheduler：负责调度 Pod 到合适的 Node Controller Manager：运行各种控制器，如 Replication Controller、Node Controller 等 etcd： 分布式键值存储，保存集群的所有配置数据 Node 组件 Kubelet：负责管理 Pod 和容器的生命周期 Kube Proxy：负责网络代理和负载均衡 Container Runtime： 运行容器的软件，如 Docker、containerd 3. 资源对象 Pod 最小的部署单元 包含一个或多个容器 共享网络和存储 Deployment 声明式更新 Pod 和 ReplicaSet 支持滚动更新和回滚 示例： apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment spec: replicas: 3 selector: matchLabels: app: nginx template: metadata: labels: app: nginx spec: containers: - name: nginx image: nginx:1.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Kubernetes 深入浅出</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 13:16:53 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Kubernetes">Kubernetes</a>
+				
+				<a href="/tags/Docker">Docker</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h1 id="kubernetes">Kubernetes</h1>
+<h2 id="kubernetes-核心概念">Kubernetes 核心概念</h2>
+<h3 id="1-基本概念">1. 基本概念</h3>
+<ul>
+<li>Pod：最小的部署单元，包含一个或多个容器</li>
+<li>Node：工作节点，运行 Pod</li>
+<li>Cluster：由多个 Node 组成的集群</li>
+<li>Namespace：资源隔离和分组</li>
+</ul>
+<h3 id="2-核心组件">2. 核心组件</h3>
+<ul>
+<li>Master 组件：
+<ul>
+<li>API Server：提供 Restful API，是集群的前端接口</li>
+<li>Scheduler：负责调度 Pod 到合适的 Node</li>
+<li>Controller Manager：运行各种控制器，如 Replication Controller、Node Controller 等</li>
+<li>etcd： 分布式键值存储，保存集群的所有配置数据</li>
+</ul>
+</li>
+<li>Node 组件
+<ul>
+<li>Kubelet：负责管理 Pod 和容器的生命周期</li>
+<li>Kube Proxy：负责网络代理和负载均衡</li>
+<li>Container Runtime： 运行容器的软件，如 Docker、containerd</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-资源对象">3. 资源对象</h3>
+<ul>
+<li>Pod
+<ul>
+<li>最小的部署单元</li>
+<li>包含一个或多个容器</li>
+<li>共享网络和存储</li>
+</ul>
+</li>
+<li>Deployment
+<ul>
+<li>声明式更新 Pod 和 ReplicaSet</li>
+<li>支持滚动更新和回滚</li>
+<li>示例：</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.14.2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><ul>
+<li>Service
+<ul>
+<li>定义 Pod 的访问策略</li>
+<li>支持 ClusterIP、NodePort、LoadBalancer 等类型</li>
+<li>示例：</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">ClusterIP</span>
+</span></span></code></pre></div><ul>
+<li>ConfigMap 和 Secret
+<ul>
+<li>存储配置数据</li>
+<li>示例：</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">game-config</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">game.properties</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    enemy.types=aliens,monsters
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    player.maximum-lives=5</span>    
+</span></span></code></pre></div><ul>
+<li>Secret：
+<ul>
+<li>存储敏感信息</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Secret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mysecret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">type</span>: <span style="color:#ae81ff">Opaque</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">username</span>: <span style="color:#ae81ff">YWRtaW4=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">password</span>: <span style="color:#ae81ff">MWYyZDFlMmU2N2Rm</span>
+</span></span></code></pre></div><h2 id="网络模型">网络模型</h2>
+<h3 id="1-pod-网络">1. Pod 网络</h3>
+<ul>
+<li>每个 Pod 有唯一的 IP 地址</li>
+<li>Pod 之间可以直接通信</li>
+<li>使用 CNI（Container Network Interface）插件</li>
+</ul>
+<h3 id="2-service-网络">2. Service 网络</h3>
+<ul>
+<li>ClusterIP：集群内部访问</li>
+<li>NodePort：通过节点访问</li>
+<li>LoadBalancer：通过云服务商的负载均衡访问</li>
+</ul>
+<h3 id="3-dns-服务">3. DNS 服务</h3>
+<ul>
+<li>内置 DNS 服务</li>
+<li>通过服务名进行服务发现</li>
+<li>示例：<code>my-service.my-namespace.svc.cluster.local</code></li>
+</ul>
+<h2 id="存储管理">存储管理</h2>
+<h3 id="1-volume">1. Volume</h3>
+<ul>
+<li>提供持久化存储</li>
+<li>支持多种类型（如 emptyDir、hostPath、NFS、云存储）</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">test-pd</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/test-webserver</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">test-container</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/test-pd</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">test-volume</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">test-volume</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/data</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">type</span>: <span style="color:#ae81ff">Directory</span>
+</span></span></code></pre></div><h3 id="2-persistentvolumepv-和-persistentvolumeclaimpvc">2. PersistentVolume(PV) 和 PersistentVolumeClaim(PVC)</h3>
+<ul>
+<li>PV：集群范围的存储资源</li>
+<li>PVC：用户对存储资源的请求</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolume</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pv0001</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">capacity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">5Gi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/mnt/data</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">myclaim</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">3Gi</span>
+</span></span></code></pre></div><h2 id="调度策略">调度策略</h2>
+<h3 id="1-节点选择器nodeselector">1. 节点选择器（nodeSelector）</h3>
+<ul>
+<li>根据节点标签选择节点</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeSelector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">disktype</span>: <span style="color:#ae81ff">ssd</span>
+</span></span></code></pre></div><h3 id="2-亲和性和反亲和性affinityanti-affinity">2. 亲和性和反亲和性（affinity/anti-affinity）</h3>
+<ul>
+<li>控制 Pod 的调度位置</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">affinity</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nodeAffinity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requiredDuringSchedulingIgnoredDuringExecution</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">nodeSelectorTerms</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">matchExpressions</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">kubernetes.io/e2e-az-name</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">In</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">values</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">e2e-az1</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">e2e-az2</span>
+</span></span></code></pre></div><h3 id="3-污点与容忍tainttoleration">3. 污点与容忍（taint/toleration）</h3>
+<ul>
+<li>控制 Pod 是否可以调度到特定节点</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">tolerations</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;key1&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Equal&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;value1&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoSchedule&#34;</span>
+</span></span></code></pre></div><h2 id="安全机制">安全机制</h2>
+<h3 id="1-认证authentication">1. 认证（Authentication）</h3>
+<ul>
+<li>支持多种认证方式（如证书、令牌、用户名密码）</li>
+</ul>
+<h3 id="2-授权authorization">2. 授权（Authorization）</h3>
+<ul>
+<li>使用 RBAC （Role-Based Access Controll）</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Role</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod-reader</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">apiGroups</span>: [<span style="color:#e6db74">&#34;&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>: [<span style="color:#e6db74">&#34;pods&#34;</span>]
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">verbs</span>: [<span style="color:#e6db74">&#34;get&#34;</span>, <span style="color:#e6db74">&#34;watch&#34;</span>, <span style="color:#e6db74">&#34;list&#34;</span>]
+</span></span></code></pre></div><h3 id="3-网络策略network-policy">3. 网络策略（Network Policy）</h3>
+<ul>
+<li>控制 Pod 之间的网络通信</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">NetworkPolicy</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">test-network-policy</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">podSelector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">role</span>: <span style="color:#ae81ff">db</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">policyTypes</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">Egress</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingress</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">from</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">ipBlock</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">cidr</span>: <span style="color:#ae81ff">172.17.0.0</span><span style="color:#ae81ff">/16</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">except</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#ae81ff">172.17.1.0</span><span style="color:#ae81ff">/24</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">namespaceSelector</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">project</span>: <span style="color:#ae81ff">myproject</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">podSelector</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">role</span>: <span style="color:#ae81ff">frontend</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">egress</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">to</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">ipBlock</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">cidr</span>: <span style="color:#ae81ff">10.0.0.0</span><span style="color:#ae81ff">/24</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">5978</span>
+</span></span></code></pre></div><h2 id="监控和日志">监控和日志</h2>
+<h3 id="1-metrics-server">1. Metrics Server</h3>
+<ul>
+<li>收集集群资源使用情况</li>
+<li>支持 Horizontal Pod Autoscaler（HPA）</li>
+</ul>
+<h3 id="2-prometheus-和-grafana">2. Prometheus 和 Grafana</h3>
+<ul>
+<li>提供强大的监控和可视化功能</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">monitoring.coreos.com/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Prometheus</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">prometheus</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">prometheus</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">serviceMonitorSelector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">team</span>: <span style="color:#ae81ff">frontend</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">400Mi</span>
+</span></span></code></pre></div><h3 id="3-kubernetes-dashboard">3. Kubernetes Dashboard</h3>
+<ul>
+<li>提供 Web 界面管理集群</li>
+<li>示例：</li>
+</ul>
+<p><code>kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml</code></p>
+<h2 id="kubernetes-架构">Kubernetes 架构</h2>
+<h3 id="1-master-节点">1. Master 节点</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>|    API Server     |
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>|    Scheduler      |
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>| Controller Manager|
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>|      etcd         |
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span></code></pre></div><h3 id="2-node-节点">2. Node 节点</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>|     Kubelet       |
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>|   Kube Proxy      |
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span><span style="display:flex;"><span>| Container Runtime |
+</span></span><span style="display:flex;"><span>+-------------------+
+</span></span></code></pre></div><h3 id="3-整体架构">3. 整体架构</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>+-------------------+     +-------------------+
+</span></span><span style="display:flex;"><span>|      Master       | &lt;-&gt; |       Node        |
+</span></span><span style="display:flex;"><span>+-------------------+     +-------------------+
+</span></span><span style="display:flex;"><span>      ^                         ^
+</span></span><span style="display:flex;"><span>      |                         |
+</span></span><span style="display:flex;"><span>      v                         v
+</span></span><span style="display:flex;"><span>+-------------------+     +-------------------+
+</span></span><span style="display:flex;"><span>|      etcd         |     |      Pods         |
+</span></span><span style="display:flex;"><span>+-------------------+     +-------------------+
+</span></span></code></pre></div><h2 id="常见问题">常见问题</h2>
+<h3 id="1-kubernetes-的核心组件有哪些">1. Kubernetes 的核心组件有哪些？</h3>
+<ul>
+<li>Master 组件：API Server、Scheduler、Controller Manager、etcd</li>
+<li>Node 组件：Kubelet、Kube Proxy、Container Runtime</li>
+</ul>
+<h3 id="2-pod-和容器区别是什么">2. Pod 和容器区别是什么</h3>
+<ul>
+<li>Pob 是 Kubernetes 的最小部署单元</li>
+<li>一个 Pod 可以包含一个或者多个容器</li>
+<li>Pod 内的容器共享网络和存储</li>
+</ul>
+<h3 id="3-如何实现-kubernetes-的高可用">3. 如何实现 Kubernetes 的高可用？</h3>
+<ul>
+<li>部署多个 Master 节点</li>
+<li>使用负载均衡</li>
+<li>配置 etcd 集群</li>
+<li>定期备份数据</li>
+</ul>
+<h3 id="4-kubernetes-的网络模型是怎么样的">4. Kubernetes 的网络模型是怎么样的？</h3>
+<ul>
+<li>每个 Pod 有唯一的 IP 地址</li>
+<li>Pod 之间可以直接通信</li>
+<li>使用 CNI （Container Network Interface）</li>
+</ul>
+<h3 id="5-如何实现-kubernetes-的自动扩展">5. 如何实现 Kubernetes 的自动扩展？</h3>
+<ul>
+<li>使用 Horizontal Pod Autoscaler （HPA）</li>
+<li>配置资源请求和限制</li>
+<li>监控应用指标</li>
+</ul>
+<h3 id="6-如何管理-kubernetes-的配置">6. 如何管理 Kubernetes 的配置</h3>
+<ul>
+<li>使用 ConfigMap 存储配置数据</li>
+<li>使用 Secret 存储敏感信息</li>
+<li>通过环境变量或 Volume 挂载到 Pod</li>
+</ul>
+<h3 id="7-kubernetes-的调度策略有哪些">7. Kubernetes 的调度策略有哪些？</h3>
+<ul>
+<li>节点选择器（nodeSelector）</li>
+<li>亲和性和反亲和性（affinity/anti-affinity）</li>
+<li>污点和容忍（taint/toleration）</li>
+<li>优先级和抢占（priority/preempiton）</li>
+</ul>
+<h3 id="8-如何实现-kubernetes-的持久化存储">8. 如何实现 Kubernetes 的持久化存储？</h3>
+<ul>
+<li>使用 PersistentVolume（PV）</li>
+<li>使用 PersistentVolumeClaim（PVC）</li>
+<li>支持多种存储后端（如 NFS、iSCI、云存储）</li>
+</ul>
+<h3 id="9-如何监控-kubernetes-集群">9. 如何监控 Kubernetes 集群？</h3>
+<ul>
+<li>使用 Metrics Server</li>
+<li>集成 Prometheus 和 Grafana</li>
+<li>使用 Kubernetes Dashborad</li>
+<li>配置告警规则</li>
+</ul>
+<h3 id="10-如何实现-kubernetes-的滚动更新">10. 如何实现 Kubernetes 的滚动更新？</h3>
+<ul>
+<li>使用 Deployment</li>
+<li>配置更新策略（RollingUpdate）</li>
+<li>设置最大不可用和最大超出副本数</li>
+</ul>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/netty/">
+		<img class="icon-text" src="/img/prev.svg"/>Netty知识</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/jvmissuesolution/">JVM 问题排查<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

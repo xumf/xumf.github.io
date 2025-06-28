@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Ribbon - 小蜜蜂</title>
+
+		<meta name="description" content="核心概念 主要功能：负载均衡、故障转移、重试机制
+特点：
+客户端负载均衡：负载均衡逻辑在客户端实现，而不是在服务端。 集成Spring Cloud：与 Spring Cloud 深度集成，常用于 Feign 和 RestTemplate 可扩展性：支持自定义负载均衡策略和规则 工作原理 服务发现 Ribbon 从服务注册中心（如 Eureka）获取服务实例列表 服务实例列表动态更新，确保 Ribbon 能够感知服务实例变化 负载均衡 Ribbon 根据配置的负载均衡策略，从服务实例列表中选择一个实例 常见的负载均衡策略 轮询（Round Robin）：依次选择每个实例 随机（Random）：随机选择一个实例 加权响应时间（Weighted Response Time）：根据实例的响应时间分配权重 区域感知（Zone Aware）：优先选择同一区域的实例 故障转移 如果选择的实例不可用，Ribbon 会自动重试其他实例 重试次数和超时时间可以通过配置调整 请求分发 Ribbon 将请求分发到选定的服务实例，并处理响应 配置 负载均衡策略 通过配置文件负载均衡策略： service-name: ribbon: NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule 通过代码配置负载均衡策略： @RibbonClient(name = &#34;service-name&#34;, configuration = MyRibbonConfig.class) public class MyRibbonConfig { @Bean public IRule ribbonRule() { return new RoundRobinRule(); // 轮询策略 // return new RandomRule(); // 随机策略 // return new WeightedResponseTimeRule(); // 加权响应时间策略 // return new ZoneAvoidanceRule(); // 区域感知策略 } } 重试机制 通过配置文件配置重试次数和超时时间 service-name: ribbon: MaxAutoRetries: 3 MaxAutoRetriesNextServer: 1 ConnectTimeout: 1000 ReadTimeout: 3000 通过代码方式配置重试次数和超时时间 @RibbonClient(name = &#34;service-name&#34;, configuration = MyRibbonConfig.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Ribbon</h1>
+	<h5>
+		
+		<time datetime="2018-04-19 21:09:25 &#43;0800 CST">2018年 4月 19日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Ribbon">Ribbon</a>
+				
+				<a href="/tags/Spring%20Cloud">Spring Cloud</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="核心概念">核心概念</h2>
+<p>主要功能：负载均衡、故障转移、重试机制</p>
+<p>特点：</p>
+<ul>
+<li>客户端负载均衡：负载均衡逻辑在客户端实现，而不是在服务端。</li>
+<li>集成Spring Cloud：与 Spring Cloud 深度集成，常用于 Feign 和 RestTemplate</li>
+<li>可扩展性：支持自定义负载均衡策略和规则</li>
+</ul>
+<h2 id="工作原理">工作原理</h2>
+<ol>
+<li>服务发现
+<ol>
+<li>Ribbon 从服务注册中心（如 Eureka）获取服务实例列表</li>
+<li>服务实例列表动态更新，确保 Ribbon 能够感知服务实例变化</li>
+</ol>
+</li>
+<li>负载均衡
+<ol>
+<li>Ribbon 根据配置的负载均衡策略，从服务实例列表中选择一个实例</li>
+<li>常见的负载均衡策略
+<ol>
+<li>轮询（Round Robin）：依次选择每个实例</li>
+<li>随机（Random）：随机选择一个实例</li>
+<li>加权响应时间（Weighted Response Time）：根据实例的响应时间分配权重</li>
+<li>区域感知（Zone Aware）：优先选择同一区域的实例</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>故障转移
+<ol>
+<li>如果选择的实例不可用，Ribbon 会自动重试其他实例</li>
+<li>重试次数和超时时间可以通过配置调整</li>
+</ol>
+</li>
+<li>请求分发
+<ol>
+<li>Ribbon 将请求分发到选定的服务实例，并处理响应</li>
+</ol>
+</li>
+</ol>
+<h2 id="配置">配置</h2>
+<ol>
+<li>负载均衡策略
+<ol>
+<li>通过配置文件负载均衡策略：</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">service-name</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">NFLoadBalancerRuleClassName</span>: <span style="color:#ae81ff">com.netflix.loadbalancer.RoundRobinRule</span>
+</span></span></code></pre></div><ol start="2">
+<li>通过代码配置负载均衡策略：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@RibbonClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, configuration <span style="color:#f92672">=</span> MyRibbonConfig.<span style="color:#a6e22e">class</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRibbonConfig</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IRule <span style="color:#a6e22e">ribbonRule</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RoundRobinRule(); <span style="color:#75715e">// 轮询策略</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// return new RandomRule(); // 随机策略</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// return new WeightedResponseTimeRule(); // 加权响应时间策略</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// return new ZoneAvoidanceRule(); // 区域感知策略</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li>重试机制
+<ol>
+<li>通过配置文件配置重试次数和超时时间</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>  <span style="color:#f92672">service-name</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">MaxAutoRetries</span>: <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">MaxAutoRetriesNextServer</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ConnectTimeout</span>: <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ReadTimeout</span>: <span style="color:#ae81ff">3000</span>
+</span></span></code></pre></div><ol start="2">
+<li>通过代码方式配置重试次数和超时时间</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@RibbonClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, configuration <span style="color:#f92672">=</span> MyRibbonConfig.<span style="color:#a6e22e">class</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRibbonConfig</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IRule <span style="color:#a6e22e">ribbonRule</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RoundRobinRule(); <span style="color:#75715e">// 轮询策略</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> RetryHandler <span style="color:#a6e22e">retryHandler</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DefaultLoadBalancerRetryHandler(3, 1, <span style="color:#66d9ef">true</span>); <span style="color:#75715e">// 重试配置</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="3">
+<li>自定义配置
+3. 通过 **@RibbonClient **注解指定自定义配置：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#a6e22e">@RibbonClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, configuration <span style="color:#f92672">=</span> MyRibbonConfig.<span style="color:#a6e22e">class</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRibbonConfig</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">public</span> IRule <span style="color:#a6e22e">ribbonRule</span>() {
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RandomRule();
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><h2 id="heading"></h2>
+<h2 id="使用场景">使用场景</h2>
+<ol>
+<li>与 RestTemplate 集成
+<ol>
+<li>使用 <strong>@LoadBalanced</strong> 注解启用 Ribbon 负载均衡：</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">@LoadBalanced</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> RestTemplate <span style="color:#a6e22e">restTemplate</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RestTemplate();
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><ol start="2">
+<li>调用服务时，Ribbon 会自动选择服务实例</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  String response <span style="color:#f92672">=</span> restTemplate.<span style="color:#a6e22e">getForObject</span>(<span style="color:#e6db74">&#34;http://service-name/endpoint&#34;</span>, String.<span style="color:#a6e22e">class</span>);
+</span></span></code></pre></div><ol start="2">
+<li>与 Feign 集成
+<ol>
+<li>Feign 默认集成了 Ribbon，无需额外配置</li>
+<li>通过 Feign 客户端调用服务时，Ribbon 会自动处理负载均衡：</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#a6e22e">@FeignClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyFeignClient</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">@GetMapping</span>(<span style="color:#e6db74">&#34;/endpoint&#34;</span>)
+</span></span><span style="display:flex;"><span>      String <span style="color:#a6e22e">getResponse</span>();
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><h2 id="底层原理">底层原理</h2>
+<ol>
+<li>负载均衡器（LoadBalancer）
+<ol>
+<li>Ribbon 的核心组件时 <strong>ILoadBalancer</strong>，负责管理服务实例列表和选择实例</li>
+<li>默认实现时** DynamicServerListLoadBalancer **，动态更新服务实例列表</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicServerListLoadBalancer</span><span style="color:#f92672">&lt;</span>T <span style="color:#66d9ef">extends</span> Server<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> BaseLoadBalancer {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ServerList<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> serverList; <span style="color:#75715e">// 服务实例列表</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ServerListUpdater serverListUpdater; <span style="color:#75715e">// 服务实例列表更新器</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setServersList</span>(List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> servers) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#a6e22e">setServersList</span>(servers); <span style="color:#75715e">// 更新服务实例列表</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">updateListOfServers</span>() {
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> servers <span style="color:#f92672">=</span> serverList.<span style="color:#a6e22e">getUpdatedListOfServers</span>(); <span style="color:#75715e">// 获取最新的服务实例列表</span>
+</span></span><span style="display:flex;"><span>        setServersList(servers); <span style="color:#75715e">// 更新负载均衡器中的服务实例列表</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">start</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#a6e22e">start</span>();
+</span></span><span style="display:flex;"><span>        serverListUpdater.<span style="color:#a6e22e">start</span>(<span style="color:#66d9ef">new</span> UpdateAction()); <span style="color:#75715e">// 启动服务实例列表更新任务</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UpdateAction</span> <span style="color:#66d9ef">implements</span> ServerListUpdater.<span style="color:#a6e22e">UpdateAction</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doUpdate</span>() {
+</span></span><span style="display:flex;"><span>            updateListOfServers(); <span style="color:#75715e">// 执行服务实例列表更新</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li>负载均衡策略（IRule）
+<ol>
+<li><strong>IRule</strong> 接口定义了负载均衡策略，常见实现包括：
+<ol>
+<li><strong>RoundRobinRule</strong>：轮询策略</li>
+<li><strong>RandomRule</strong>：随机策略</li>
+<li><strong>WeightedResponseTimeRule</strong>：加权响应时间策略</li>
+<li><strong>ZoneAvoidanceRule</strong>：区域感知策略</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>服务实例列表（ServerList）
+<ol>
+<li><strong>ServerList</strong> 接口负责从服务注册中心获取服务实例列表</li>
+<li>默认实现时 <strong>DiscoveryEnabledNIWSServerList</strong>，从 Eureka 获取实例列表</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DiscoveryEnabledNIWSServerList</span> <span style="color:#66d9ef">extends</span> AbstractServerList<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> EurekaClient eurekaClient; <span style="color:#75715e">// Eureka 客户端</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> String serviceId; <span style="color:#75715e">// 服务名称</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getInitialListOfServers</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> obtainServersViaDiscovery(); <span style="color:#75715e">// 从 Eureka 获取初始服务实例列表</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getUpdatedListOfServers</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> obtainServersViaDiscovery(); <span style="color:#75715e">// 从 Eureka 获取更新后的服务实例列表</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">obtainServersViaDiscovery</span>() {
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> serverList <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (eurekaClient <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> serverList;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 从 Eureka 获取服务实例信息</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>InstanceInfo<span style="color:#f92672">&gt;</span> listOfInstanceInfo <span style="color:#f92672">=</span> eurekaClient.<span style="color:#a6e22e">getInstancesByVipAddress</span>(serviceId, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (InstanceInfo instanceInfo : listOfInstanceInfo) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (instanceInfo.<span style="color:#a6e22e">getStatus</span>() <span style="color:#f92672">==</span> InstanceInfo.<span style="color:#a6e22e">InstanceStatus</span>.<span style="color:#a6e22e">UP</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 将 Eureka 的 InstanceInfo 转换为 Ribbon 的 Server</span>
+</span></span><span style="display:flex;"><span>                serverList.<span style="color:#a6e22e">add</span>(<span style="color:#66d9ef">new</span> DiscoveryEnabledServer(instanceInfo, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">true</span>));
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> serverList;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="4">
+<li>故障转移（Retry）
+<ol>
+<li>Ribbon 通过 <strong>RetryHandler</strong> 实现故障转移，支持重试和超时处理</li>
+</ol>
+</li>
+</ol>
+
+</article>
+<nav class="no-print post-nav">
+
+
+	<a class="next-post" href="http://xumf.net/blog/synchronized/">Synchronized<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

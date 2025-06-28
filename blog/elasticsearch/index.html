@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>ElasticSearch 知识 - 小蜜蜂</title>
+
+		<meta name="description" content="1. Elasticsearch 概念与架构 集群(Cluster)：Elasticsearch 中的多个节点(Node)组成集群。一个集群中有一个主节点(Master Node)，负责集群管理，其它节点可能是数据节点(Data Node)、协调节点(Coordinating Node)、以及 Ingest 节点等。 节点(Node)：每个 Elasticsearch 实例都被称为节点，节点存储数据并处理请求。节点可以有不同角色，如master 、data 、ingest 等。 索引(Index)：Elasticsearch 中数据的存储单位，每个索引包含多个分片(Shards)，可以进行高效的存储与查询。 分片(Shard)：每个索引会被分割成多个分片，分片是数据存储的基本单位，主分片和副本分片提供了数据的分布与冗余 2. 核心原理 1.1 倒排索引(Inverted Index) 原理：通过词项(Term)映射到文档表，实现快速全文检索 构建过程：文档分词→生成词项→记录词项所在文档及位置 优势：高效查询，支持复杂搜索(如布尔逻辑、短语匹配) 与正排索引对比：正排索引通过文档 ID 查找内容，倒排索引通过词项找文档 1.2 分布式架构 分片(Shard)： 主分片(Primary)*：*处理写操作，数量创建索引时固定 副本分片(Replica)：提供读高可用，数量可调整 节点角色： Master 节点：管理集群状态(如索引创建、节点上下线) Data 节点：存储分片，处理数据 CURD Coordinating 节点：路由请求，聚合结果(默认所有节点均可担任) Ingest 节点： 数据预处理 功能：通过定义 Pipeline(处理管道)，对原始数据进行加工，例如： 解析结构：如将日志中的非结构化文本解析为结构化字段(使用Grok 处理器)。 字段转换：如转换时间格式、大小写转、类型转换(字符串转数字)。 数据增强：如添加地理位置信息、基于 IP 生成 GeoIP 字段。 字段过滤：删除无用字段、重命名字段。 条件处理：根据字段内容动态决定是否执行某些操作。 减轻数据节点负载 职责分离：将计算密集型的预处理任务从 Data 节点剥离，避免影响索引和查询功能。 资源优化：专用 Ingest 节点可配置更高 CPU 资源，专注于数据处理。 简化架构 替代部分 Logstash 功能：在不需要复杂 ETL 的场景中，可直接通过 Elasticsearch 完成数据处理，减少外部组件依赖。 1.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>ElasticSearch 知识</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 13:16:53 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/ElasticSearch">ElasticSearch</a>
+				
+				<a href="/tags/Database">Database</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="1-elasticsearch-概念与架构">1. Elasticsearch 概念与架构</h2>
+<ul>
+<li><strong>集群(Cluster)</strong>：Elasticsearch 中的多个节点(Node)组成集群。一个集群中有一个主节点(Master Node)，负责集群管理，其它节点可能是数据节点(Data Node)、协调节点(Coordinating Node)、以及 Ingest 节点等。</li>
+<li><strong>节点(Node)</strong>：每个 Elasticsearch 实例都被称为节点，节点存储数据并处理请求。节点可以有不同角色，如<code>master</code> 、<code>data</code> 、<code>ingest</code> 等。</li>
+<li><strong>索引(Index)</strong>：Elasticsearch 中数据的存储单位，每个索引包含多个分片(Shards)，可以进行高效的存储与查询。</li>
+<li><strong>分片(Shard)</strong>：每个索引会被分割成多个分片，分片是数据存储的基本单位，主分片和副本分片提供了数据的分布与冗余</li>
+</ul>
+<h2 id="2--核心原理">2.  核心原理</h2>
+<h3 id="11-倒排索引inverted-index">1.1 倒排索引(Inverted Index)</h3>
+<ul>
+<li><strong>原理</strong>：通过词项(<strong>Term</strong>)映射到文档表，实现快速全文检索
+<ul>
+<li><strong>构建过程</strong>：文档分词→生成词项→记录词项所在文档及位置</li>
+<li><strong>优势</strong>：高效查询，支持复杂搜索(如布尔逻辑、短语匹配)</li>
+</ul>
+</li>
+<li><strong>与正排索引对比</strong>：正排索引通过文档 ID 查找内容，倒排索引通过词项找文档</li>
+</ul>
+<h3 id="12-分布式架构">1.2 分布式架构</h3>
+<ul>
+<li><em>分片(Shard)：</em>
+<ul>
+<li><strong>主分片(Primary)</strong>*：*处理写操作，数量创建索引时固定</li>
+<li><strong>副本分片(Replica)</strong>：提供读高可用，数量可调整</li>
+</ul>
+</li>
+<li><strong>节点角色</strong>：
+<ul>
+<li><strong>Master 节点</strong>：管理集群状态(如索引创建、节点上下线)</li>
+<li><strong>Data 节点</strong>：存储分片，处理数据 CURD</li>
+<li><strong>Coordinating 节点</strong>：路由请求，聚合结果(默认所有节点均可担任)</li>
+<li><strong>Ingest 节点</strong>：
+<ol>
+<li><strong>数据预处理</strong>
+<ul>
+<li><strong>功能</strong>：通过定义 <strong>Pipeline</strong>(处理管道)，对原始数据进行加工，例如：
+<ul>
+<li><strong>解析结构</strong>：如将日志中的非结构化文本解析为结构化字段(使用<code>Grok</code> 处理器)。</li>
+<li><strong>字段转换</strong>：如转换时间格式、大小写转、类型转换(字符串转数字)。</li>
+<li><strong>数据增强</strong>：如添加地理位置信息、基于 IP 生成 GeoIP 字段。</li>
+<li><strong>字段过滤</strong>：删除无用字段、重命名字段。</li>
+<li><strong>条件处理</strong>：根据字段内容动态决定是否执行某些操作。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>减轻数据节点负载</strong>
+<ul>
+<li><strong>职责分离</strong>：将计算密集型的预处理任务从 Data 节点剥离，避免影响索引和查询功能。</li>
+<li><strong>资源优化</strong>：专用 Ingest 节点可配置更高 CPU 资源，专注于数据处理。</li>
+</ul>
+</li>
+<li><strong>简化架构</strong>
+<ul>
+<li><strong>替代部分 Logstash 功能</strong>：在不需要复杂 ETL 的场景中，可直接通过 Elasticsearch 完成数据处理，减少外部组件依赖。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="13-近实时nrtnear-real-time">1.3 近实时(NRT，Near Real-Time)</h3>
+<ul>
+<li><strong>Refresh 机制</strong>：内存缓冲区数据每隔一秒(默认)生成新 Segment(文件系统缓存)，实现可搜索</li>
+<li><strong>Translog 持久化</strong>：写入操作记录到事务日志，定期 Flush 到磁盘保证数据安全</li>
+</ul>
+<h3 id="14-查询流程">1.4 查询流程</h3>
+<ol>
+<li><strong>客户端发起请求</strong>
+<ul>
+<li><strong>请求类型</strong>：根据需求，客户端可能发起 Get 请求(通过 ID 获取文档)或 <strong>Search</strong> 请求(复杂查询)</li>
+<li><strong>目标节点</strong>：客户端将请求发送到集群中的任意节点，该节点默认担任<strong>协调节点(Coordinating Node</strong>)</li>
+</ul>
+</li>
+<li><strong>请求路由与分片定位</strong>
+<ul>
+<li><strong>Get by ID</strong>
+<ul>
+<li>协调节点通过<strong>路由算法</strong>(如<code>hash(_id) % number_of_shards</code> )确定文档所在分片</li>
+<li>直接向该分片的<strong>主分片或副本分片</strong>发送请求(副本分片负载均衡)</li>
+</ul>
+</li>
+<li><strong>Search 请求</strong>
+<ul>
+<li>若查询未指定路由，协调节点将请求广播到索引的<strong>所有分片</strong>(主分片或副本分片)</li>
+<li>若指定路由参数，仅查询关联的分片</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>分片本地查询(Query Phase)</strong>
+<ul>
+<li><strong>分片处理</strong>：
+<ul>
+<li>每个分片在本地执行查询，使用<strong>倒排索引</strong>快速匹配词项</li>
+<li>对于搜索请求，分片返回<strong>匹配文档的 ID 和排序值</strong>(如相关性评分)</li>
+<li>分片可能使用缓存(如<strong>分片请求缓存</strong>)加速查询</li>
+</ul>
+</li>
+<li><strong>结果返回</strong>：
+<ul>
+<li>各分片返回本地排序后的 <strong>Top N 结果</strong>(N 有<code>size</code> 参数决定)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>全局结果合并(Coordinating Node)</strong>
+<ul>
+<li><strong>排序与筛选</strong>：
+<ul>
+<li>协调节点收集所有分片的中间结果，按全局排序规则(如相关性评分)合并</li>
+<li>筛选最终** Top N 文档的 ID 列表 **(例如用户请求的 <code>size=10</code> )</li>
+</ul>
+</li>
+<li><strong>分页处理</strong>：
+<ul>
+<li><strong>深度分页优化</strong>：若使用<code>from + size</code> ，协调节点需要合并所有分片的<code>from + size</code> 条数据，内存开销大。推荐使用 <strong>Search After</strong> 或 <strong>Scroll API</strong> 替代</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>获取文档详情(Fetch Phase)</strong>
+<ul>
+<li><strong>二次请求</strong>：
+<ul>
+<li>协调节点根据筛选后的文档 ID，向对应分片发送 <strong>Multi-Get 请求</strong>获取完整文档内容</li>
+<li>分片返回文档的原始数据(如<code>_source</code> 字段)</li>
+</ul>
+</li>
+<li><strong>结果聚合</strong>：
+<ul>
+<li>协调节点将最终结果组装，返回给客户端</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>实时性处理</strong>
+<ul>
+<li><strong>新写入文档可见性</strong>：
+<ul>
+<li><strong>搜索请求</strong>：依赖 <strong>Refresh 机制</strong>(默认1秒生成新 Segment)，未刷新前不可被搜索</li>
+<li><strong>Get 请求</strong>：通过实施读取 <strong>Translog</strong> 可立即获取最新文档，无需等待 Refresh</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>容错与负载均衡</strong>
+<ul>
+<li><strong>副本分片利用</strong>：
+<ul>
+<li>读请求优先分发到副本分片，分担主分片压力，提升吞吐量</li>
+</ul>
+</li>
+<li><strong>故障恢复</strong>：
+<ul>
+<li>若某分片不可用，协调节点自动重试其它副本分片</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>缓存机制优化</strong>
+<ul>
+<li><strong>分片请求缓存</strong>：
+<ul>
+<li>缓存聚合结果或频繁查询的响应(仅对不含<code>now</code> 或动态参数的查询生效)</li>
+</ul>
+</li>
+<li><strong>字段数据缓存</strong>：
+<ul>
+<li>用于排序和聚合的字段数据缓存在内存，加速计算</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="15-写入流程">1.5 写入流程</h3>
+<ol>
+<li><strong>客户端发起写入请求</strong>
+<ul>
+<li><strong>请求类型</strong>：可以是单文档写入(<code>PUT /index/_doc/1</code> )、批量写入(<code>Bulk API</code> )或更新/删除操作</li>
+<li><strong>协调节点选择</strong>：客户端将请求发送到任意节点(默认作为协调节点)</li>
+</ul>
+</li>
+<li><strong>路由计算与主分片定位</strong>
+<ul>
+<li><strong>路由规则</strong>：
+<ul>
+<li>若指定文档 ID，使用哈希算法：<code>hash(_id) % number_of_shards</code> 确定目标分片</li>
+<li>若未指定 ID(自动生成 ID)，Elasticsearch 会随机选择主分片</li>
+</ul>
+</li>
+<li><strong>分片定位</strong>：协调节点根据路由结果，将请求转发到该主分片所在的** Data 节点**</li>
+</ul>
+</li>
+<li><strong>主分片写入处理</strong></li>
+</ol>
+<p><strong>3.1 写入内存缓冲去</strong></p>
+<ul>
+<li><strong>内存缓冲区(Index Buffer)</strong>：
+<ul>
+<li>文档首先被写入主分片的<strong>内存缓冲区</strong></li>
+<li>此时数据<strong>不可被搜索</strong>（尚未生成 Segment）</li>
+</ul>
+</li>
+<li><strong>分词与索引构建</strong>：
+<ul>
+<li>对文档字段进行分词（根据 mapping 定义的分词器）</li>
+<li>生成倒排序索引的临时数据结构</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 写入 Translog (事务日志)</strong></p>
+<ul>
+<li><strong>Translog 作用</strong>：确保数据未持久化到磁盘前不会丢失
+<ul>
+<li>所有写入操作会<strong>同步追加</strong>到 Translog</li>
+<li>Translog 默认每次请求后刷新(<code>index.translog.durability: request</code> )，保证可靠性</li>
+<li>可配置为异步刷新(<code>async</code>)以提高性能，但可能丢失部分数据</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.3 副本分片同步(Replication)</strong></p>
+<ul>
+<li><strong>同步模式</strong>：
+<ul>
+<li><strong>主分片</strong>将写入操作并行发送到所有<strong>副本分片</strong></li>
+<li>副本分片执行相同的写入流程(写入内存缓冲区 + Translog)</li>
+</ul>
+</li>
+<li><strong>写入确认条件</strong>：
+<ul>
+<li>默认要求<strong>多数分片成功</strong>(<code>wait_for_active_shards: quorum</code>)</li>
+<li>若副本分片写入失败，主分片会重试，最终可能标记副本分片为失效</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li><strong>返回客户端响应</strong></li>
+</ol>
+<ul>
+<li><strong>成功条件</strong>：
+<ul>
+<li>主分片和副本分片均为完成内存和 Translog 写入后，协调节点向客户端返回<code>acknowledged: true</code></li>
+</ul>
+</li>
+<li><strong>失败处理</strong>：
+<ul>
+<li>若副本分片不可用，主分片仍会写入，但集群状态变为<code>yellow</code> (副本未分配)</li>
+<li>客户端可能收到<code>ShardFailureException</code> (需重试或处理异常)</li>
+</ul>
+</li>
+</ul>
+<ol start="5">
+<li><strong>近实时搜索实现(Refresh)</strong></li>
+</ol>
+<ul>
+<li><strong>Refresh机制</strong>：
+<ul>
+<li>默认每个<strong>1秒</strong>(<code>index.refresh_interval</code> )，内存缓冲区的数据会生成新的 <strong>Lucene Segment</strong></li>
+<li>Segment 写入<strong>文件系统缓存</strong>(非磁盘)，此时数据可被搜索</li>
+<li>Refresh 操作开销较大，高频写入场景可适当调大间隔(如30秒)</li>
+</ul>
+</li>
+</ul>
+<ol start="6">
+<li><strong>数据持久化(Flush)</strong></li>
+</ol>
+<ul>
+<li><strong>Flush 触发条件</strong>：
+<ul>
+<li>Translog 大小达到阈值(默认512MB，<code>index.translog.flush_threshold_size</code> )</li>
+<li>时间间隔(默认30分钟，<code>index.translog.sync_interval</code> )</li>
+<li>手动调用<code>_flush</code> API</li>
+</ul>
+</li>
+<li><strong>持久化过程</strong>：
+<ul>
+<li>清空内存缓冲区，将所有 Segment 持久化到磁盘</li>
+<li>清空当前 Translog，生成新的 Translog 文件</li>
+<li><strong>Segment 只读</strong>：写入磁盘后不再修改，删除操作通过<code>.del</code> 文件标记</li>
+</ul>
+</li>
+</ul>
+<ol start="7">
+<li>Segment 合并(Merge)</li>
+</ol>
+<ul>
+<li><strong>后台优化</strong>：
+<ul>
+<li>多个 Segment 会被合并为更大的 Segment，提升查询性能</li>
+<li>合并过程自动触发，删除过期文档(如标记为删除的文档)</li>
+<li>合并期间可能占用较多I/O和 CPU 资源</li>
+</ul>
+</li>
+</ul>
+<ol start="8">
+<li><strong>容错与恢复机制</strong></li>
+</ol>
+<ul>
+<li><strong>节点宕机恢复</strong>：
+<ul>
+<li>重启后，通过重放 Translog 恢复未持久化的数据</li>
+<li>若主分片宕机，集群选举新的主分片(优先选择最新数据的副本)</li>
+</ul>
+</li>
+<li><strong>数据一致性</strong>：
+<ul>
+<li>使用<code>_seq_no</code> 和<code>_primary_term</code> 保证写入顺序和冲突解决</li>
+<li>写入时可通过<code>version</code> 参数实现乐观锁控制</li>
+</ul>
+</li>
+</ul>
+<h2 id="3--倒排索引的底层实现">3.  倒排索引的底层实现</h2>
+<p><strong>3.1 核心数据结构</strong></p>
+<ul>
+<li><strong>词典(Term Dictionary)</strong>：
+<ul>
+<li>使用** FST(有限状态转换机)** 压缩存储词项，减少内存占用(Lucene 6.0 后默认)。</li>
+<li>支持快速前缀查询(如通配符<code>*</code>)，但需权衡内存与查询性能。</li>
+</ul>
+</li>
+<li><strong>倒排列表(Postings List)</strong>：
+<ul>
+<li><strong>DocID 列表</strong>：使用差值编码(Delta Encoding)和 **Frame Of Reference(FOR)**压缩。</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>原始ID：100, 200, 300 → 差值：100, 100, 100 → 压缩为单值100 + 重复次数。
+</span></span></code></pre></div><ul>
+<li><strong>词频(TF)与位置(Position)</strong>：使用**位压缩(Bit Packing)和游程编码(RLE)**。</li>
+</ul>
+<p><strong>3.2 倒排索引的局限性</strong></p>
+<ul>
+<li><strong>更新代价高</strong>：文档修改需要重建索引，适合读多写少场景。</li>
+<li><strong>内存压力</strong>：字段数据缓存(如排序字段)可能引发堆内存溢出(需结合<code>doc_values</code> 优化)。</li>
+</ul>
+<h2 id="4-分布式设计的深度剖析">4. 分布式设计的深度剖析</h2>
+<p><strong>4.1 分片策略的权衡</strong></p>
+<ul>
+<li><strong>分片数选择</strong>：
+<ul>
+<li><strong>过少</strong>：单分片数据量大，扩容困难，写入易成瓶颈。</li>
+<li><strong>过多</strong>：元数据管理开销大(每个分片是独立 Lucence 索引)，查询合并成本高。</li>
+<li><strong>黄金法则</strong>：单个分片大小建议在** 10-50GB **，结合数据增长速率设计。</li>
+</ul>
+</li>
+<li><strong>路由优化</strong>：
+<ul>
+<li><strong>自定义路由</strong>：指定<code>routing</code> 参数将相关文档存入同一分片，提升查询效率。</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>PUT /logs/_doc/1?routing=node-1
+</span></span><span style="display:flex;"><span>{ &#34;message&#34;: &#34;error in node-1&#34; }
+</span></span></code></pre></div><ul>
+<li><strong>弊端</strong>：可能导致数据倾斜(如某个路由值数据量过大)</li>
+</ul>
+<p><strong>4.2 分布式一致性模型</strong></p>
+<ul>
+<li><strong>写入一致性</strong>：
+<ul>
+<li><strong>参数</strong>：<code>wait_for_active_shards</code> (默认为<code>quorum</code> ，即<code>(主分片数+副本数)/ 2 + 1)</code> 。</li>
+<li><strong>场景</strong>：若副本分片故障，主分片写入成功后仍返回成功，但集群状态为<code>yellow</code> 。</li>
+</ul>
+</li>
+<li><strong>读一致性</strong>：
+<ul>
+<li><strong>默认最终一致性</strong>：主分片写入成功后，副本分片可能短暂落后。</li>
+<li><strong>强制读主分片</strong>：设置<code>preference=_primary</code> ，但牺牲性能。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.3 脑裂问题与防范</strong></p>
+<ul>
+<li><strong>原因</strong>：网络分区导致多个 Master 节点被选举。</li>
+<li><strong>解决方案</strong>：
+<ul>
+<li><code>discovery.zen.minimun_master_nodes</code> (ES 7.x前)：设置为<code>(master 节点数 / 2)+ 1</code> 。</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-查询流程深度优化">5. 查询流程深度优化</h2>
+<p>5.1 <strong>Query 与 Filter 的执行差异</strong></p>
+<ul>
+<li><strong>Query 上下文</strong>
+<ul>
+<li>计算相关性评分(<code>score</code>)，无法缓存，适合全文搜索</li>
+<li><strong>代价</strong>：频繁访问到排序索引，CPU 消耗高。</li>
+</ul>
+</li>
+<li><strong>Filter 上下文</strong>
+<ul>
+<li>仅判断是否匹配，结果可缓存(使用<code>bitset</code>)，适合精准过滤。</li>
+<li><strong>优化技巧</strong>：将范围查询、<code>term</code> 查询至于<code>filter</code> 中。</li>
+</ul>
+</li>
+</ul>
+<p>5.2 <strong>聚合(Aggregation)的底层实现</strong></p>
+<ul>
+<li><strong>全局排序限制</strong>:
+<ul>
+<li><code>terms</code> 聚合默认返回每个分片的 Top 结果再合并，可能导致精度损失。</li>
+<li><strong>解决方案</strong>：设置<code>size: 10000</code> + <code>shard_size: 50000</code> (增加分片级计算量)。</li>
+</ul>
+</li>
+<li><strong>内存控制</strong>：
+<ul>
+<li>聚合结果构建在堆内存中，需监控<code>fielddata</code> 使用(避免<code>CircuitBreaker</code> 触发)。</li>
+</ul>
+</li>
+</ul>
+<p>5.3 <strong>查询性能优化</strong></p>
+<ul>
+<li><strong>索引设计</strong>：
+<ul>
+<li>使用<code>keyword</code> 类型替代<code>text</code> ，避免分词开销。</li>
+<li>禁用<code>_all</code> 字段(ES 6.0+默认禁用，替换为<code>copy_to</code> )。</li>
+</ul>
+</li>
+<li><strong>查询重写</strong>
+<ul>
+<li><strong>布尔查询顺序</strong>：高选择性条件(如<code>term</code> )放在前面，减少后续计算量。</li>
+<li><strong>分页替代方案</strong>：
+<ul>
+<li><strong>Search After</strong>：利用上一页的排序值(如<code>@timestamp</code> )避免深分页。</li>
+<li><strong>Scroll API</strong>：创建快照上下文，适合离线导出(但消耗资源)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="6-高级调优参数">6. 高级调优参数</h2>
+<table>
+<thead>
+<tr>
+<th><strong>参数</strong></th>
+<th><strong>作用</strong></th>
+<th><strong>推荐值</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>indices.memory.index_buffer_size</strong></td>
+<td>控制索引缓冲区大小(堆内存百分比)</td>
+<td>10%(默认)</td>
+</tr>
+<tr>
+<td><strong>index.refresh_interval</strong></td>
+<td>刷新间隔，影响搜索实时性</td>
+<td><code>30s</code>(写入优化场景)</td>
+</tr>
+<tr>
+<td><strong>index.translog.flush_threshold_size</strong></td>
+<td>Translog刷盘阈值</td>
+<td><code>1gb</code>(高吞吐场景)</td>
+</tr>
+<tr>
+<td><strong>index.merge.scheduler.max_thread_count</strong></td>
+<td>合并线程数(需 SSD 支持)</td>
+<td><code>4</code>(默认)</td>
+</tr>
+<tr>
+<td><strong>search.max_buckets</strong></td>
+<td>聚合返回的最大桶数</td>
+<td><code>100000</code>(大数据聚合场景)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-架构运行相关流程图">6. 架构运行相关流程图</h2>
+<p><a href="images/10ae25fa-00a2-4642-a1ce-f58cfdad9224.svg">drawio</a></p>
+<h2 id="快速问答">快速问答</h2>
+<ol>
+<li><strong>Translog 如何保证数据安全？</strong>
+<ul>
+<li>Translog 使用追加写入(Append-Only)模式，避免随机写磁盘的性能问题</li>
+<li>通过 fsync 系统调度强制刷盘(依赖<code>index.translog.durability</code> 配置)</li>
+<li>崩溃恢复：节点重启时，通过 Translog 重放未持久化到 Lucene Segment 的操作</li>
+<li>源码关联：<code>org.elasticsearch.index.translog.Translog</code> 类处理日志的写入与恢复</li>
+<li>与 Lucene Commit 的关系：Flush 操作会将内存数据生成 Segment 并刷盘，同时清除已提交的 Translog</li>
+</ul>
+</li>
+<li><strong>使用 Bulk API、调大 Refresh 间隔</strong>
+<ul>
+<li>实战案例：在日志系统中，将<code>refresh_interval</code> 设为<code>30s</code> ，写入吞吐量提升 3 倍，但需接受搜索延迟</li>
+<li>参数调优：调整<code>indices.memory.index_buffer_size</code> (默认 10% 堆内存)增加索引缓冲区</li>
+<li>硬件影响：使用 SSD 减少 Flush 耗时，避免写入瓶颈</li>
+<li>监控工具：通过 Kibana Monitoring 观察<code>indexing_rate</code>和<code>merge_time</code> ，针对性优化</li>
+</ul>
+</li>
+<li><strong>Elasticsearch 和关系型数据库的写入区别</strong>
+<ul>
+<li>数据模型：ES 时 Schema-less 的文档模型，支持动态字段；关系数据库需预定义 Schema</li>
+<li>事务性：ES 不支持 ACID 事务，依赖版本号(<code>_version</code> )实现乐观锁</li>
+<li>写入延迟：ES 的 NRT(近实时)vs 数据库的实时可见</li>
+</ul>
+</li>
+<li><strong>Refresh 机制对写入性能的影响</strong>
+<ul>
+<li>Refresh 操作将内存缓冲区中的数据生成新的 Lucene Segment，写入文件系统缓存(非磁盘)，使数据可被搜索)</li>
+<li>频繁 Refresh 会导致产生大量小 Segment，增加 Merge 开销(I/O 和 CPU 竞争)</li>
+<li>日志数据：设置<code>refresh_interval: 30s</code> 甚至<code>-1</code> (关闭自动 Refresh)，通过手动 Refresh 控制搜索可见性</li>
+<li>高查询压力：避免长时间不 Refresh，否则新数据无法被搜索</li>
+<li>监控指标：通过<code>_nodes/states/indices/</code> API 观察<code>refresh_tatol</code> 和<code>refresh_time_in_millis</code> ，评估 Refresh 开销</li>
+</ul>
+</li>
+<li><strong>主分片与副本分片的写入同步</strong>
+<ul>
+<li>主分片写入成功后，会并行向所有副本分片发送写入请求</li>
+<li>副本分片写入成功后，主分片才向客户端返回确认</li>
+<li><code>wait_for_active_shards: quorm</code> (默认)：多数分片(主 + 副本)可用时写入成功</li>
+<li><code>wati_for_active_shards: 1</code> ：仅主分片成功即可(风险：副本可能落后)</li>
+<li>若副本分片写入失败，主分片会向 Master 节点报告，触发分片重分配</li>
+<li>集群状态变为<code>Yellow</code> ，直到副本恢复</li>
+</ul>
+</li>
+<li><strong>设计一个支持亿级日志写入的系统，你会如何规划 ES 集群？</strong>
+<ul>
+<li>分片设计：按时间滚动索引(如<code>logs-2023-10</code> )，单个分片大小控制在 50GB 以内</li>
+<li>写入优化：使用 Bulk API，客户端侧实现批量压缩与重试机制</li>
+<li>硬件规划：独立 Ingest 节点处理数据预处理，Data 节点使用 NVMe SSD</li>
+<li>可靠性：设置<code>index.translog.durability: async</code> ，副本数设为 1</li>
+<li>监控：通过 ILM(索引生命周期管理)自动归档旧索引到冷存储</li>
+</ul>
+</li>
+<li><strong>为什么 Elasticsearch 查询比数据库快？</strong>
+<ul>
+<li>倒排序索引：快速定位文档，避免全表扫描。</li>
+<li>分布式并行：查询拆分到多个分片并行执行。</li>
+<li>文件系统缓存：Segment 文件缓存在 OS Cache，减少磁盘 IO。</li>
+<li>列式存储(<code>doc_values</code> )：优化排序与聚合。</li>
+</ul>
+</li>
+<li><strong>如何处理数据一致性问题？</strong>
+<ul>
+<li>写入一致性：通过<code>wait_for_active_shards</code> 控制最小成功分片数。</li>
+<li>版本控制：
+<ul>
+<li>使用<code>_version</code> 实现乐观锁，避免并发覆盖。</li>
+<li>外部版本号(<code>version_type=external</code> )兼容数据库同步。</li>
+</ul>
+</li>
+<li>读一致性：
+<ul>
+<li><code>preference=_primary</code> ：强制读主分片(强一致性，性能低)。</li>
+<li><code>replication=async</code> ：异步副本更新(最终一致性，性能高)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>如何设计一个高可用 ES 集群？</strong>
+<ul>
+<li>节点角色分离：
+<ul>
+<li>专用 Master 节点（3台，避免脑裂）。</li>
+<li>独立 Data 节点、Ingest 节点、Coordination 节点。</li>
+</ul>
+</li>
+<li>分片策略：
+<ul>
+<li>副本数≥1，跨机架分布（<code>awareness</code> 参数）。</li>
+<li>使用ILM（索引生命周期管理）自动滚动索引。</li>
+</ul>
+</li>
+<li>容灾备份：
+<ul>
+<li>快照（Snapshot）到 S3/NFS，支持跨集群恢复。</li>
+<li>多集群同步（CCR，跨集群复制）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/eureka/">
+		<img class="icon-text" src="/img/prev.svg"/>Eureka</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/springcloudbus/">Spring Cloud Bus<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

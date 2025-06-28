@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>JVM 问题排查 - 小蜜蜂</title>
+
+		<meta name="description" content="可正常运行系统： 通过jmap来查看JVM中各个区域的使用情况 通过jstack来查看线程的运行情况，比如哪些线程阻塞、是否出现死锁 通过jstat来查看垃圾回收情况，特别是fullgc，如果发现fullgc比较频繁，那么就得进行调优 通过各个命令的结果或者jvisualvm等工具来进行分析 首先：初步猜测频发发送fullgc的原因，如果频繁发生fullgc，但是又一直没有出现内存溢出，那么表示fullgc实际上回收了很多对象，所以这些对象最好能在younggc过程中直接回收掉，避免这些对象进入到老年代，对于这种情况，就要考虑这些存活时间不长的对象是不是比较大，导致年轻代放不下，直接进入到老年代，尝试加大年轻代的大小，如果改完之后，fullgc减少，则证明修改有效 同时，还可以找到占用CPU最多的线程，定位到具体的方法，优化这个方法的执行，看是否能避免某些对象的创建，从而节省内存 运行中发生OOM的系统： 一般生产系统中都会设置当前系统发生了OOM时，生成当时的dump文件（-XX:&#43;HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/base） 我们可以利用jvisualvm等工具来分析dump文件 根据dump文件找到异常的实例对象和异常的线程（占用CPU高），定位到具体代码 然后再进行详细的分析和调试 ">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>JVM 问题排查</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 13:16:53 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Java">Java</a>
+				
+				<a href="/tags/JVM">JVM</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h3 id="可正常运行系统">可正常运行系统：</h3>
+<ol>
+<li>通过<code>jmap</code>来查看JVM中各个区域的使用情况</li>
+<li>通过<code>jstack</code>来查看线程的运行情况，比如哪些线程阻塞、是否出现死锁</li>
+<li>通过j<code>stat</code>来查看垃圾回收情况，特别是fullgc，如果发现fullgc比较频繁，那么就得进行调优</li>
+<li>通过各个命令的结果或者<code>jvisualvm</code>等工具来进行分析</li>
+<li>首先：初步猜测频发发送fullgc的原因，如果频繁发生fullgc，但是又一直没有出现内存溢出，那么表示fullgc实际上回收了很多对象，所以这些对象最好能在younggc过程中直接回收掉，避免这些对象进入到老年代，对于这种情况，就要考虑这些存活时间不长的对象是不是比较大，导致年轻代放不下，直接进入到老年代，尝试加大年轻代的大小，如果改完之后，fullgc减少，则证明修改有效</li>
+<li>同时，还可以找到占用CPU最多的线程，定位到具体的方法，优化这个方法的执行，看是否能避免某些对象的创建，从而节省内存</li>
+</ol>
+<hr>
+<h3 id="运行中发生oom的系统">运行中发生OOM的系统：</h3>
+<ol>
+<li>一般生产系统中都会设置当前系统发生了OOM时，生成当时的dump文件（<code>-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/base</code>）</li>
+<li>我们可以利用<code>jvisualvm</code>等工具来分析dump文件</li>
+<li>根据dump文件找到异常的实例对象和异常的线程（占用CPU高），定位到具体代码</li>
+<li>然后再进行详细的分析和调试</li>
+</ol>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/kubernetes/">
+		<img class="icon-text" src="/img/prev.svg"/>Kubernetes 深入浅出</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/eureka/">Eureka<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/synchronized/">Synchronized</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

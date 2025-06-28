@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Spring 三级缓存 - 小蜜蜂</title>
+
+		<meta name="description" content="三级缓存 在 Spring 框架中，三级缓存机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。
+三级缓存的组成： Spring的DefaultSingletonBeanRegistry类三级缓存对象
+private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256); private final Map&lt;String, Object&gt; earlySingletonObjects = new ConcurrentHashMap&lt;&gt;(16); private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new HashMap&lt;&gt;(16); 一级缓存（singletonObjects）：存放完全初始化的单例 Bean 实例。当请求一个 Bean 时，Spring 首先从一级缓存中查找，如果存在，则直接返回实例。 二级缓存（earlySingletonObjects）：存放尚未完全初始化的单例 Bean 实例，通常是指构造函数已执行完毕，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中，以便在依赖注入过程中，其它 Bean 可以获取该 Bean 的早期引用，从而解决循环依赖。 三级缓存（singletonFactories）：存放用于创建单例 Bean 的工厂对象（ObjectFactory）。当 Bean 正在创建过程中，且需要提前暴露其引用时，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取正在创建中的 Bean 的引用。 三级缓存解决下循环依赖的流程 实例化 Bean：当 Spring 需要创建一个 Bean 时，首先会检查一级缓存中是否已有该 Bean 的实例。如果没有，则开始实例化该 Bean。 放入三级缓存：在实例化过程中，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。这样，其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取到正在创建中的 Bean 的引用。 放入二级缓存：当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中。此时，其它 Bean 可以从二级缓存中获取到该 Bean 的早期引用。 放入一级缓存：当 Bean 的属性填充和初始化方法执行完毕后，Spring 会将其放入一级缓存，表示该 Bean 已完全初始化。此时，其它 Bean 可以从一级缓存中获取到该 Bean 的实例。 为什么需要三级缓存？ 虽然二级缓存可以解决大部分循环依赖问题，但在涉及 AOP（面向切面编程）时，三级缓存显得尤为重要。在 AOP 代理的情况下，Bean 的创建过程需要通过代理工厂来生成代理对象。三级缓存缓存中的工厂对象正是用于创建这些代理对象的。如果没有三级缓存，Spring 将无法在 Bean 创建过程中提前暴露代理对象，从而导致循环依赖无法解决。">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Spring 三级缓存</h1>
+	<h5>
+		
+		<time datetime="2018-04-30 22:39:17 &#43;0800 CST">2018年 4月 30日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Spring%20Refresh">Spring Refresh</a>
+				
+				<a href="/tags/Spring">Spring</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="三级缓存">三级缓存</h2>
+<p>在 Spring 框架中，<strong>三级缓存</strong>机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。</p>
+<h3 id="三级缓存的组成">三级缓存的组成：</h3>
+<blockquote>
+<p>Spring的DefaultSingletonBeanRegistry类三级缓存对象</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> singletonObjects <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;</span>(256);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> earlySingletonObjects <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;</span>(16);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, ObjectFactory<span style="color:#f92672">&lt;?&gt;&gt;</span> singletonFactories <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;</span>(16);
+</span></span></code></pre></div><ol>
+<li><strong>一级缓存（<strong><strong>singletonObjects</strong></strong>）</strong>：存放完全初始化的单例 Bean 实例。当请求一个 Bean 时，Spring 首先从一级缓存中查找，如果存在，则直接返回实例。</li>
+<li><strong>二级缓存（<strong><strong>earlySingletonObjects</strong></strong>）</strong>：存放尚未完全初始化的单例 Bean 实例，通常是指构造函数已执行完毕，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中，以便在依赖注入过程中，其它 Bean 可以获取该 Bean 的早期引用，从而解决循环依赖。</li>
+<li><strong>三级缓存（<strong><strong>singletonFactories</strong></strong>）</strong>：存放用于创建单例 Bean 的工厂对象（ObjectFactory）。当 Bean 正在创建过程中，且需要提前暴露其引用时，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取正在创建中的 Bean 的引用。</li>
+</ol>
+<h3 id="三级缓存解决下循环依赖的流程">三级缓存解决下循环依赖的流程</h3>
+<ol>
+<li><strong>实例化 Bean</strong>：当 Spring 需要创建一个 Bean 时，首先会检查一级缓存中是否已有该 Bean 的实例。如果没有，则开始实例化该 Bean。</li>
+<li><strong>放入三级缓存</strong>：在实例化过程中，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。这样，其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取到正在创建中的 Bean 的引用。</li>
+<li><strong>放入二级缓存</strong>：当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中。此时，其它 Bean 可以从二级缓存中获取到该 Bean 的早期引用。</li>
+<li><strong>放入一级缓存</strong>：当 Bean 的属性填充和初始化方法执行完毕后，Spring 会将其放入一级缓存，表示该 Bean 已完全初始化。此时，其它 Bean 可以从一级缓存中获取到该 Bean 的实例。</li>
+</ol>
+<h3 id="为什么需要三级缓存">为什么需要三级缓存？</h3>
+<p>虽然二级缓存可以解决大部分循环依赖问题，但在涉及 AOP（面向切面编程）时，三级缓存显得尤为重要。在 AOP 代理的情况下，Bean 的创建过程需要通过代理工厂来生成代理对象。三级缓存缓存中的工厂对象正是用于创建这些代理对象的。如果没有三级缓存，Spring 将无法在 Bean 创建过程中提前暴露代理对象，从而导致循环依赖无法解决。</p>
+<p>通过引用三级缓存，Spring 能够在 Bean 创建过程中提前暴露代理对象，确保循环依赖能够正确解决。这使得 Spring 在处理复杂的依赖关系时，能够保持高效和灵活。</p>
+<p>总之，Spring 的三级缓存机制通过合理的缓存策略，确保了单例 Bean 在存在循环依赖和 AOP 代理的情况下，能够正确地相互引用，避免了循环依赖导致的错误。</p>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/springcloudsleuth/">
+		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Sleuth</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/rabbitmq/">RabbitMQ 深入浅出<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

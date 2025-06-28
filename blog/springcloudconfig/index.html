@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Spring Cloud Config - 小蜜蜂</title>
+
+		<meta name="description" content="核心概念 （1）什么是 Spring Cloud Config？ Spring Cloud Config 是一个分布式配置管理工具，用于集中管理微服务应用的配置文件 支持从 Git、SVN、本地文件系统等存储后端加载配置 （2）Spring Cloud Config 的组成 Config Server：配置中心服务器，负责从存储后端加载配置并提供客户端 Config Client：配置客户端，从 Config Server 获取配置并应用到应用中。 （3）Spring Cloud Config 的特点 集中化管 将微服务应用的配置文件集中存储在配置中心（如 Git 仓库），便于统一管理和维护 避免配置文件分散在各个微服务中，降低管理成本 动态刷新 支持配置的动态刷新，无需重启应用 通过 Spring Cloud Bus 或者手动出发 /actuator/refresh 端点实现配置的动态更新 多环境支持 支持不同环境（如 dev、test、prod）的配置文件 通过 spring.profiles.active 指定当前环境，自动加载对应配置 安全性 支持配置文件的加密和解密，保护敏感信息（如数据库密码、API 密钥等）。 使用对称加密（如 AES）或非对称加密（如 RSA）对配置文件中的敏感字段进行加密 版本控制 Git 集成：Spring Cloud Config 默认支持 Git 作为存储后端，天然具备版本控制能力 可以查看配置文件提交历史，方便回滚到之前的版本 支持分支和标签，便于管理不同版本的配置 SVN 集成：如果需要，也可以使用 SVN 作为存储后端，同样支持版本控制 权限控制 Git 仓库权限：通过 Git 仓库的权限控制机制（如 GitHub/GitLab 的访问令牌、SSH 密钥等），限制对配置文件的访问 只对授权的用户或者服务才能拉取配置文件 Config Server 权限：可以通过 Spring Security 对 Config Server 的访问进行权限控制 例如：限制只有特定的微服务或者用户才能访问 Config Server 的配置接口 高可用性 Config Server 支持集群部署，避免单点故障 通过 Eureka 注册中心实现 Config Server 的自动发现和负载均衡 多种存储后端支持 支持 Git、SVN、本地文件系统、JDBC、Vault 等多种存储后端 根据实际需求选择合适的存储后端 工作原理 （1）Config Server Config Server 从存储后端（如 Git）加载配置文件 通过 Http 接口将配置提供给 Config Client （2）Config Client Config Client 在启动时从 Config Server 获取配置 支持配置的动态刷新（通过 Spring Cloud Bus 或手动触发） （3）配置文件的加载顺序 Config Client 会按照一下顺序加载配置： bootstrap.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Spring Cloud Config</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 15:40:53 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Spring%20Cloud%20Config">Spring Cloud Config</a>
+				
+				<a href="/tags/Spring%20Cloud">Spring Cloud</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="核心概念">核心概念</h2>
+<h3 id="1什么是-spring-cloud-config">（1）什么是 Spring Cloud Config？</h3>
+<ul>
+<li>Spring Cloud Config 是一个分布式配置管理工具，用于集中管理微服务应用的配置文件</li>
+<li>支持从 Git、SVN、本地文件系统等存储后端加载配置</li>
+</ul>
+<h3 id="2spring-cloud-config-的组成">（2）Spring Cloud Config 的组成</h3>
+<ul>
+<li>Config Server：配置中心服务器，负责从存储后端加载配置并提供客户端</li>
+<li>Config Client：配置客户端，从 Config Server 获取配置并应用到应用中。</li>
+</ul>
+<h3 id="3spring-cloud-config-的特点">（3）Spring Cloud Config 的特点</h3>
+<ol>
+<li>集中化管
+<ul>
+<li>将微服务应用的配置文件集中存储在配置中心（如 Git 仓库），便于统一管理和维护</li>
+<li>避免配置文件分散在各个微服务中，降低管理成本</li>
+</ul>
+</li>
+<li>动态刷新
+<ul>
+<li>支持配置的动态刷新，无需重启应用</li>
+<li>通过 Spring Cloud Bus 或者手动出发 <strong>/actuator/refresh</strong> 端点实现配置的动态更新</li>
+</ul>
+</li>
+<li>多环境支持
+<ul>
+<li>支持不同环境（如 dev、test、prod）的配置文件</li>
+<li>通过 spring.profiles.active 指定当前环境，自动加载对应配置</li>
+</ul>
+</li>
+<li>安全性
+<ul>
+<li>支持配置文件的加密和解密，保护敏感信息（如数据库密码、API 密钥等）。</li>
+<li>使用对称加密（如 AES）或非对称加密（如 RSA）对配置文件中的敏感字段进行加密</li>
+</ul>
+</li>
+<li>版本控制
+<ul>
+<li>Git 集成：Spring Cloud Config 默认支持 Git 作为存储后端，天然具备版本控制能力
+<ul>
+<li>可以查看配置文件提交历史，方便回滚到之前的版本</li>
+<li>支持分支和标签，便于管理不同版本的配置</li>
+</ul>
+</li>
+<li>SVN 集成：如果需要，也可以使用 SVN 作为存储后端，同样支持版本控制</li>
+</ul>
+</li>
+<li>权限控制
+<ul>
+<li>Git 仓库权限：通过 Git 仓库的权限控制机制（如 GitHub/GitLab 的访问令牌、SSH 密钥等），限制对配置文件的访问
+<ul>
+<li>只对授权的用户或者服务才能拉取配置文件</li>
+</ul>
+</li>
+<li>Config Server 权限：可以通过 Spring Security 对 Config Server 的访问进行权限控制
+<ul>
+<li>例如：限制只有特定的微服务或者用户才能访问 Config Server 的配置接口</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>高可用性
+<ul>
+<li>Config Server 支持集群部署，避免单点故障</li>
+<li>通过 Eureka 注册中心实现 Config Server 的自动发现和负载均衡</li>
+</ul>
+</li>
+<li>多种存储后端支持
+<ul>
+<li>支持 Git、SVN、本地文件系统、JDBC、Vault 等多种存储后端</li>
+<li>根据实际需求选择合适的存储后端</li>
+</ul>
+</li>
+</ol>
+<h2 id="工作原理">工作原理</h2>
+<h3 id="1config-server">（1）Config Server</h3>
+<ul>
+<li>Config Server 从存储后端（如 Git）加载配置文件</li>
+<li>通过 Http 接口将配置提供给 Config Client</li>
+</ul>
+<h3 id="2config-client">（2）Config Client</h3>
+<ul>
+<li>Config Client 在启动时从 Config Server 获取配置</li>
+<li>支持配置的动态刷新（通过 Spring Cloud Bus 或手动触发）</li>
+</ul>
+<h3 id="3配置文件的加载顺序">（3）配置文件的加载顺序</h3>
+<ul>
+<li>Config Client 会按照一下顺序加载配置：
+<ol>
+<li><strong>bootstrap.yml</strong> （或 <strong>bootstrap.properties</strong>）：用于加载 Config Server 的地址和应用名称</li>
+<li>Config Server 返回的配置</li>
+<li>本地的 <strong>application.yml</strong>（或 <strong>application.properties</strong>）</li>
+</ol>
+</li>
+</ul>
+<h2 id="spring-cloud-config-的配置">Spring Cloud Config 的配置</h2>
+<h3 id="1config-server-配置">（1）Config Server 配置</h3>
+<ul>
+<li>pom.xml 依赖：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-config-server<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><ul>
+<li>application.yml 配置：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">server</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">port</span>: <span style="color:#ae81ff">8888</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">config</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">server</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">git</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">https://github.com/your-repo/config-repo.git</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">search-paths</span>: <span style="color:#ae81ff">config-files</span>
+</span></span></code></pre></div><ul>
+<li>启动类</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableConfigServer</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConfigServerApplication</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
+</span></span><span style="display:flex;"><span>        SpringApplication.<span style="color:#a6e22e">run</span>(ConfigServerApplication.<span style="color:#a6e22e">class</span>, args);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="2config-client-配置">（2）Config Client 配置</h3>
+<ul>
+<li>pom.xml 依赖：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-config<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><ul>
+<li>bootstrap.yml 配置：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">application</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-app</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">config</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">http://localhost:8888</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">profile</span>: <span style="color:#ae81ff">dev</span>
+</span></span></code></pre></div><ul>
+<li>启动类：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConfigClientApplication</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
+</span></span><span style="display:flex;"><span>        SpringApplication.<span style="color:#a6e22e">run</span>(ConfigClientApplication.<span style="color:#a6e22e">class</span>, args);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="spring-cloud-config-的使用场景">Spring Cloud Config 的使用场景</h2>
+<h3 id="1集中化管理配置文件">（1）集中化管理配置文件</h3>
+<ul>
+<li>将微服务应用的配置文件集中存储在配置中心，便于管理和维护</li>
+</ul>
+<h3 id="2多环境支持">（2）多环境支持</h3>
+<ul>
+<li>支持不同环境（如 dev、test、prod）的配置文件，避免手动切换配置</li>
+</ul>
+<h3 id="3动态刷新配置">（3）动态刷新配置</h3>
+<ul>
+<li>支持配置的动态刷新，无需重启应用、</li>
+</ul>
+
+<div class="mermaid my-8">
+  graph TD;
+    A[客户端调用 /actuator/refresh 端点] --> B[RefreshEndpoint.refresh]
+    B --> C[RefreshScope.refreshAll]
+    C --> D[销毁 &#64RefreshScope 标记的 Bean]
+    D --> E[重新初始化 Bean]
+    E --> F[配置更新完成]
+</div><hr>
+
+<div class="mermaid my-8">
+  graph TD;
+    A[Config Server 接收到刷新请求] --> B[通过 RabbitMQ 发送刷新事件]
+    B --> C[Config Client 接收到刷新事件]
+    C --> D[RefreshScope.refreshAll]
+    D --> E[销毁 &#64RefreshScope 标记的 Bean]
+    E --> F[重新初始化 Bean]
+    F --> G[配置更新完成]
+</div><h3 id="4安全性">（4）安全性</h3>
+<ul>
+<li>支持配置文件的加密和解密，保护敏感信息</li>
+</ul>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/springcloudbus/">
+		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Bus</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/garbagecollector/">垃圾回收器<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/springcloudbus/">Spring Cloud Bus</a></li>
+  	
+  	<li><a href="/blog/eureka/">Eureka</a></li>
+  	
+  	<li><a href="/blog/ribbon/">Ribbon</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+  <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: isDarkMode ? 'dark' : 'default',
+        securityLevel: 'loose',
+        fontFamily: "'Source Sans Pro', sans-serif",
+        flowchart: { 
+          curve: 'basis',
+          htmlLabels: true
+        }
+      });
+      
+      mermaid.run({
+        querySelector: '.mermaid',
+        suppressErrors: true
+      });
+    });
+  </script>
+  
+</footer>

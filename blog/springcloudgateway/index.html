@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Spring Cloud Gateway - 小蜜蜂</title>
+
+		<meta name="description" content="Spring Cloud Gateway 核心原理 架构组成 Client -&gt; Gateway -&gt; Route Predicate -&gt; Gateway Filter -&gt; Target Service 核心概念 Route：路由，包含、目标 URI、Predicate 结合和 Filter 集合 Predicate：断言，用于匹配 Http 请求 Filter：过滤器，用于修改请求和响应 工作流程 1. 客户端发起请求 2. Gateway Handler Mapping 查找匹配的路由 3. 执行 Gateway Filter 链（pre filters） 4. 代理请求到目标服务 5. 执行 Gateway Filter 链（post filters） 6. 返回响应给客户端 关键组件 RouteLocator：路由定位器 GatewayFilter：网关过滤器 RoutePredicateHandlerMapping：路由断言处理器映射 WebHandler：Web 请求处理器 重要知识点 Spring Cloud Gateway 和 Zuul 的区别是什么？ 架构模型：Gateway 是异步非阻塞，Zuul 1.x 是同步阻塞 性能：Gateway 性能更高 过滤器：Gateway 的过滤器更轻量 协议支持：Gateway 原生支持 HTTP/2 Gateway 的核心组件有哪些？ Route Predicate Filter RouteLocator GatewayFilterFactory 如何自定义过滤器 // .">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Spring Cloud Gateway</h1>
+	<h5>
+		
+		<time datetime="2018-04-26 23:13:45 &#43;0800 CST">2018年 4月 26日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Spring%20Cloud%20Gateway">Spring Cloud Gateway</a>
+				
+				<a href="/tags/Spring%20Cloud">Spring Cloud</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="spring-cloud-gateway-核心原理">Spring Cloud Gateway 核心原理</h2>
+<ol>
+<li>架构组成</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>Client -&gt; Gateway -&gt; Route Predicate -&gt; Gateway Filter -&gt; Target Service
+</span></span></code></pre></div><ol start="2">
+<li>核心概念</li>
+</ol>
+<ul>
+<li>Route：路由，包含、目标 URI、Predicate 结合和 Filter 集合</li>
+<li>Predicate：断言，用于匹配 Http 请求</li>
+<li>Filter：过滤器，用于修改请求和响应</li>
+</ul>
+<ol start="3">
+<li>工作流程</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>1. 客户端发起请求
+</span></span><span style="display:flex;"><span>2. Gateway Handler Mapping 查找匹配的路由
+</span></span><span style="display:flex;"><span>3. 执行 Gateway Filter 链（pre filters）
+</span></span><span style="display:flex;"><span>4. 代理请求到目标服务
+</span></span><span style="display:flex;"><span>5. 执行 Gateway Filter 链（post filters）
+</span></span><span style="display:flex;"><span>6. 返回响应给客户端
+</span></span></code></pre></div><ol start="4">
+<li>关键组件</li>
+</ol>
+<ul>
+<li>RouteLocator：路由定位器</li>
+<li>GatewayFilter：网关过滤器</li>
+<li>RoutePredicateHandlerMapping：路由断言处理器映射</li>
+<li>WebHandler：Web 请求处理器</li>
+</ul>
+<h2 id="重要知识点">重要知识点</h2>
+<ol>
+<li>Spring Cloud Gateway 和 Zuul 的区别是什么？
+<ul>
+<li>架构模型：Gateway 是异步非阻塞，Zuul 1.x 是同步阻塞</li>
+<li>性能：Gateway 性能更高</li>
+<li>过滤器：Gateway 的过滤器更轻量</li>
+<li>协议支持：Gateway 原生支持 HTTP/2</li>
+</ul>
+</li>
+<li>Gateway 的核心组件有哪些？
+<ul>
+<li>Route</li>
+<li>Predicate</li>
+<li>Filter</li>
+<li>RouteLocator</li>
+<li>GatewayFilterFactory</li>
+</ul>
+</li>
+<li>如何自定义过滤器</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CustomFilter</span> <span style="color:#66d9ef">implements</span> GatewayFilter, Ordered {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Mono<span style="color:#f92672">&lt;</span>Void<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">filter</span>(ServerWebExchange exchange, GatewayFilterChain chain) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 前置处理</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> chain.<span style="color:#a6e22e">filter</span>(exchange).<span style="color:#a6e22e">then</span>(Mono.<span style="color:#a6e22e">fromRunnable</span>(() <span style="color:#f92672">-&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 后置处理</span>
+</span></span><span style="display:flex;"><span>        }));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getOrder</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span>1; <span style="color:#75715e">// 过滤器顺序</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span></code></pre></div><ol start="4">
+<li>Gateway 如何实现负载均衡？
+<ul>
+<li>集成 Spring Cloud LoadBalancer</li>
+<li>使用 <strong>lb://service-id</strong> 格式的 URI</li>
+<li>自动从注册中心获取服务实例</li>
+</ul>
+</li>
+<li>如何实现限流
+<ul>
+<li>使用 RequestRateLimiter GatewayFilter</li>
+<li>集成 Redis 实现分布式限流</li>
+<li>配置示例：</li>
+</ul>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">limit_route</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">http://example.org</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">RequestRateLimiter</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">redis-rate-limiter.replenishRate</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">redis-rate-limiter.burstCapacity</span>: <span style="color:#ae81ff">20</span>
+</span></span></code></pre></div><ol start="6">
+<li>Gateway 如何实现熔断？
+<ul>
+<li>使用 Hystrix GatewayFilter</li>
+<li>配置 fallback 机制</li>
+<li>示例：</li>
+</ul>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">hystrix_route</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">lb://backing-service:8088</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Hystrix</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">fallbackcmd</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">fallbackUri</span>: <span style="color:#ae81ff">forward:/fallback</span>
+</span></span></code></pre></div><ol start="7">
+<li>如何实现动态路由？
+<ul>
+<li>实现 RouteDefinitionRepository 接口</li>
+<li>从数据库或配置中心加载路由配置</li>
+<li>支持实时更新路由规则</li>
+</ul>
+</li>
+<li>Gateway 的安全机制有哪些？
+<ul>
+<li>集成 Spring Security</li>
+<li>支持 OAuth2、JWT 等认证方式</li>
+<li>支持 HTTPS</li>
+<li>支持 IP 白名单</li>
+</ul>
+</li>
+<li>Gateway 的监控如何实现？
+<ul>
+<li>集成 Actuator</li>
+<li>使用 Micrometer 收集指标</li>
+<li>支持 Prometheus 监控</li>
+<li>提供 /actuator/gateway 端点</li>
+</ul>
+</li>
+<li>Gateway 如何处理跨域问题？</li>
+</ol>
+<ul>
+<li>配置全局 CORS</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">globalcors</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">cors-configurations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#39;[/**]&#39;</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedOrigins</span>: <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedMethods</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">GET</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">POST</span>
+</span></span></code></pre></div>
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/zookeeper/">
+		<img class="icon-text" src="/img/prev.svg"/>ZooKeeper</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/springcloudsleuth/">Spring Cloud Sleuth<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/zookeeper/">ZooKeeper</a></li>
+  	
+  	<li><a href="/blog/hystrix/">Hystrix</a></li>
+  	
+  	<li><a href="/blog/feign/">Feign</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

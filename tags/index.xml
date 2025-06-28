@@ -2,212 +2,215 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 小蜜蜂</title>
-    <link>https://xumf.github.io/tags/</link>
+    <link>http://xumf.net/tags/</link>
     <description>Recent content in Tags on 小蜜蜂</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo 0.125.1</generator>
+    <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Fri, 09 Jul 2021 23:36:22 +0800</lastBuildDate>
-    
-	<atom:link href="https://xumf.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <atom:link href="http://xumf.net/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>iptv</title>
-      <link>https://xumf.github.io/tags/iptv/</link>
-      <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/iptv/</guid>
+      <title>Java</title>
+      <link>http://xumf.net/tags/java/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/java/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>net</title>
-      <link>https://xumf.github.io/tags/net/</link>
-      <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/net/</guid>
+      <title>JVM</title>
+      <link>http://xumf.net/tags/jvm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/jvm/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>blog</title>
-      <link>https://xumf.github.io/tags/blog/</link>
-      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/blog/</guid>
+      <title>Spring</title>
+      <link>http://xumf.net/tags/spring/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>opini</title>
-      <link>https://xumf.github.io/tags/opini/</link>
-      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/opini/</guid>
+      <title>SpringBoot</title>
+      <link>http://xumf.net/tags/springboot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/springboot/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>tutorial</title>
-      <link>https://xumf.github.io/tags/tutorial/</link>
-      <pubDate>Wed, 09 May 2018 23:36:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/tutorial/</guid>
+      <title>Spring Cloud</title>
+      <link>http://xumf.net/tags/spring-cloud/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring-cloud/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>linux</title>
-      <link>https://xumf.github.io/tags/linux/</link>
-      <pubDate>Mon, 07 May 2018 23:04:30 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/linux/</guid>
+      <title>Zuul</title>
+      <link>http://xumf.net/tags/zuul/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/zuul/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>Centos</title>
-      <link>https://xumf.github.io/tags/centos/</link>
-      <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/centos/</guid>
+      <title>Zipkin</title>
+      <link>http://xumf.net/tags/zipkin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/zipkin/</guid>
       <description></description>
     </item>
-    
+    <item>
+      <title>MQ</title>
+      <link>http://xumf.net/tags/mq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/mq/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Nacos</title>
+      <link>http://xumf.net/tags/nacos/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/nacos/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>RabbitMQ</title>
+      <link>http://xumf.net/tags/rabbitmq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/rabbitmq/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Refresh</title>
+      <link>http://xumf.net/tags/spring-refresh/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring-refresh/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Cloud Sleuth</title>
+      <link>http://xumf.net/tags/spring-cloud-sleuth/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring-cloud-sleuth/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Cloud Gateway</title>
+      <link>http://xumf.net/tags/spring-cloud-gateway/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring-cloud-gateway/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>ZooKeeper</title>
+      <link>http://xumf.net/tags/zookeeper/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/zookeeper/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Hystrix</title>
+      <link>http://xumf.net/tags/hystrix/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/hystrix/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Database</title>
+      <link>http://xumf.net/tags/database/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/database/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Feign</title>
+      <link>http://xumf.net/tags/feign/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/feign/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>GC</title>
+      <link>http://xumf.net/tags/gc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/gc/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>HBase</title>
+      <link>http://xumf.net/tags/hbase/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/hbase/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Cloud Config</title>
+      <link>http://xumf.net/tags/spring-cloud-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring-cloud-config/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Cloud Bus</title>
+      <link>http://xumf.net/tags/spring-cloud-bus/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/spring-cloud-bus/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Docker</title>
-      <link>https://xumf.github.io/tags/docker/</link>
-      <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/docker/</guid>
+      <link>http://xumf.net/tags/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/docker/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>JIRA</title>
-      <link>https://xumf.github.io/tags/jira/</link>
-      <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/jira/</guid>
+      <title>ElasticSearch</title>
+      <link>http://xumf.net/tags/elasticsearch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/elasticsearch/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>postgresql</title>
-      <link>https://xumf.github.io/tags/postgresql/</link>
-      <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/postgresql/</guid>
+      <title>Eureka</title>
+      <link>http://xumf.net/tags/eureka/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/eureka/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>centos7</title>
-      <link>https://xumf.github.io/tags/centos7/</link>
-      <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/centos7/</guid>
+      <title>Kubernetes</title>
+      <link>http://xumf.net/tags/kubernetes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/kubernetes/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>l2tp</title>
-      <link>https://xumf.github.io/tags/l2tp/</link>
-      <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/l2tp/</guid>
+      <title>Lock</title>
+      <link>http://xumf.net/tags/lock/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/lock/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>vpn</title>
-      <link>https://xumf.github.io/tags/vpn/</link>
-      <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/vpn/</guid>
+      <title>Netty</title>
+      <link>http://xumf.net/tags/netty/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/netty/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>Vultr</title>
-      <link>https://xumf.github.io/tags/vultr/</link>
-      <pubDate>Mon, 30 Apr 2018 22:39:17 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/vultr/</guid>
+      <title>Server</title>
+      <link>http://xumf.net/tags/server/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/server/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>github</title>
-      <link>https://xumf.github.io/tags/github/</link>
-      <pubDate>Sat, 28 Apr 2018 13:54:50 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/github/</guid>
+      <title>Ribbon</title>
+      <link>http://xumf.net/tags/ribbon/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://xumf.net/tags/ribbon/</guid>
       <description></description>
     </item>
-    
-    <item>
-      <title>java</title>
-      <link>https://xumf.github.io/tags/java/</link>
-      <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/java/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>spring</title>
-      <link>https://xumf.github.io/tags/spring/</link>
-      <pubDate>Thu, 26 Apr 2018 23:13:45 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/spring/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Rabbitmq</title>
-      <link>https://xumf.github.io/tags/rabbitmq/</link>
-      <pubDate>Sun, 22 Apr 2018 22:21:04 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/rabbitmq/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>redis</title>
-      <link>https://xumf.github.io/tags/redis/</link>
-      <pubDate>Sun, 22 Apr 2018 15:43:54 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/redis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>maven</title>
-      <link>https://xumf.github.io/tags/maven/</link>
-      <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/maven/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>tomcat</title>
-      <link>https://xumf.github.io/tags/tomcat/</link>
-      <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/tomcat/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>work</title>
-      <link>https://xumf.github.io/tags/work/</link>
-      <pubDate>Thu, 19 Apr 2018 21:09:25 +0800</pubDate>
-      
-      <guid>https://xumf.github.io/tags/work/</guid>
-      <description></description>
-    </item>
-    
   </channel>
 </rss>

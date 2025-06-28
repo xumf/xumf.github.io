@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>JMM - 小蜜蜂</title>
+
+		<meta name="description" content="Java Memory Model">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>JMM</h1>
+	<h5>
+		
+		<time datetime="2021-07-09 23:36:22 &#43;0800 CST">2021年 7月 09日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Java">Java</a>
+				
+				<a href="/tags/JVM">JVM</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h3 id="1基本操作流程单线程">1：基本操作流程（单线程）</h3>
+
+<div class="mermaid my-8">
+  sequenceDiagram
+    participant 主内存
+    participant 工作内存
+    participant 线程
+
+    Note over 主内存,工作内存: 读取变量（主内存 → 工作内存）
+    线程 ->> 主内存: read(var)
+    主内存 -->> 工作内存: 传输变量值
+    线程 ->> 工作内存: load(var)
+
+    Note over 工作内存: 修改变量（工作内存内操作）
+    线程 ->> 工作内存: assign(var, newValue)
+
+    Note over 工作内存,主内存: 写回变量（工作内存 → 主内存）
+    线程 ->> 工作内存: store(var)
+    工作内存 -->> 主内存: 传输变量值
+    线程 ->> 主内存: write(var)
+</div><h3 id="2多线程下的原子性问题">2：多线程下的原子性问题</h3>
+
+<div class="mermaid my-8">
+  sequenceDiagram
+    participant 主内存
+    participant 工作内存A
+    participant 线程A
+    participant 工作内存B
+    participant 线程B
+
+    rect rgba(255, 0, 0, 0.1)
+        Note left of 线程A: 线程A操作
+        线程A ->> 主内存: read(var)
+        主内存 -->> 工作内存A: var=0
+        线程A ->> 工作内存A: load(var)
+        线程A ->> 工作内存A: assign(var, 1)
+        线程A ->> 工作内存A: store(var)
+        工作内存A -->> 主内存: 准备写入var=1
+    end
+
+    rect rgba(0, 255, 0, 0.1)
+        Note right of 线程B: 线程B操作（插入A的store→write之间）
+        线程B ->> 主内存: read(var)（主内存仍为0）
+        主内存 -->> 工作内存B: var=0
+        线程B ->> 工作内存B: load(var)
+        线程B ->> 工作内存B: assign(var, 1)
+        线程B ->> 工作内存B: store(var)
+        工作内存B -->> 主内存: 写入var=1
+        主内存 -->> 线程B: write(var)完成
+    end
+
+    rect rgba(255, 0, 0, 0.1)
+        Note left of 线程A: 线程A完成写入（被覆盖）
+        主内存 -->> 线程A: write(var)（最终var=1，预期为2）
+    end
+</div><h3 id="3同步机制下的原子性保证如volatile">3：同步机制下的原子性保证（如volatile）</h3>
+
+<div class="mermaid my-8">
+  sequenceDiagram
+    participant 主内存
+    participant 工作内存A
+    participant 线程A
+    participant 工作内存B
+    participant 线程B
+
+    rect rgba(0, 255, 0, 0.1)
+        Note left of 线程A: 线程A操作（volatile变量）
+        线程A ->> 主内存: read(var)
+        主内存 -->> 工作内存A: var=0
+        线程A ->> 工作内存A: load(var)
+        线程A ->> 工作内存A: assign(var, 1)
+        线程A ->> 工作内存A: store(var)
+        工作内存A -->> 主内存: 立即写入var=1
+        主内存 -->> 线程A: write(var)完成
+    end
+
+    rect rgba(0, 0, 255, 0.1)
+        Note right of 线程B: 线程B操作（强制读取最新值）
+        线程B ->> 主内存: read(var)（必须读取var=1）
+        主内存 -->> 工作内存B: var=1
+        线程B ->> 工作内存B: load(var)
+    end
+</div><h3 id="关键说明">‌关键说明‌</h3>
+<ol>
+<li>‌基本流程‌：</li>
+</ol>
+<ul>
+<li>read→load 是主内存到工作内存的同步。</li>
+<li>store→write 是工作内存到主内存的同步。</li>
+<li>assign 是工作内存内的赋值操作。</li>
+</ul>
+<ol start="2">
+<li>‌多线程原子性问题‌：</li>
+</ol>
+<ul>
+<li>未同步时，store→write 和 read→load 可能被其他线程中断，导致最终结果不符合预期。</li>
+</ul>
+<ol start="3">
+<li>同步机制作用‌：</li>
+</ol>
+<ul>
+<li>volatile 强制 store→write 和 read→load 的原子性，确保修改对其他线程立即可见。</li>
+</ul>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/springbootstartflow/">
+		<img class="icon-text" src="/img/prev.svg"/>SpringBoot 启动流程</a>
+
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/garbagecollector/">垃圾回收器</a></li>
+  	
+  	<li><a href="/blog/jvmissuesolution/">JVM 问题排查</a></li>
+  	
+  	<li><a href="/blog/synchronized/">Synchronized</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+  <script src="https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: isDarkMode ? 'dark' : 'default',
+        securityLevel: 'loose',
+        fontFamily: "'Source Sans Pro', sans-serif",
+        flowchart: { 
+          curve: 'basis',
+          htmlLabels: true
+        }
+      });
+      
+      mermaid.run({
+        querySelector: '.mermaid',
+        suppressErrors: true
+      });
+    });
+  </script>
+  
+</footer>
