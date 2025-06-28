@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zipkin on 小蜜蜂</title>
+    <link>http://xumf.net/tags/zipkin/</link>
+    <description>Recent content in Zipkin on 小蜜蜂</description>
+    <generator>Hugo 0.125.1</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
+    <lastBuildDate>Thu, 03 May 2018 22:19:24 +0800</lastBuildDate>
+    <atom:link href="http://xumf.net/tags/zipkin/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Zipkin</title>
+      <link>http://xumf.net/blog/zipkin/</link>
+      <pubDate>Thu, 03 May 2018 22:19:24 +0800</pubDate>
+      <guid>http://xumf.net/blog/zipkin/</guid>
+      <description>Zipkin 核心原理 1. 架构组成 +-----------+ +-----------+ +-----------+ | Collector | &amp;lt;-- | Reporter | &amp;lt;-- | Instrument| +-----------+ +-----------+ +-----------+ | | v v +-----------+ +-----------+ | Storage | | UI | +-----------+ +-----------+ 2. 核心概念 Trace：一次完整的请求链路 span：一个工作单元 Annotation：关键事件标记 BinaryAnnotation：附加的键值信息 1. cs (Client Sent): 客户端发送请求的时间。 2. sr (Server Received): 服务器接收到请求的时间。 3. ss (Server Sent): 服务器发送响应的时间。 4. cr (Client Received): 客户端接收到响应的时间。 5. ca (Client Address): 客户端的地址信息。 6. sa (Server Address): 服务器的地址信息。 7.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>SpringBoot 启动流程 - 小蜜蜂</title>
+
+		<meta name="description" content="核心的 BeanPostProcessor AutowiredAnnotationBeanPostProcessor 作用：处理@Autowired 、@Value 、@Inject 等注解，实现依赖注入。 触发时机： postProcessBeforeInitialization：在 Bean 初始化之前，解析并注入依赖 postProcessAfterInitialization：在 Bean 初始化之后，通常不执行额外逻辑 源码类：org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor CommonAnnotationBeanPostProcessor 作用：处理 JSR-250 标准注解，如 @Resource 、@PostConstruct 、@PreDestory @Resource ：按名称或类型注入 Bean @PostConstruct ：在 Bean 初始化后执行 @PreDestory ：在 Bean 销毁前执行 触发时机： postProcessBeforeInitialization：在 Bean 初始化之前，处理 @PostConstruct 注解的方法 postProcessAfterInitialization：在 Bean 初始化之后，处理 @PreDestroy 注解的方法 源码类：org.springframework.context.annotation.CommonAnnotationBeanPostProcessor RequiredAnnotationBeanPostProcessor 作用：检查 @Required 注解标注的属性是否已注入，未注入则抛出异常 触发时机： postProcessoBeforeInitialization：在 Bean 初始化前，检查 @Required 属性是否已注入 源码类：org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor ApplicationContextAwareProcessor 作用：处理 ApplicationContextAware 接口，向 Bean 注入 ApplicationContext 触发时机： postProcessorBeforeInitialization：在 Bean 初始化之前，调用 setApplicationContext() 方法 源码类：org.springframework.context.support.ApplicationContextAwareProcessor InitDestroyAnnotationBeanPostProcessor 作用：处理 @PostConstruct 和 @PreDestory 注解，分别在 Bean 初始化和销毁时执行 触发时机： postProcessBeforeInitialization ：在 Bean 初始化之前，执行 @PostConstruct 注解的方法 postProcessAfterInitialization：在 Bean 初始化之后，注册 @PreDestory 注解的方法，以便在 Bean 销毁时执行 InfrastructureAdvisorAutoProxyCreator 作用：为 Bean 创建代理，支持 AOP （面向切面编程） 触发时机： postProcessAfterInitialization：在 Bean 初始化之后，根据切面规则生成代理对象 源码类：org.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>SpringBoot 启动流程</h1>
+	<h5>
+		
+		<time datetime="2018-05-09 23:36:22 &#43;0800 CST">2018年 5月 09日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Spring">Spring</a>
+				
+				<a href="/tags/SpringBoot">SpringBoot</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h3 id="核心的-beanpostprocessor">核心的 BeanPostProcessor</h3>
+<ol>
+<li><code>AutowiredAnnotationBeanPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理<code>@Autowired</code> 、<code>@Value</code> 、<code>@Inject</code> 等注解，实现依赖注入。</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessBeforeInitialization</strong>：在 Bean 初始化之前，解析并注入依赖</li>
+<li><strong>postProcessAfterInitialization</strong>：在 Bean 初始化之后，通常不执行额外逻辑</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor</code></li>
+</ul>
+</li>
+<li><code>CommonAnnotationBeanPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理 JSR-250 标准注解，如 <code>@Resource</code> 、<code>@PostConstruct</code> 、<code>@PreDestory</code>
+<ul>
+<li><code>@Resource</code> ：按名称或类型注入 Bean</li>
+<li><code>@PostConstruct</code> ：在 Bean 初始化后执行</li>
+<li><code>@PreDestory</code> ：在 Bean 销毁前执行</li>
+</ul>
+</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessBeforeInitialization</strong>：在 Bean 初始化之前，处理 <code>@PostConstruct</code> 注解的方法</li>
+<li><strong>postProcessAfterInitialization</strong>：在 Bean 初始化之后，处理 <code>@PreDestroy</code> 注解的方法</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.context.annotation.CommonAnnotationBeanPostProcessor</code></li>
+</ul>
+</li>
+<li><code>RequiredAnnotationBeanPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：检查 <code>@Required</code>  注解标注的属性是否已注入，未注入则抛出异常</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessoBeforeInitialization</strong>：在 Bean 初始化前，检查 <code>@Required</code> 属性是否已注入</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor</code></li>
+</ul>
+</li>
+<li><code>ApplicationContextAwareProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理 <code>ApplicationContextAware</code> 接口，向 Bean 注入 <code>ApplicationContext</code></li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessorBeforeInitialization</strong>：在 Bean 初始化之前，调用 <code>setApplicationContext()</code> 方法</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.context.support.ApplicationContextAwareProcessor</code></li>
+</ul>
+</li>
+<li><code>InitDestroyAnnotationBeanPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理 <code>@PostConstruct</code> 和 <code>@PreDestory</code> 注解，分别在 Bean 初始化和销毁时执行</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessBeforeInitialization</strong> ：在 Bean 初始化之前，执行 <code>@PostConstruct</code>  注解的方法</li>
+<li><strong>postProcessAfterInitialization</strong>：在 Bean 初始化之后，注册 <code>@PreDestory</code> 注解的方法，以便在 Bean 销毁时执行</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>InfrastructureAdvisorAutoProxyCreator</code>
+<ul>
+<li><strong>作用</strong>：为 Bean 创建代理，支持 AOP （面向切面编程）</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessAfterInitialization</strong>：在 Bean 初始化之后，根据切面规则生成代理对象</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.aop.framework.autoproxy.InfrastructureAdvisorAutoProxyCreator</code></li>
+</ul>
+</li>
+<li><code>PersistenceExceptionTranslationPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：将持久化层异常（如 JPA、Hibernate 异常）转换为 Spring 的统一异常</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessorBeforeInitialization</strong>：在 Bean 初始化之前，注册异常翻译器</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor</code></li>
+</ul>
+</li>
+<li><code>EventListenerMethodProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理 <code>@EventListener</code> 注解，将标注的方法注册为事件监听器</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessAfterInitialization</strong>：在 Bean 初始化之后，扫描并注册 <code>@EventListener</code> 方法</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.context.event.EventListenerMethodProcessor</code></li>
+</ul>
+</li>
+<li><code>ScheduleAnnotationBeanPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理 <code>@Schedule</code> 注解，将标注的方法注册为定时任务</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessAfterInitialization</strong>：在 Bean 初始化之后，解析 <code>@Scheduled</code> 注解并注册定时任务</li>
+<li><strong>源码类</strong>：<code>org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ImportAwareBeanPostProcessor</code></li>
+</ol>
+<ul>
+<li><strong>作用</strong>：处理 <code>@Import</code> 注解导入的类，支持 <code>ImportAware</code> 接口</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcesssBeforeInitializtion</strong>：在 Bean 初始化之前，调用 <code>setImportMetadata()</code> 方法</li>
+<li><strong>源码类</strong>：<code>org.springframework.context.annotation.ImportAwareBeanPostProcessor</code></li>
+</ul>
+</li>
+</ul>
+<ol start="11">
+<li><code>EmbeddedValueResolverAwareBeanPostProcessor</code></li>
+</ol>
+<ul>
+<li><strong>作用</strong>：
+<ul>
+<li>处理 <code>EmbeddedValueResolverAware</code> 接口，向 Bean 注入 <code>StringValueResolver</code>。</li>
+<li><code>StringValueResolver</code> 用于解析占位符（如 <code>${property}</code>）和 SpEL 表达式（如 <code>#{expression}</code>）</li>
+</ul>
+</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li><strong>postProcessBeforeInitialization</strong>：在 Bean 初始化之前，调用 <code>setEmbeddedValueResolver()</code> 方法</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.context.support.EmbeddedValueResolverAwareBeanPostProcessor</code></li>
+</ul>
+<h3 id="核心的beanfactorypostprocessor">核心的BeanFactoryPostProcessor</h3>
+<ol>
+<li><code>ConfigurationClassPostProcessor</code>
+<ul>
+<li><strong>作用</strong>：处理 <code>@Configuration</code> ，解析 <code>@ComponentScan</code> 、<code>@Import</code> 、<code>@Bean</code> 等注解</li>
+<li><strong>触发时机</strong>：
+<ul>
+<li>在 <code>BeanFactoryPostProcessor</code> 阶段执行，负责加载配置类并注册 Bean 定义</li>
+<li>不属于 <code>BeanPostProcessor</code> 的执行时机，而是在容器刷新时提前执行</li>
+</ul>
+</li>
+<li><strong>源码类</strong>：<code>org.springframework.context.annotation.ConfigurationClassPostProcessor</code></li>
+</ul>
+</li>
+</ol>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/zuul/">
+		<img class="icon-text" src="/img/prev.svg"/>Zuul</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/javamemorymodel/">JMM<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/springthridlevelcache/">Spring 三级缓存</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

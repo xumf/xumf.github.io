@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>ZooKeeper - 小蜜蜂</title>
+
+		<meta name="description" content="ZooKeeper 核心原理 数据模型： ZNode：树形结构中的节点，存储数据（&lt;=1MB） 节点类型 持久节点：手动删除 临时节点：会话结束自动删除 顺序节点：名称追加单调递增序号 版本号：每个 ZNode 有版本号， 用于 CAS操作 架构与角色： Leader：处理写请求，发起提案 Follower：参与选举，处理读请求 Observer：拓展读性能，不参与选举 ZAB 协议（ZooKeeper Atomic Broadcast） 恢复模式：选举 Leader （基于 zxid 和 myid，半数以上投票） 广播模式：Leader 提出事物，半数以上 Follower 确认后提交 一致性保护： 顺序一致性（客户端操作按顺序执行） 原子性（事物要么全成功要么全失败） 最终一致性（读请求可能返回旧值，但最终同步） Watch 机制： 客户端监听 ZNode 变化（如节点删除，数据更新） 一次性触发，需要重新注册 异步通知，可能存在延迟或丢失 典型应用场景 分布式锁：通过临时顺序节点实现，避免惊群效应 配置管理：集中存储配置，客户端监听变更 服务注册与发现：临时节点表示服务实例在线状态 选主（Leader Election）：最小序号节点成为 Master 分布式队列：顺序节点实现生产消费模型 重要知识点 ZooKeeper 如何保证数据一致性？ 答：通过 ZAB 协议，写操作需要半数以上节点确认，保证顺序一致性和原子性。读请求可能来自任意节点（可能读到旧数据），但可通过 sync 操作强制读取最新值。 临时节点的作用时什么？ 答：临时节点在会话结束后自动删除，常用于服务注册（服务下线自动清除）和分布式锁（客户端崩溃自动释放锁）。 如何处理脑裂问题？ 答：ZAB 协议要求写操作必须由 Leader 发起，且需要半数以上节点确认。网络分区时，仅拥有多数节点的分区能选举 Leader，另一个分区无法写入，避免数据不一致。 Watcher 机制有哪些主要事项？ 答：一次性触发、通知可能延迟、需要处理事件丢失（如 Watch 注册期间发生变更）。需在回调中重新注册 Watcher。 Leader 选举过程是怎样的？ 答：节点启动时进入选举状态，投票优先给 zxid 最大的节点，zxid 相同则选 myid 更大的。获得半数以上投票的节点成为 Leader。 如何实现分布式锁？ 答：客户端创建临时顺序节点，检查是否为最小序号节点。若是则获得锁；否则监听前一个节点的删除事件，使用 exists() &#43;Watcher 避免轮询。 性能与优化 写性能：依赖半数以上节点确认，建议集群节点数为奇数（如3、5）。 读性能：可直接从本地节点读取，高吞吐。 快照与日志：定期生成快照（snapshot）和事务日志（txn log），加速恢复。 配置与运维 会话超时：tickTime 为基本时间单位，sessionTimeout 建议2-20倍tickTime 。 数据持久化：事务日志和快照存储于dataDir 和dataLogDir 。 ACL 控制：支持IP、Digest等多种认证方式，精细化权限管理。 ">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>ZooKeeper</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 22:21:04 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/ZooKeeper">ZooKeeper</a>
+				
+				<a href="/tags/Spring%20Cloud">Spring Cloud</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="zookeeper-核心原理">ZooKeeper 核心原理</h2>
+<ol>
+<li><strong>数据模型</strong>：
+<ol>
+<li>ZNode：树形结构中的节点，存储数据（&lt;=1MB）</li>
+<li>节点类型
+<ol>
+<li>持久节点：手动删除</li>
+<li>临时节点：会话结束自动删除</li>
+<li>顺序节点：名称追加单调递增序号</li>
+</ol>
+</li>
+<li>版本号：每个 ZNode 有版本号， 用于 CAS操作</li>
+</ol>
+</li>
+<li><strong>架构与角色</strong>：
+<ol>
+<li>Leader：处理写请求，发起提案</li>
+<li>Follower：参与选举，处理读请求</li>
+<li>Observer：拓展读性能，不参与选举</li>
+</ol>
+</li>
+<li><strong>ZAB 协议</strong>（ZooKeeper Atomic Broadcast）
+<ol>
+<li>恢复模式：选举 Leader （基于 zxid 和 myid，半数以上投票）</li>
+<li>广播模式：Leader 提出事物，半数以上 Follower 确认后提交</li>
+</ol>
+</li>
+<li><strong>一致性保护</strong>：
+<ol>
+<li>顺序一致性（客户端操作按顺序执行）</li>
+<li>原子性（事物要么全成功要么全失败）</li>
+<li>最终一致性（读请求可能返回旧值，但最终同步）</li>
+</ol>
+</li>
+<li><strong>Watch 机制</strong>：
+<ol>
+<li>客户端监听 ZNode 变化（如节点删除，数据更新）</li>
+<li>一次性触发，需要重新注册</li>
+<li>异步通知，可能存在延迟或丢失</li>
+</ol>
+</li>
+</ol>
+<h2 id="典型应用场景">典型应用场景</h2>
+<ul>
+<li><strong>分布式锁</strong>：通过临时顺序节点实现，避免惊群效应</li>
+<li><strong>配置管理</strong>：集中存储配置，客户端监听变更</li>
+<li><strong>服务注册与发现</strong>：临时节点表示服务实例在线状态</li>
+<li><strong>选主（Leader Election）</strong>：最小序号节点成为 Master</li>
+<li><strong>分布式队列</strong>：顺序节点实现生产消费模型</li>
+</ul>
+<h2 id="重要知识点">重要知识点</h2>
+<ol>
+<li><strong>ZooKeeper 如何保证数据一致性？</strong>
+<ul>
+<li><strong>答</strong>：通过 ZAB 协议，写操作需要半数以上节点确认，保证顺序一致性和原子性。读请求可能来自任意节点（可能读到旧数据），但可通过 <code>sync</code> 操作强制读取最新值。</li>
+</ul>
+</li>
+<li><strong>临时节点的作用时什么？</strong>
+<ul>
+<li><strong>答</strong>：临时节点在会话结束后自动删除，常用于服务注册（服务下线自动清除）和分布式锁（客户端崩溃自动释放锁）。</li>
+</ul>
+</li>
+<li><strong>如何处理脑裂问题？</strong>
+<ul>
+<li><strong>答</strong>：ZAB 协议要求写操作必须由 Leader 发起，且需要半数以上节点确认。网络分区时，仅拥有多数节点的分区能选举 Leader，另一个分区无法写入，避免数据不一致。</li>
+</ul>
+</li>
+<li><strong>Watcher 机制有哪些主要事项？</strong>
+<ul>
+<li><strong>答</strong>：一次性触发、通知可能延迟、需要处理事件丢失（如 Watch 注册期间发生变更）。需在回调中重新注册 Watcher。</li>
+</ul>
+</li>
+<li><strong>Leader 选举过程是怎样的？</strong>
+<ul>
+<li><strong>答</strong>：节点启动时进入选举状态，投票优先给 zxid 最大的节点，zxid 相同则选 myid 更大的。获得半数以上投票的节点成为 Leader。</li>
+</ul>
+</li>
+<li>如何实现分布式锁？
+<ul>
+<li><strong>答</strong>：客户端创建临时顺序节点，检查是否为最小序号节点。若是则获得锁；否则监听前一个节点的删除事件，使用 <code>exists()</code> +Watcher 避免轮询。</li>
+</ul>
+</li>
+</ol>
+<h2 id="性能与优化">性能与优化</h2>
+<ul>
+<li><strong>写性能</strong>：依赖半数以上节点确认，建议集群节点数为奇数（如3、5）。</li>
+<li><strong>读性能</strong>：可直接从本地节点读取，高吞吐。</li>
+<li><strong>快照与日志</strong>：定期生成快照（snapshot）和事务日志（txn log），加速恢复。</li>
+</ul>
+<h2 id="配置与运维">配置与运维</h2>
+<ul>
+<li><strong>会话超时</strong>：<code>tickTime</code> 为基本时间单位，<code>sessionTimeout</code> 建议2-20倍<code>tickTime</code> 。</li>
+<li><strong>数据持久化</strong>：事务日志和快照存储于<code>dataDir</code> 和<code>dataLogDir</code> 。</li>
+<li><strong>ACL 控制</strong>：支持IP、Digest等多种认证方式，精细化权限管理。</li>
+</ul>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/hystrix/">
+		<img class="icon-text" src="/img/prev.svg"/>Hystrix</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/springcloudgateway/">Spring Cloud Gateway<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/hystrix/">Hystrix</a></li>
+  	
+  	<li><a href="/blog/feign/">Feign</a></li>
+  	
+  	<li><a href="/blog/springcloudconfig/">Spring Cloud Config</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

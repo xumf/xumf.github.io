@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>Spring Cloud Sleuth - 小蜜蜂</title>
+
+		<meta name="description" content="github">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>Spring Cloud Sleuth</h1>
+	<h5>
+		
+		<time datetime="2018-04-28 13:54:50 &#43;0800 CST">2018年 4月 28日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/Spring%20Cloud%20Sleuth">Spring Cloud Sleuth</a>
+				
+				<a href="/tags/Spring%20Cloud">Spring Cloud</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="spring-cloud-sleuth-核心原理">Spring Cloud Sleuth 核心原理</h2>
+<h3 id="1-分布式追踪概念">1. 分布式追踪概念</h3>
+<ul>
+<li>Trace：一次完整的请求链路</li>
+<li>Span：一个工作单元，包含开始和结束时间</li>
+<li>Annotation：关键事件标记（如 cs、sr、ss、cr）</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>cs (Client Sent)：标识客户端发起请求的时间点。
+</span></span><span style="display:flex;"><span>sr (Server Received)：标识服务端接收到请求并开始处理的时间点。
+</span></span><span style="display:flex;"><span>ss (Server Sent)：标识服务端处理完请求并准备返回响应的时间点。
+</span></span><span style="display:flex;"><span>cr (Client Received)：标识客户端接收到服务端响应的时间点。
+</span></span></code></pre></div><h3 id="2-核心功能">2. 核心功能</h3>
+<ul>
+<li>自动生成和传播 Trace ID 和 Span ID</li>
+<li>集成 Zipkin 等追踪系统</li>
+<li>支持多种通信协议（HTTP、MQ、RPC等）</li>
+<li>提供丰富的上下文信息</li>
+</ul>
+<h3 id="3-数据模型">3. 数据模型</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>Trace
+</span></span><span style="display:flex;"><span>├── Span 1
+</span></span><span style="display:flex;"><span>│   ├── Annotation: cs
+</span></span><span style="display:flex;"><span>│   ├── Annotation: sr
+</span></span><span style="display:flex;"><span>│   ├── Annotation: ss
+</span></span><span style="display:flex;"><span>│   └── Annotation: cr
+</span></span><span style="display:flex;"><span>└── Span 2
+</span></span><span style="display:flex;"><span>    ├── Annotation: cs
+</span></span><span style="display:flex;"><span>    └── Annotation: cr
+</span></span></code></pre></div><h2 id="源码分析">源码分析</h2>
+<h3 id="1-tracer-核心类">1. Tracer 核心类</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Tracer</span> {
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">nextSpan</span>();
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">nextSpan</span>(Span parent);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">newTrace</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">continueSpan</span>(Span span);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span>(Span span);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">currentSpan</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... other methods ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>负责创建和管理 Span</li>
+<li>提供当前 Span 的访问</li>
+<li>支持 Span 的继续和关闭</li>
+</ul>
+<h3 id="2-tracecontext-传播">2. TraceContext 传播</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Propagator</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">inject</span>(TraceContext context, C carrier, Setter<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> setter);
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> Span.<span style="color:#a6e22e">Builder</span> <span style="color:#a6e22e">extract</span>(C carrier, Getter<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> getter);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>负责 TraceContext 的注入和提取</li>
+<li>支持多种传播方式（如 HTTP Headers）</li>
+</ul>
+<h3 id="3-span-创建">3. Span 创建</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Span</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isNoop</span>();
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">start</span>();
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">name</span>(String name);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">tag</span>(String key, String value);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">event</span>(String value);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">error</span>(Throwable throwable);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">end</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... other methods ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>表示一个工作单元</li>
+<li>支持添加标签和事件</li>
+<li>支持错误记录</li>
+</ul>
+<h3 id="4-自动配置">4. 自动配置</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ConditionalOnProperty</span>(value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;spring.sleuth.enabled&#34;</span>, matchIfMissing <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TraceAutoConfiguration</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Tracer <span style="color:#a6e22e">tracer</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DefaultTracer();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CurrentTraceContext <span style="color:#a6e22e">currentTraceContext</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ThreadLocalCurrentTraceContext.<span style="color:#a6e22e">create</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... other beans ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>自动配置 Tracer 和相关组件</li>
+<li>支持通过配置启用/禁用</li>
+</ul>
+<h2 id="重要知识点">重要知识点</h2>
+<h3 id="1-sleuth-如何实现分布式追踪">1. Sleuth 如何实现分布式追踪？</h3>
+<ul>
+<li>自动生成传播 Trace ID 和 Span ID</li>
+<li>通过 HTTP Headers 或者消息头传播上下文</li>
+<li>集成 Zipkin 等追踪系统</li>
+</ul>
+<h3 id="2-trace-和-space-的区别是什么">2. Trace 和 Space 的区别是什么？</h3>
+<ul>
+<li>Trace 表示一次完整的请求链路</li>
+<li>Span 表示一个工作单元</li>
+<li>一个 Trace 包含多个 Span</li>
+</ul>
+<h3 id="3-如何自定义-span-信息">3. 如何自定义 Span 信息？</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> Tracer tracer;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">customSpan</span>() {
+</span></span><span style="display:flex;"><span>    Span span <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">nextSpan</span>().<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;custom-operation&#34;</span>).<span style="color:#a6e22e">start</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> (Tracer.<span style="color:#a6e22e">SpanInScope</span> ws <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">withSpan</span>(span.<span style="color:#a6e22e">start</span>())) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// business logic</span>
+</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">tag</span>(<span style="color:#e6db74">&#34;custom-tag&#34;</span>, <span style="color:#e6db74">&#34;value&#34;</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">finally</span> {
+</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">end</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span></code></pre></div><h3 id="4-sleuth-如何与-zipkin-集成">4. Sleuth 如何与 Zipkin 集成？</h3>
+<ul>
+<li>通过 <strong>Spring-cloud-starter-zipkin</strong> 依赖</li>
+<li>配置 Zipkin 服务器地址</li>
+<li>自动发送追踪数据到 Zipkin</li>
+</ul>
+<h3 id="5-如何实现跨服务追踪">5. 如何实现跨服务追踪</h3>
+<ul>
+<li>通过 HTTP Header 传播 TraceContext</li>
+<li>支持 RestTemplate、Feign、WebClient 等</li>
+<li>自动处理消息队列的上下文传播</li>
+</ul>
+<h3 id="6-sleuth-的性能影响如何">6. Sleuth 的性能影响如何？</h3>
+<ul>
+<li>轻量级实现，性能开销小</li>
+<li>支持采样率配置</li>
+<li>异步发送追踪数据</li>
+</ul>
+<h3 id="7-如何配置采样率">7. 如何配置采样率？</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sleuth</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sampler</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">probability</span>: <span style="color:#ae81ff">1.0</span> <span style="color:#75715e"># 1.0表示100%采样</span>
+</span></span></code></pre></div><h3 id="8-sleuth-支持哪些通信协议">8. Sleuth 支持哪些通信协议？</h3>
+<ul>
+<li>HTTP（RestTemplate、Feign、WebClient）</li>
+<li>消息队列（RabbitMQ、Kafka）</li>
+<li>RPC（gRPC）</li>
+<li>数据库访问</li>
+</ul>
+<h3 id="9-如何查看-sleuth-的追踪日志">9. 如何查看 Sleuth 的追踪日志？</h3>
+<ul>
+<li>日志中会自动添加 <strong>[appname, traceId,  spanId,  exportable]</strong></li>
+<li>示例：<strong>[myapp,2485ec27856c56f4,2485ec27856c56f4,true]</strong></li>
+</ul>
+<h3 id="10-sleuth-如何处理异步操作">10. Sleuth 如何处理异步操作？</h3>
+<ul>
+<li>使用 Tracer.withSpan() 保持上下文</li>
+<li>支持 Reactor 上下文传播</li>
+<li>示例：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span><span style="display:flex;"><span>Mono.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;value&#34;</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">doOnNext</span>(value <span style="color:#f92672">-&gt;</span> {
+</span></span><span style="display:flex;"><span>        Span span <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">nextSpan</span>().<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;async-operation&#34;</span>).<span style="color:#a6e22e">start</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> (Tracer.<span style="color:#a6e22e">SpanInScope</span> ws <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">withSpan</span>(span.<span style="color:#a6e22e">start</span>())) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// async logic</span>
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">finally</span> {
+</span></span><span style="display:flex;"><span>            span.<span style="color:#a6e22e">end</span>();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">contextWrite</span>(Context.<span style="color:#a6e22e">of</span>(Span.<span style="color:#a6e22e">class</span>, span));
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
+</span></span></code></pre></div>
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/springcloudgateway/">
+		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Gateway</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/springthridlevelcache/">Spring 三级缓存<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/springcloudgateway/">Spring Cloud Gateway</a></li>
+  	
+  	<li><a href="/blog/zookeeper/">ZooKeeper</a></li>
+  	
+  	<li><a href="/blog/hystrix/">Hystrix</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

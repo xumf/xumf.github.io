@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nacos on 小蜜蜂</title>
+    <link>http://xumf.net/tags/nacos/</link>
+    <description>Recent content in Nacos on 小蜜蜂</description>
+    <generator>Hugo 0.125.1</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
+    <lastBuildDate>Thu, 03 May 2018 20:54:29 +0800</lastBuildDate>
+    <atom:link href="http://xumf.net/tags/nacos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nacos</title>
+      <link>http://xumf.net/blog/nacos/</link>
+      <pubDate>Thu, 03 May 2018 20:54:29 +0800</pubDate>
+      <guid>http://xumf.net/blog/nacos/</guid>
+      <description>一、Nacos 核心概念 是什么？ Nacos（Dynamic Naming and Configuration Server）是阿里开源的服务发现+配置管理+服务治理平台，核心功能：&#xA;服务发现与健康监测：服务注册、心跳机制、DNS 查询 动态配置管理：配置发布、监听、版本管理 动态 DNS：基于权重的路由、地域就近访问 服务元数据管理：支持应用/版本/环境等元数据 关键特性 双模式：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现） 配置实时推送：基于长轮询（减少无效请求） 生态兼容：无缝集成 Spring Cloud、Dubbo、Kubernetes 二、核心架构与原理 服务注册与发现流程 注册：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPc） 心跳：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除 发现：消费者通过订阅机制获取服务列表，本地缓存+增量更新 配置管理机制 发布配置：通过控制台/API发布配置，存储与 Derby 或 MySQL 监听配置：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回 历史版本：支持配置回滚和版本对比 一致性协议 CP 模式：使用 Raft 协议（配置管理场景） AP 模式：自研 Distro 协议（服务发现场景，最终一致性） 三、重要知识点 Nacos vs Eureka vs Zookeeper？ Eureka：AP 设计，适合服务发现，但功能单一 Zookeeper：CP 设计，强一致性，但写性能低 Nacos：AP/CP 可切换，集成服务发现+配置管理，生态更全面 长轮询如何实现配置实时推送？ 客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回 对比传统轮询：减少无效请求，提升实时性 Nacos 集群如何保证数据一致性？ Distro 模式（AP 模式）：每个节点负责部分数据，通过异步复制保证最终一致性 Raft 协议（CP 模式）：选举 Leader，多数节点写成功才返回 Nacos 2.</description>
+    </item>
+  </channel>
+</rss>

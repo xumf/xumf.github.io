@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>HBase 深入浅出 - 小蜜蜂</title>
+
+		<meta name="description" content="1. HBase 核心组件源码深度解析 1.1 HMaster 源码路径：org.apache.hadoop.hbase.master.HMaster
+核心职责： 元数据管理： 管理表创建、删除、修改等 DDL 操作 维护 hbase:meta 表，记录所有 Region 的分布信息 负载均衡： 监控 RegionServer 的状态，分配 Region 到 RegionServer 处理 RegionServer 的故障恢复 协调分裂与合并 当 Region 大小超过阈值时，触发 Region 分裂 合并小 Region，减少元数据开销 源码关键点：
+启动流程： 初始化 ZooKeeper 链接，注册 HMaster 节点 加载 hbase:meta 表，获取所有 Region 的分布信息 启动后台线程，监控 RegionServer 状态 Region 分配 通过 AssignmentManager 将 Region 分配到 RegionServer 使用 ZooKeeper 协调 Region 的分配和迁移 面试题：
+HMaster 宕机后，HBase 还能正常工作吗？ 可以，HBase 的读写操作有 RegionServer 直接处理，HMaster 宕机不会影响已有表的读写，但会影响表的元数据操作（如创建表） HMaster 如何实现高可用？ 通过 ZooKeeper 选举机制，确保只有一个活跃的 HMaster 1.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>HBase 深入浅出</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 15:43:54 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/HBase">HBase</a>
+				
+				<a href="/tags/Database">Database</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="1-hbase-核心组件源码深度解析">1. HBase 核心组件源码深度解析</h2>
+<h3 id="11-hmaster">1.1 HMaster</h3>
+<p><strong>源码路径</strong>：<code>org.apache.hadoop.hbase.master.HMaster</code></p>
+<ul>
+<li>核心职责：
+<ul>
+<li>元数据管理：
+<ul>
+<li>管理表创建、删除、修改等 DDL 操作</li>
+<li>维护 <code>hbase:meta</code> 表，记录所有 Region 的分布信息</li>
+</ul>
+</li>
+<li>负载均衡：
+<ul>
+<li>监控 RegionServer 的状态，分配 Region 到 RegionServer</li>
+<li>处理 RegionServer 的故障恢复</li>
+</ul>
+</li>
+<li>协调分裂与合并
+<ul>
+<li>当 Region 大小超过阈值时，触发 Region 分裂</li>
+<li>合并小 Region，减少元数据开销</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>启动流程：
+<ul>
+<li>初始化 ZooKeeper 链接，注册 HMaster 节点</li>
+<li>加载 <code>hbase:meta</code> 表，获取所有 Region 的分布信息</li>
+<li>启动后台线程，监控 RegionServer 状态</li>
+</ul>
+</li>
+<li>Region 分配
+<ul>
+<li>通过 AssignmentManager 将 Region 分配到 RegionServer</li>
+<li>使用 ZooKeeper 协调 Region 的分配和迁移</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题</strong>：</p>
+<ul>
+<li>HMaster 宕机后，HBase 还能正常工作吗？
+<ul>
+<li>可以，HBase 的读写操作有 RegionServer 直接处理，HMaster 宕机不会影响已有表的读写，但会影响表的元数据操作（如创建表）</li>
+</ul>
+</li>
+<li>HMaster 如何实现高可用？
+<ul>
+<li>通过 ZooKeeper 选举机制，确保只有一个活跃的 HMaster</li>
+</ul>
+</li>
+</ul>
+<h3 id="12-regionserver">1.2 RegionServer</h3>
+<p><strong>源码路径</strong>：<code>org.apache.hadoop.hbase.regionserver.HRegionServer</code></p>
+<ul>
+<li>核心职责：
+<ul>
+<li>数据存储：
+<ul>
+<li>管理多个 Region，每个 Region 负责表的一部分数据</li>
+<li>将数据写入 MemStore，定期刷写到 HFile</li>
+</ul>
+</li>
+<li>读写请求处理：
+<ul>
+<li>处理客户端的读写请求</li>
+<li>使用 BlockCache 缓存热点数据，提升读性能</li>
+</ul>
+</li>
+<li>WAL 管理
+<ul>
+<li>每次写入数据时，先写入 WAL，确保数据可靠性</li>
+<li>定期滚动 WAL 文件，防止文件过大</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>写流程：
+<ul>
+<li>数据先写入 WAL，再写入 MemStore</li>
+<li>当 MemStore 达到阈值时，触发刷写（Flush）操作，将数据写如 HFile</li>
+</ul>
+</li>
+<li>读流程：
+<ul>
+<li>首先从 BlockCache 中查找数据</li>
+<li>如果未命中，则从 MemStore 和 HFile 中读取数据</li>
+</ul>
+</li>
+<li>Compaction
+<ul>
+<li>定期合并 HFile，减少文件数量，提升读性能</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题</strong>：</p>
+<ul>
+<li>RegionServer 的架构时怎么样的？
+<ul>
+<li>RegionServer 包含多个 Region，每个 Region 负责表的一部分数据。RegionServer 还包含 MemStore（内存存储）、BlockCache（读缓存）和 WAL（预写日志）</li>
+<li>MemStore 的作用时什么？
+<ul>
+<li>MemStore 是内存中的数据结构，用于缓存写入的数据。当 MemStore 达到一定大小时，数据会被刷到 HFile 中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="13-region">1.3 Region</h3>
+<p><strong>源码路径</strong>：<code>org.apache.hadoop.hbase.regionserver.HRegion</code></p>
+<ul>
+<li>核心职责：
+<ul>
+<li>数据分区：
+<ul>
+<li>按行键范围划分数据</li>
+</ul>
+</li>
+<li>数据存储：
+<ul>
+<li>每个 Region 包含多个 Store，每个 Store 对应一个列族</li>
+<li>Store 包含一个MemStore 和多个 HFile</li>
+</ul>
+</li>
+<li>读写请求处理：
+<ul>
+<li>处理客户端对当前 Region 的读写请求</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>源码关键点：</strong></p>
+<ul>
+<li>Region 分裂：
+<ul>
+<li>当 Region 大小超过阈值时，触发分裂操作</li>
+<li>分裂过程由 RegionServer 触发，HMaster 负责协调</li>
+</ul>
+</li>
+<li>Store 管理：
+<ul>
+<li>每个 Store 对应一个列族，包含一个 MemStore 和多个 HFile</li>
+<li>定期刷写 MemStore 到 HFile，合并 HFile</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题</strong>：</p>
+<ul>
+<li>Region 时如何分裂的？
+<ul>
+<li>当 Region 的大小达到阈值（默认 10GB），Region 会分裂为两个子 Region。分裂过程由 RegionServer 触发，HMaster 负责协调</li>
+</ul>
+</li>
+<li>Region 分裂对读写有什么影响
+<ul>
+<li>分裂过程中，Region 会暂时不可用，但分裂完成后，读写请求会路由到新的 Region</li>
+</ul>
+</li>
+</ul>
+<h3 id="14-walwrite-ahead-log">1.4 WAL（Write Ahead log）</h3>
+<p><strong>源码路径</strong>：<code>org.apache.hadoop.hbase.wal.WAL</code></p>
+<ul>
+<li>核心职责
+<ul>
+<li>数据可靠性：
+<ul>
+<li>每次写入数据时，先写入 WAL，再写入 MemStore</li>
+<li>如果 RegionServer  宕机，可以通过 WAL 恢复未刷写到 HFile 的数据</li>
+</ul>
+</li>
+<li>日志滚动：
+<ul>
+<li>定期滚动 WAL 文件，防止文件过大</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>WAL 写入：
+<ul>
+<li>使用 <strong>FSHLog</strong>** **类将日志写入 HDFS</li>
+<li>支持批量写入和异步写入，提升性能</li>
+</ul>
+</li>
+<li>WAL 恢复：
+<ul>
+<li>当 RegionServer 重启时，通过 WAL 恢复未持久化的数据</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题</strong>：</p>
+<ul>
+<li>WAL 的作用时什么？
+<ul>
+<li>WAL 记录每次写入操作，确保再 RegionServer 宕机时可以通过 WAL 恢复未持久化的数据。</li>
+</ul>
+</li>
+<li>WAL 的写入性能如何优化？
+<ul>
+<li>可以通过批量写入、异步写入等方式优化 WAL 的性能。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-hbase-读写流程源码深度解析">2. HBase 读写流程源码深度解析</h2>
+<h3 id="21-写流程">2.1 写流程</h3>
+<ol>
+<li>客户端向 RegionServer 发送写请求</li>
+<li>RegionServer 将数据写入 WAL（Write Ahead Log）</li>
+<li>数据写入 MemStore</li>
+<li>当 MemStore 达到一定大小时，数据刷写到 HFile</li>
+</ol>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>WAL 写入
+<ul>
+<li>使用 <code>FSHLog</code> 类将日志写入 HDFS</li>
+</ul>
+</li>
+<li>MemStore 写入：
+<ul>
+<li>数据写入<code>ConcurrentSkipListMap</code> ，支持高效的内存存储</li>
+</ul>
+</li>
+<li>刷写（Flush）
+<ul>
+<li>当 MemStore 大小超过阈值时，触发刷写操作，将数据写入 HFile</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题：</strong></p>
+<ul>
+<li><strong>写流程中如何保证数据一致性？</strong>
+<ul>
+<li>通过 WAL 和 HDFS 的多副本机制保证数据一致性。</li>
+</ul>
+</li>
+</ul>
+<h3 id="22-读流程">2.2 读流程</h3>
+<ol>
+<li>客户端向 RegionServer 发送请求</li>
+<li>RegionServer 首先从 BlockCache 中查找数据</li>
+<li>如果 BlockCache 未命中，则从 MemStore 和 HFile 中读取数据</li>
+<li>返回查询结果</li>
+</ol>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>BlockCache：
+<ul>
+<li>使用 <code>LruBlockCache</code> 缓存热点数据</li>
+</ul>
+</li>
+<li>HFile 读取：
+<ul>
+<li>使用 <code>HFileReader</code> 读取 HFile 中的数据</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题：</strong></p>
+<ul>
+<li>如何优化 HBase 的读性能？
+<ul>
+<li>可以通过增大 BlockCache、使用 Bloom Filter、预分区等方式优化读性能</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-hbase-高级特性源码深度解析">3. HBase 高级特性源码深度解析</h2>
+<h3 id="31-协处理器coprocessor">3.1 协处理器（Coprocessor）</h3>
+<p><strong>源码路径</strong>：<code>org.apache.hadoop.hbase.coprocessor</code></p>
+<ul>
+<li>核心职责：
+<ul>
+<li>Observer
+<ul>
+<li>拦截 HBase 的操作（如 <code>put</code>、<code>get</code>），执行自定义逻辑</li>
+</ul>
+</li>
+<li>Endpoint：
+<ul>
+<li>在 RegionServer 上执行自定义逻辑，类似于存储过程</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>Observer：
+<ul>
+<li>通过 <code>RegionObserver</code> 拦截 Region 的操作</li>
+</ul>
+</li>
+<li>Endpoint：
+<ul>
+<li>通过 <code>CoprocessorService</code> 实现自定义 RPC 服务</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题</strong>：</p>
+<ul>
+<li>协处理器的作用时什么？
+<ul>
+<li>协处理器允许在 RegionServer 上执行自定义代码，用于实现二级索引、聚合计算等功能</li>
+</ul>
+</li>
+<li>Observer 和 Endpoint 的区别时什么？
+<ul>
+<li>Observer 用于拦截 HBase 的操作，Enpoint 用于执行自定义逻辑</li>
+</ul>
+</li>
+</ul>
+<h3 id="32-数据压缩与编码">3.2 数据压缩与编码</h3>
+<p><strong>源码路径</strong>： <code>org.apache.hadoop.hbase.io.compress</code> 、<code>org.apache.hadoop.hbase.io.encoding</code></p>
+<ul>
+<li>核心职责：
+<ul>
+<li>压缩：
+<ul>
+<li>减少存储空间和 I/O 开销</li>
+</ul>
+</li>
+<li>编码：
+<ul>
+<li>优化数据存储格式，提升查询性能</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>源码关键点</strong>：</p>
+<ul>
+<li>压缩算法：
+<ul>
+<li>支持 GZIP、Snappy、LZO 等压缩算法</li>
+</ul>
+</li>
+<li>编码方式：
+<ul>
+<li>支持 Diff、Prefix 等编码方式</li>
+</ul>
+</li>
+</ul>
+<p><strong>面试题</strong>：</p>
+<ul>
+<li>HBase 支持哪些压缩算法？
+<ul>
+<li>HBase 支持 GZIP、Snappy、LZO 等压缩算法</li>
+</ul>
+</li>
+<li>数据编码的作用时什么？
+<ul>
+<li>数据编码可以减少存储空间和 I/O 开销，提供查询性能</li>
+</ul>
+</li>
+</ul>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/garbagecollector/">
+		<img class="icon-text" src="/img/prev.svg"/>垃圾回收器</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/feign/">Feign<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/elasticsearch/">ElasticSearch 知识</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

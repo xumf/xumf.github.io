@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>RabbitMQ 深入浅出 - 小蜜蜂</title>
+
+		<meta name="description" content="RabbitMQ 知识架构 1. AMQP 协议基础 RabbitMQ 是 AMQP 0-9-1 协议的实现，其核心模型基于信道(Channel)、**交换机(Exchange)和队列(Queue)**的协作。
+AMQP 协议分层：分为 Module Layer（定义业务命令）、Session Layer（处理命令传输与同步）、Transpot Layer（二进制数据传输）。 信道(Channel)：基于 TCP 连接的虚拟链路，复用 TCP 连接以降低开销，每个信道独立处理消息路由，支持多线程并发操作。 虚拟主机(VHost)：逻辑隔离的独立环境，每个 VHost 拥有自己的交换机、队列和权限。 帧(Frame)：AMQP 数据传输的最小单位，包含帧头、帧体和帧尾，用于封装消息和协议指令。 2. 消息流转原理 消息从生产者到消费者的完整生命周期如下：
+(1)生产者发送消息
+连接建立：生产者通过 TCP 连接到 RabbitMQ 节点，并创建信道。 消息封装：消息包含有效负载(Playload) &#43; 元数据(Headers、Routing Key、Delivery Mode 等)。 发送到交换器：生产者通过basic.publish 方法将消息发送到指定的交换器。 关键参数：exchange （目标交换器）、routing_key （路由键）、mandatory （消息无法路由时是否返回错误）。 (2)交换器路由消息
+交换器根据类型和绑定规则将消息路由到队列：
+Direct Exchange：精确匹配routing_key 和binding_key ，类似哈希表查找。 Fanout Exchange：广播到所有绑定的队列，忽略routing_key 。 Topic Exchange：基于通配符的层次化匹配，内部使用Trie 树或哈希表优化路由效率。 Headers Exchange：通过headers 键值对匹配，性能较低，适用于复杂条件路由。 (3)队列存储消息
+消息进入队列后，按**先进先出(FIFO)**顺序存储，但优先级队列(Priority Queue)可调整顺序。
+持久化队列：元数据和消息（若标记为持久化）写入磁盘，重启后恢复。 内存队列：仅存储在内存，重启后丢失。 (4)消息者拉取消息
+订阅队列：消费者通过basic.consume 订阅队列，进入阻塞等待状态。 消息推送：RabbitMQ 通过basic.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>RabbitMQ 深入浅出</h1>
+	<h5>
+		
+		<time datetime="2018-05-03 20:54:29 &#43;0800 CST">2018年 5月 03日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/RabbitMQ">RabbitMQ</a>
+				
+				<a href="/tags/MQ">MQ</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h1 id="rabbitmq-知识架构">RabbitMQ 知识架构</h1>
+<h2 id="1-amqp-协议基础">1. AMQP 协议基础</h2>
+<p>RabbitMQ 是 AMQP 0-9-1 协议的实现，其核心模型基于<strong>信道(Channel)</strong>、**交换机(Exchange)<strong>和</strong>队列(Queue)**的协作。</p>
+<ul>
+<li><strong>AMQP 协议分层</strong>：分为 <strong>Module Layer</strong>（定义业务命令）、<strong>Session Layer</strong>（处理命令传输与同步）、<strong>Transpot Layer</strong>（二进制数据传输）。</li>
+<li><strong>信道(Channel)</strong>：基于 TCP 连接的虚拟链路，复用 TCP 连接以降低开销，每个信道独立处理消息路由，支持多线程并发操作。</li>
+<li><strong>虚拟主机(VHost)</strong>：逻辑隔离的独立环境，每个 VHost 拥有自己的交换机、队列和权限。</li>
+<li><strong>帧(Frame)</strong>：AMQP 数据传输的最小单位，包含帧头、帧体和帧尾，用于封装消息和协议指令。</li>
+</ul>
+<hr>
+<h2 id="2-消息流转原理">2. 消息流转原理</h2>
+<p>消息从生产者到消费者的完整生命周期如下：</p>
+<p><strong>(1)生产者发送消息</strong></p>
+<ol>
+<li><strong>连接建立</strong>：生产者通过 TCP 连接到 RabbitMQ 节点，并创建信道。</li>
+<li><strong>消息封装</strong>：消息包含<strong>有效负载(Playload)</strong> + <strong>元数据(Headers、Routing Key、Delivery Mode 等)</strong>。</li>
+<li><strong>发送到交换器</strong>：生产者通过<code>basic.publish</code> 方法将消息发送到指定的交换器。
+<ul>
+<li>关键参数：<code>exchange</code> （目标交换器）、<code>routing_key</code> （路由键）、<code>mandatory</code> （消息无法路由时是否返回错误）。</li>
+</ul>
+</li>
+</ol>
+<p><strong>(2)交换器路由消息</strong></p>
+<p>交换器根据<strong>类型</strong>和<strong>绑定规则</strong>将消息路由到队列：</p>
+<ul>
+<li><strong>Direct Exchange</strong>：精确匹配<code>routing_key</code> 和<code>binding_key</code> ，类似哈希表查找。</li>
+<li><strong>Fanout Exchange</strong>：广播到所有绑定的队列，忽略<code>routing_key</code> 。</li>
+<li><strong>Topic Exchange</strong>：基于通配符的层次化匹配，内部使用<strong>Trie 树</strong>或<strong>哈希表</strong>优化路由效率。</li>
+<li><strong>Headers Exchange</strong>：通过<code>headers</code> 键值对匹配，性能较低，适用于复杂条件路由。</li>
+</ul>
+<p><strong>(3)队列存储消息</strong></p>
+<p>消息进入队列后，按**先进先出(FIFO)**顺序存储，但优先级队列(Priority Queue)可调整顺序。</p>
+<ul>
+<li><strong>持久化队列</strong>：元数据和消息（若标记为持久化）写入磁盘，重启后恢复。</li>
+<li><strong>内存队列</strong>：仅存储在内存，重启后丢失。</li>
+</ul>
+<p><strong>(4)消息者拉取消息</strong></p>
+<ol>
+<li><strong>订阅队列</strong>：消费者通过<code>basic.consume</code> 订阅队列，进入阻塞等待状态。</li>
+<li><strong>消息推送</strong>：RabbitMQ 通过<code>basic.deliver</code> 方法主动推送消息到消费者(Push 模式)。
+<ul>
+<li>消费者也可通过<code>basic.get</code> 主动拉取消息（Pull 模式），但效率较低。</li>
+</ul>
+</li>
+<li><strong>消息确认(ACK)</strong>：
+<ul>
+<li><strong>自动 ACK</strong>：消息发送后立即从队列删除，风险高（消息可能未处理成功）。</li>
+<li><strong>手动 ACK</strong>：消费者处理完成后发送<code>basic.ack</code> ，队列删除消息；若未 ACK 且连接断开，消息重新入队（Redelivery）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="3-持久化与可靠性机制">3. 持久化与可靠性机制</h2>
+<p><strong>(1)消息持久化</strong></p>
+<ul>
+<li><strong>队列持久化</strong>：声明队列时设置<code>durable=true</code> ，确保队列元数据不丢失。</li>
+<li><strong>消息持久化</strong>：发送消息时设置<code>delivery_mode=2</code> ，将消息体写入磁盘。
+<ul>
+<li><strong>写入时机</strong>：消息先写入内存缓冲区，异步刷盘（可通过 Publisher Confirm 确保刷盘完成）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>(2)发布者确认(Publisher Confrim)</strong></p>
+<ul>
+<li><strong>事务模式</strong>：通过<code>txSelect</code> 、<code>txCommit</code> 等命令实现原子性，但性能差。</li>
+<li><strong>Confirm 模式</strong>：
+<ol>
+<li>生产者开启<code>confirm</code> 模式，每条消息分配唯一 ID。</li>
+<li>RabbitMQ 通过<code>basic.ack</code> （成功）或<code>basic.nack</code> （失败）异步通知生产者。</li>
+<li>生产者可批量确认（<code>confirm.select</code> 设置<code>multiple=true</code> ），提升吞吐量。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="4-死信队列dlx原理">4. 死信队列(DLX)原理</h2>
+<p>当消息无法被正常消费时，会被转发到私信交换器（Dead Letter Exchange）</p>
+<ul>
+<li><strong>触发条件</strong>：
+<ul>
+<li>消息被消费者拒绝（<code>basic.reject</code> 或<code>basic.nack</code> ）且<code>requeue=false</code> 。</li>
+<li>消息 TTL 过期。</li>
+<li>队列达到最大长度限制。</li>
+</ul>
+</li>
+<li><strong>死信路由</strong>：死信消息携带原始的路由键和头部消息，有 DLX 重新路由到死信队列。</li>
+</ul>
+<hr>
+<h2 id="5-集群与高可用原理">5. 集群与高可用原理</h2>
+<p><strong>(1)集群架构</strong></p>
+<ul>
+<li><strong>元数据同步</strong>：所有节点共享交换器、队列、绑定等元数据，但队列数据仅存储在创建节点。</li>
+<li><strong>客户端连接</strong>：客户端可连接任意节点，若请求的队列不在该节点，通过内部路由转发。</li>
+</ul>
+<p><strong>(2)镜像队列(Mirrored Queue)</strong></p>
+<p>通过策略（Policy）定义 ha-mode（如 all），队列数据在集群节点间同步，基于 Raft 协议选举主节点。</p>
+<ul>
+<li><strong>数据同步</strong>：队列的镜像副本分布在多个节点，通过 **Guaranteed Multicast **算法同步。</li>
+<li><strong>故障转移</strong>：主节点（Master）宕机后，从镜像中选举新的主节点（基于 Raft 协议）。</li>
+</ul>
+<p><strong>(3)网络分区处理</strong></p>
+<ul>
+<li><strong>自动恢复策略</strong>：
+<ul>
+<li><code>pause_minority</code> ：少数派节点自动暂停，避免数据冲突。</li>
+<li><code>autoHeal</code> ：重启后自动选择分区中的多数派恢复。</li>
+</ul>
+</li>
+<li><strong>手动干预</strong>：通过<code>rabbitmqctl forget_cluster_node</code> 移除故障节点。</li>
+</ul>
+<hr>
+<h2 id="6-内存与磁盘管理">6. 内存与磁盘管理</h2>
+<ul>
+<li><strong>内存控制</strong>：RabbitMQ 默认优先使用内存存储消息，超出阈值（<code>vm_memory_high_watermark</code> ）后持久化到磁盘。</li>
+<li><strong>流控机制</strong>：当消费者处理速度过慢时，通过 TCP 背压（Back Pressure）机制阻止生产者继续发送消息。</li>
+</ul>
+<hr>
+<h2 id="7-性能优化原理">7. 性能优化原理</h2>
+<p><strong>(1)预取(QoS)</strong></p>
+<ul>
+<li><strong>channel.basicQos(prefetchCount)</strong> ：限制消费者未确认消息的最大数量，避免消费过载。</li>
+<li><strong>公平分发</strong>：若多个消费者订阅同一队列，RabbitMQ 会轮询分发消息（Round-Robin）。</li>
+</ul>
+<p><strong>(2)批量操作</strong></p>
+<ul>
+<li><strong>批量发布消息</strong>：合并多个消息到单个帧，减少网络开销。</li>
+<li><strong>批量确认</strong>：通过<code>multiple=true</code> 参数确认多条消息。</li>
+</ul>
+<hr>
+<h2 id="8-rpc-模式原理">8. RPC 模式原理</h2>
+<ul>
+<li><strong>回调队列</strong>：消费者在<code>reply_to</code> 头部指定响应队列。</li>
+<li><strong>关联 ID</strong>：生产者通过<code>correlation_id</code> 匹配请求与响应。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>  +---------+          +------------+          +---------+
+</span></span><span style="display:flex;"><span>  | Client  | --(1)--&gt; | RabbitMQ   | --(2)--&gt; | Server  |
+</span></span><span style="display:flex;"><span>  |         | &lt;--(4)-- | (RPC Queue)| &lt;--(3)-- |         |
+</span></span><span style="display:flex;"><span>  +---------+          +------------+          +---------+
+</span></span><span style="display:flex;"><span>  步骤：
+</span></span><span style="display:flex;"><span>  1. 客户端发送请求到 RPC 队列，携带 `reply_to` 和 `correlation_id`。
+</span></span><span style="display:flex;"><span>  2. 服务端消费请求，处理完成后将结果发送到 `reply_to` 队列。
+</span></span><span style="display:flex;"><span>  3. 客户端监听 `reply_to` 队列，通过 `correlation_id` 匹配响应。
+</span></span></code></pre></div><hr>
+<h2 id="9-流量削峰原理">9. 流量削峰原理</h2>
+<ul>
+<li><strong>队列缓冲</strong>：通过队列暂存突发流量，消费者按处理能力逐步消费。</li>
+<li><strong>限流策略</strong>：结合 QoS 预取和消费者水平扩展，控制处理速率。</li>
+</ul>
+<h2 id="10-保证消息有序性">10. 保证消息有序性</h2>
+<p><img src="/images/rabbitmq-message-flow.png" alt="消息有序性"></p>
+<h2 id="11-高可用">11. 高可用</h2>
+<p><img src="/images/rabbitmq-cluster.png" alt="高可用"></p>
+<hr>
+<h2 id="12-重要知识点">12. 重要知识点</h2>
+<ol>
+<li><strong>为什么使用消息队列</strong>？
+<ul>
+<li><strong>核心场景</strong>：解耦（服务间异步通信）、削峰（缓冲高并发请求）、异步（非阻塞处理）。</li>
+<li><strong>缺点</strong>：系统可用性降低（依赖 MQ）、复杂性增加（需处理消息丢失、重复、顺序性问题）。</li>
+</ul>
+</li>
+<li><strong>如何保证消息不丢失？</strong>
+<ul>
+<li><strong>生产者</strong>：使用 Confirm 模式（异步确认）或事务（同步确认）。</li>
+<li><strong>Broker</strong>：持久化队列与消息，结合镜像队列。</li>
+<li><strong>消费者</strong>：关闭自动 ACK，处理完成后手动发送 ACK。</li>
+</ul>
+</li>
+<li><strong>如何避免消息重复消费？</strong>
+<ul>
+<li><strong>生产者去重</strong>：MQ 内部生成<code>inner-msg-id</code> 拦截重复投递。</li>
+<li><strong>消费者幂等</strong>：业务层通过唯一标识（如订单 ID）校验，结合数据库唯一键或 Redis 原子操作。</li>
+</ul>
+</li>
+<li><strong>RabbitMQ 集群模式？</strong>
+<ul>
+<li><strong>普通集群</strong>：元数据同步，但队列数据仅存于创建节点，故障时需重新拉取数据。</li>
+<li><strong>镜像集群</strong>：队列数据全节点同步，高可用但性能开销大，拓展性差。</li>
+</ul>
+</li>
+<li><strong>消息顺序性如何保证？</strong>
+<ul>
+<li><strong>单队列消费者</strong>：同一业务的消息路由到同一队列，由单个消费者顺序处理。</li>
+<li><strong>全局序列号</strong>：消息中添加序号，消费者按序处理。</li>
+</ul>
+</li>
+<li><strong>消息堆积如何处理？</strong>
+<ul>
+<li><strong>临时扩容</strong>：增加队列 Partition 和消费者实例，并行消费积压数据。</li>
+<li><strong>批量导出</strong>：将积压消息导出至临时 Topic，分片处理。</li>
+</ul>
+</li>
+</ol>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/springthridlevelcache/">
+		<img class="icon-text" src="/img/prev.svg"/>Spring 三级缓存</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/nacos/">Nacos<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

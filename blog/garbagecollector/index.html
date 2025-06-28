@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="generator" content="Hugo 0.125.1">
+		<title>垃圾回收器 - 小蜜蜂</title>
+
+		<meta name="description" content="一、JVM 垃圾回收器概述 常见的垃圾回收器：
+Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC（Garbage First） ZGC（Z Garbage Collector） Shenandoah GC 二、垃圾回收器的特点与回收流程 Serial GC 特点： 单线程垃圾回收 适用于单核 CPU 或小型应用 回收时会暂停所有应用线程（Stop-The-World，STW） 回收流程： 新生代：使用复制算法（Copying） 老年代：使用标记-整理算法（Mark-Compact） 适用场景： 客户端应用和小型服务端应用 重要参数： -XX:UseSerialGC ：启用 Serial GC Parallel GC（Throughput GC） 特点： 多线程垃圾回收器 目标是最大化吞吐量（Throughput） 回收时会暂停所有应用线程（STW） 回收流程： 新生代：使用复制算法（Copying） 老年代：使用标记-整理算法（Mark-Compact） 适用场景： 多核 CPU 且对吞吐量要求高的应用 重要参数： -XX:&#43;UseParallelGC ：启用 Parallel GC -XX:ParallelGCThreads ：设置并行 GC 线程数 -XX:MaxGCPauseMillis ：设置最大 CG 暂停时间目标 -XX:GCTimeRatio ：设置吞吐量目标（GC 时间与总时间目标） CMS GC（Concurrent Mark Sweep） 特点： 并发垃圾回收器，尽量减少 STW 时间 适用于对延迟敏感的应用 使用标记-清除算法（Mark-Sweep），会产生内存碎片 回收流程： 初始标记（STW）：标记 GC Roots 直接关联对象 并发标记：并发标记所有可达对象 重新标记（STW）：修正并发标记期间的变化 并发清除：并发清除不可达对象 适用场景： 对延迟敏感的应用，如 Web 服务 重要参数： -XX:&#43;UseConcMarkSweepGC ：启用 CMS GC -XX:CMSInitiatingOccupancyFraction ：设置老年代使用率触发 CMS 的阈值（默认 68%） -XX:UseCMSCompactAtFullCollection ：在 Full GC 时进行内存整理 -XX:CMSFullGCsBeforeCompaction ：设置多少次 Full GC 后进行内存整理 G1 GC（Garbage First） 特点： 面向服务端应用的垃圾回收器 将堆内存划分为多个 Region，优先回收垃圾最多的 Region 目标是平衡吞吐量和延迟 回收流程： 初始标记（STW）：标记 GC Roots 直接关联的对象 并发标记：标记所有的可达对象 最终标记（STW）：修正并发标记期间的变化 筛选回收（STW）：根据回收价值排序 Region，优先回收垃圾最多的 Region 适用场景： 大内存、多核 CPU 的应用 重要参数： -XX:&#43;UseG1GC ：启用 G1 GC -XX:MaxGCPauseMillis ：设置最大 GC 暂停时间的目标（默认 200ms） -XX:G1HeapRegionSize ：设置 G1 Region 的大小 -XX:InitiatingHeapOccupancyPercent ：设置堆使用率触发并发标记的阈值（默认 45%） ZGC（Z Garbage Collector） 特点： 低延迟垃圾回收器，STW 时间极短（通常少于 10ms） 支持最大堆内存（TB 级别） 使用染色指针（Colored Pointers）和读屏障（Load Barrier）技术 回收流程： 1.">
+
+
+		
+		<link rel="shortcut icon" href="/images/logo.png">
+		
+	
+		
+
+
+
+
+<link rel="stylesheet" href="/css/ui.css">
+
+	
+		
+
+		<script defer src="/js/dark-mode.js"></script>
+		<link disabled id="dark-mode-theme" rel="stylesheet" href="/css/dark.css">
+		<link  rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Mono|Lato|Raleway">
+
+		
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-savanna-light.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/common.min.js"></script>
+		
+		
+	</head>
+
+<body>
+<header class="container no-print">
+	<div class="u-header">
+		<nav class="bar">
+	<ul><li>
+			<a href="/">
+				<img class="icon-text" src="/img/prev.svg"/>
+			</a>
+		</li><li><img class="icon-text" id="dark-mode-toggle" src="/img/moon-regular.svg" alt="Toggle Dark Mode"></a></li><li><a href="/about/">了解我</a></li><li><a href="/blog/">博客</a></li><li><a href="/work/">工作</a></li></ul>
+</nav>
+
+	</div>
+</header>
+<main class="container">
+
+<article>
+	<header><hgroup id="brand">
+	<h1>垃圾回收器</h1>
+	<h5>
+		
+		<time datetime="2018-04-22 15:43:54 &#43;0800 CST">2018年 4月 22日</time>
+		<span class="no-print">
+			-
+				
+				<a href="/tags/GC">GC</a>
+				
+				<a href="/tags/Java">Java</a>
+				
+				<a href="/tags/JVM">JVM</a>
+				<span>
+	</h5>
+	
+</hgroup>
+<hr class="sep" />
+</header>
+	<h2 id="一jvm-垃圾回收器概述">一、JVM 垃圾回收器概述</h2>
+<p>常见的垃圾回收器：</p>
+<ol>
+<li>Serial GC</li>
+<li>Parallel GC（Throughput GC）</li>
+<li>CMS GC（Concurrent Mark Sweep）</li>
+<li>G1 GC（Garbage First）</li>
+<li>ZGC（Z Garbage Collector）</li>
+<li>Shenandoah GC</li>
+</ol>
+<h2 id="二垃圾回收器的特点与回收流程">二、垃圾回收器的特点与回收流程</h2>
+<ol>
+<li>Serial GC
+<ul>
+<li>特点：
+<ul>
+<li>单线程垃圾回收</li>
+<li>适用于单核 CPU 或小型应用</li>
+<li>回收时会暂停所有应用线程（Stop-The-World，STW）</li>
+</ul>
+</li>
+<li>回收流程：
+<ul>
+<li>新生代：使用复制算法（Copying）</li>
+<li>老年代：使用标记-整理算法（Mark-Compact）</li>
+</ul>
+</li>
+<li>适用场景：
+<ul>
+<li>客户端应用和小型服务端应用</li>
+</ul>
+</li>
+<li>重要参数：
+<ul>
+<li><code>-XX:UseSerialGC</code> ：启用 Serial GC</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Parallel GC（Throughput GC）
+<ul>
+<li>特点：
+<ul>
+<li>多线程垃圾回收器</li>
+<li>目标是最大化吞吐量（Throughput）</li>
+<li>回收时会暂停所有应用线程（STW）</li>
+</ul>
+</li>
+<li>回收流程：
+<ul>
+<li>新生代：使用复制算法（Copying）</li>
+<li>老年代：使用标记-整理算法（Mark-Compact）</li>
+</ul>
+</li>
+<li>适用场景：
+<ul>
+<li>多核 CPU 且对吞吐量要求高的应用</li>
+</ul>
+</li>
+<li>重要参数：
+<ul>
+<li><code>-XX:+UseParallelGC</code> ：启用 Parallel GC</li>
+<li><code>-XX:ParallelGCThreads</code> ：设置并行 GC 线程数</li>
+<li><code>-XX:MaxGCPauseMillis</code> ：设置最大 CG 暂停时间目标</li>
+<li><code>-XX:GCTimeRatio</code> ：设置吞吐量目标（GC 时间与总时间目标）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CMS GC（Concurrent Mark Sweep）
+<ul>
+<li>特点：
+<ul>
+<li>并发垃圾回收器，尽量减少 STW 时间</li>
+<li>适用于对延迟敏感的应用</li>
+<li>使用标记-清除算法（Mark-Sweep），会产生内存碎片</li>
+</ul>
+</li>
+<li>回收流程：
+<ul>
+<li>初始标记（STW）：标记 GC Roots 直接关联对象</li>
+<li>并发标记：并发标记所有可达对象</li>
+<li>重新标记（STW）：修正并发标记期间的变化</li>
+<li>并发清除：并发清除不可达对象</li>
+</ul>
+</li>
+<li>适用场景：
+<ul>
+<li>对延迟敏感的应用，如 Web 服务</li>
+</ul>
+</li>
+<li>重要参数：
+<ul>
+<li><code>-XX:+UseConcMarkSweepGC</code> ：启用 CMS GC</li>
+<li><code>-XX:CMSInitiatingOccupancyFraction</code> ：设置老年代使用率触发 CMS 的阈值（默认 68%）</li>
+<li><code>-XX:UseCMSCompactAtFullCollection</code> ：在 Full GC 时进行内存整理</li>
+<li><code>-XX:CMSFullGCsBeforeCompaction</code> ：设置多少次 Full GC 后进行内存整理</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>G1 GC（Garbage First）
+<ul>
+<li>特点：
+<ul>
+<li>面向服务端应用的垃圾回收器</li>
+<li>将堆内存划分为多个 Region，优先回收垃圾最多的 Region</li>
+<li>目标是平衡吞吐量和延迟</li>
+</ul>
+</li>
+<li>回收流程：
+<ul>
+<li>初始标记（STW）：标记 GC Roots 直接关联的对象</li>
+<li>并发标记：标记所有的可达对象</li>
+<li>最终标记（STW）：修正并发标记期间的变化</li>
+<li>筛选回收（STW）：根据回收价值排序 Region，优先回收垃圾最多的 Region</li>
+</ul>
+</li>
+<li>适用场景：
+<ul>
+<li>大内存、多核 CPU 的应用</li>
+<li>重要参数：
+<ul>
+<li><code>-XX:+UseG1GC</code> ：启用 G1 GC</li>
+<li><code>-XX:MaxGCPauseMillis</code> ：设置最大 GC 暂停时间的目标（默认 200ms）</li>
+<li><code>-XX:G1HeapRegionSize</code> ：设置 G1 Region 的大小</li>
+<li><code>-XX:InitiatingHeapOccupancyPercent</code> ：设置堆使用率触发并发标记的阈值（默认 45%）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ZGC（Z Garbage Collector）
+<ul>
+<li>特点：
+<ul>
+<li>低延迟垃圾回收器，STW 时间极短（通常少于 10ms）</li>
+<li>支持最大堆内存（TB 级别）</li>
+<li>使用染色指针（Colored Pointers）和读屏障（Load Barrier）技术</li>
+</ul>
+</li>
+<li>回收流程：</li>
+</ul>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>1. 初始化阶段（Initial Mark）
+</span></span><span style="display:flex;"><span>这是 ZGC 回收的第一个阶段，主要目标是标记所有存活的根对象。此时，ZGC 会标记所有活动线程和 JVM 堆栈中的对象，以及直接引用的对象。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>启动时标记：在这个阶段，ZGC 会先标记应用程序中所有的“根对象”（如活动线程的栈、直接引用的对象等）。这个过程是 Stop-the-World（STW）操作，因为它需要暂停应用程序的执行，确保能够访问到所有根对象。
+</span></span><span style="display:flex;"><span>彩色指针标记：在此阶段，对象会被标记为活动状态。ZGC 会使用彩色指针技术，在对象的指针低位或高位嵌入额外的标记信息，表示对象的状态（例如，是否是“活动”对象）。
+</span></span><span style="display:flex;"><span>2. 并发标记（Concurrent Mark）
+</span></span><span style="display:flex;"><span>在这一步骤中，ZGC 会并发地标记堆中的所有对象，以确定哪些对象是活动的（存活的）。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>并发标记：在并发标记阶段，ZGC 会遍历堆中的所有对象，并标记所有能通过根对象访问到的对象。此阶段 与应用程序并发运行，不会暂停应用程序的执行，因此不会造成长时间的停顿。
+</span></span><span style="display:flex;"><span>读屏障：ZGC 使用 读屏障 技术来确保指向活动对象的指针会被正确地修正，特别是当对象被移动时。读屏障帮助 ZGC 在并发标记阶段管理对象的状态。
+</span></span><span style="display:flex;"><span>Marking Phase：对象通过指针传播，标记所有从根对象可达的对象。如果对象可达，它就会被标记为“存活”。
+</span></span><span style="display:flex;"><span>3. 并发移除（Concurrent Relocation）
+</span></span><span style="display:flex;"><span>ZGC 通过并发的方式，在标记阶段之后开始清理垃圾并将存活对象移动到新的内存区域。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>对象移动（Relocation）：ZGC 通过使用彩色指针将对象迁移到堆的连续区域，这样可以避免堆内存碎片。此阶段仍然是并发进行的，因此并不会阻塞应用程序的执行。
+</span></span><span style="display:flex;"><span>空间整理：ZGC 会将存活的对象移动到新的位置，目的是为了更好地利用堆空间并减少碎片。由于对象的内存位置发生变化，ZGC 使用读屏障来确保应用程序始终访问到正确的对象位置。
+</span></span><span style="display:flex;"><span>4. 并发清理（Concurrent Sweep）
+</span></span><span style="display:flex;"><span>在 ZGC 的并发清理阶段，垃圾回收器会清理被标记为垃圾的对象。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>清理未标记的对象：在这个阶段，ZGC 会清理所有标记为不可达（垃圾）的对象。这一过程会并发进行，不会阻塞应用程序线程。
+</span></span><span style="display:flex;"><span>标记-清理分离：ZGC 的并发清理是通过 并发清理 和 并发回收 的方式来实现的，即标记阶段和清理阶段是分开进行的。ZGC 不需要在这两者之间进行停顿。
+</span></span><span style="display:flex;"><span>5. 结束阶段（Final Cleanup）
+</span></span><span style="display:flex;"><span>当 ZGC 完成并发清理后，会进行一些最后的清理工作，准备为下一轮垃圾回收做准备。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最后整理：在这个阶段，ZGC 会对剩余的内存进行整理，将所有的存活对象放到堆内存的最前端。这有助于下一轮垃圾回收时减少碎片。
+</span></span><span style="display:flex;"><span>恢复应用程序：在所有并发阶段完成后，应用程序可以恢复执行，垃圾回收已经完成。这个阶段通常是 Stop-the-World 的短暂停顿。
+</span></span></code></pre></div><ul>
+<li>适用场景：
+<ul>
+<li>对延迟极其敏感的应用，如金融交易系统</li>
+</ul>
+</li>
+<li>重要参数：
+<ul>
+<li><code>-XX:+UseZGC</code> ：启用 ZGC</li>
+<li><code>-XX:ZAllocationSpikeTolerance</code> ：设置分配尖峰容忍度</li>
+<li><code>-XX:ZCollectionInterval</code> ：这是 ZGC 的回收时间间隔</li>
+</ul>
+</li>
+</ul>
+<ol start="6">
+<li>Shenandoah GC
+<ul>
+<li>特点：
+<ul>
+<li>低延迟垃圾回收器，STW 时间极短</li>
+<li>支持并发压缩（Concurrent Compaction）</li>
+<li>使用 Brooks 指针和读屏障技术</li>
+</ul>
+</li>
+<li>回收流程：
+<ul>
+<li>并发标记：并发标记所有可达对象</li>
+<li>并发转移：并发将存活对象转移到新的内存区域</li>
+<li>并发更新引用：并发更新对象引用</li>
+</ul>
+</li>
+<li>适用场景：
+<ul>
+<li>对延迟敏感的应用，如实时数据处理系统</li>
+</ul>
+</li>
+<li>重要参数：
+<ul>
+<li><code>-XX:+UseShenandoahGC</code> ：启用 Shenandoah GC</li>
+<li><code>-XX:ShenandoahGCHeuristics</code> ：设置 Shenandoah 的启发式策略</li>
+<li><code>-XX:ShenandoahGCMode</code> ：设置 Shenandoah 的工作默认</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="三总结">三、总结</h3>
+<table>
+<thead>
+<tr>
+<th>垃圾回收器</th>
+<th>特点</th>
+<th>适用场景</th>
+<th>重要参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Serial GC</td>
+<td>单线程，STW</td>
+<td>小型应用</td>
+<td>-XX:+UseSerialGC</td>
+</tr>
+<tr>
+<td>Parallel GC</td>
+<td>多线程，高吞吐量</td>
+<td>多核 CPU，高吞吐量应用</td>
+<td>-XX:+UseParallelGC, -XX:ParallelGCThreads</td>
+</tr>
+<tr>
+<td>CMS GC</td>
+<td>并发，低延迟</td>
+<td>对延迟敏感的应用</td>
+<td>-XX:+UseConcMarkSweepGC, -XX:CMSInitiatingOccupancyFraction</td>
+</tr>
+<tr>
+<td>G1 GC</td>
+<td>平衡吞吐量和延迟</td>
+<td>大内存、多核 CPU 应用</td>
+<td>-XX:+UseG1GC, -XX:MaxGCPauseMillis</td>
+</tr>
+<tr>
+<td>ZGC</td>
+<td>极低延迟，超大堆</td>
+<td>对延迟极其敏感的应用</td>
+<td>-XX:+UseZGC</td>
+</tr>
+<tr>
+<td>Shenandoah GC</td>
+<td>极低延迟，并发压缩</td>
+<td>对延迟敏感的应用</td>
+<td>-XX:+UseShenandoahGC</td>
+</tr>
+</tbody>
+</table>
+<h3 id="四选择垃圾回收器的建议">四、选择垃圾回收器的建议</h3>
+<ul>
+<li>小型应用：Serial GC。</li>
+<li>高吞吐量应用：Parallel GC。</li>
+<li>低延迟应用：CMS GC（JDK 8 及之前）或 G1 GC（JDK 9 及之后）。</li>
+<li>超大堆内存、极低延迟应用：ZGC 或 Shenandoah GC。</li>
+</ul>
+<p>通过合理选择和配置垃圾回收器，可以显著提升应用的性能和稳定性。</p>
+<h3 id="五其他关键点">五、其他关键点</h3>
+<h4 id="1-可达性算法">1. 可达性算法</h4>
+<h4 id="2-三色标记">2. 三色标记</h4>
+<h4 id="3-标记清除算法">3. 标记清除算法</h4>
+<p>先标记，再清除</p>
+<ul>
+<li>优点：速度快</li>
+<li>缺点：产生碎片空间</li>
+</ul>
+<h3 id="4-标记复制算法">4. 标记复制算法</h3>
+<p>在一块内存先标记存活对象，然后将存活对象复制到另外一块内存，最后清除原有内存</p>
+<ul>
+<li>优点：速度快，不产生碎片空间</li>
+<li>缺点：浪费内存空间，只能使用原有内存的一般</li>
+<li>应用：一般应用在新生代 eden，survivor1，survior2</li>
+</ul>
+<h4 id="5-标记整理算法">5. 标记整理算法</h4>
+<p>先标记存活对象，将存活对象全部向一边内存迁移，最后清除另一边内存</p>
+<ul>
+<li>优点：不产生碎片空间</li>
+<li>缺点：速度较慢</li>
+<li>应用：CMS</li>
+</ul>
+<h3 id="安全点safe-point">安全点（Safe Point）</h3>
+<h3 id="安全区域safe-area">安全区域（Safe Area）</h3>
+<h3 id="跨代引用解决方案">跨代引用解决方案</h3>
+<h5 id="1-g1的解决方案记忆集rset">1. G1的解决方案：记忆集（RSet）</h5>
+<p>每个 Region 维护一个 <strong>RSet</strong>（Remembered Set），用于记录 <strong>其他 Region 中的对象对本 Region 的引用</strong>。例如：</p>
+<ul>
+<li>Region A（老年代）中的对象引用了 Region B（新生代）中的对象，则 Region B 中 RSet 会记录 Region A 中存在这种引用
+<strong>RSet 的结构</strong></li>
+<li>RSet 本质上是一个哈希表，键是引用来源的 Region 地址，值是来源 Region 中的卡表索引（Card Index）</li>
+<li>卡表（Card Table）：每个 Region 被划分为多个卡页（Card Page，默认 512 字节），卡表是一个字节数组，每个元素对应一个卡页。当卡页内的对象存在跨 Region 引用时，对应的卡表元素会被标记为脏</li>
+</ul>
+<h5 id="2-写屏障write-barrier维护-rset">2. 写屏障（Write Barrier）维护 RSet</h5>
+<p>当程序修改对象引用（如 Obj.field = newObj）时，G1 通过写屏障触发一下操作：</p>
+<ol>
+<li>判断是否为跨 Region 引用：检查 <code>obj</code> 和<code>newObj</code> 是否属于不同 Region</li>
+<li>更新 RSet：如果跨 Region，将引用来源（<code>obj</code> 所在的 Region 和卡页）记录到<code>newObj</code> 所在 Region 的 RSet 中</li>
+</ol>
+<p>伪代码示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">writeBarrier</span>(Field field, Object newObj) {
+</span></span><span style="display:flex;"><span>    Object oldObj <span style="color:#f92672">=</span> field.<span style="color:#a6e22e">get</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (oldObj <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> isCrossRegionRef(oldObj, newObj)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 记录引用来源到目标 Region 的 RSet</span>
+</span></span><span style="display:flex;"><span>        addToRSet(oldObj.<span style="color:#a6e22e">region</span>(), newObj.<span style="color:#a6e22e">region</span>(), getCardIndex(oldObj));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    field.<span style="color:#a6e22e">set</span>(newObj);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="3-垃圾回收处理跨代引用">3. 垃圾回收处理跨代引用</h5>
+<p>以 Young GC 为例（清理新生代 Region）：</p>
+<ol>
+<li>确定存活对象：通过 GC Roots 扫描新生代对象</li>
+<li>处理跨代引用：
+<ol>
+<li>遍历新生代每个 Region 的 RSet，找到所有老年代 Region 对新生代的引用</li>
+<li>将这里老年代 Region 中的卡页标记为“需要扫描”</li>
+<li>仅扫描这些脏卡页中的对象，避免扫描整个老年代</li>
+</ol>
+</li>
+</ol>
+<p><strong>优势</strong></p>
+<ul>
+<li><strong>减少扫描范围</strong>：仅处理与新生代相关的跨代引用，而非全堆扫描</li>
+<li><strong>并行处理</strong>：RSet 的维护和扫描可以并行化，降低停顿时间</li>
+</ul>
+<h5 id="4-rset-的优化">4. RSet 的优化</h5>
+<p>为了减少内存和计算开销，G1 对 RSet 进行了优化：</p>
+<ol>
+<li><strong>稀疏哈希表</strong>：仅在存在跨 Region 引用时分配存储空间</li>
+<li><strong>粒度控制</strong>：卡页大小（512 字节）平衡了进度与内存占用</li>
+<li><strong>并发更新</strong>：写屏障的操作是并发执行的，减少对应用线程阻塞</li>
+</ol>
+<h5 id="5-与其他回收器的对比">5. 与其他回收器的对比</h5>
+<table>
+<thead>
+<tr>
+<th>机制</th>
+<th>G1</th>
+<th>CMS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>跨代引用处理</strong></td>
+<td>每个 Region 维护 RSet</td>
+<td>全局卡表（Card Table）</td>
+</tr>
+<tr>
+<td><strong>精度</strong></td>
+<td>精确到 Region 和卡页</td>
+<td>粗粒度（卡表页）</td>
+</tr>
+<tr>
+<td><strong>内存开销</strong></td>
+<td>较高（每个 Region 一个 RSet）</td>
+<td>较低（单个全局卡表）</td>
+</tr>
+<tr>
+<td><strong>扫描效率</strong></td>
+<td>更高效（仅扫描相关 Region）</td>
+<td>需扫描整个老年代的脏卡页</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+<nav class="no-print post-nav">
+
+	<a class="prev-post" href="http://xumf.net/blog/springcloudconfig/">
+		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Config</a>
+
+
+	<a class="next-post" href="http://xumf.net/blog/hbase/">HBase 深入浅出<img class="icon-text" src="/img/next.svg"/>
+	</a>
+
+</nav>
+
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/jvmissuesolution/">JVM 问题排查</a></li>
+  	
+  	<li><a href="/blog/synchronized/">Synchronized</a></li>
+  	
+  </ul>
+</section>
+
+
+
+
+	<div id="disqus_thread" class="no-print"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'xumf';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</footer>

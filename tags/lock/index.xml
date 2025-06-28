@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lock on 小蜜蜂</title>
+    <link>http://xumf.net/tags/lock/</link>
+    <description>Recent content in Lock on 小蜜蜂</description>
+    <generator>Hugo 0.125.1</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 22 Apr 2018 13:16:53 +0800</lastBuildDate>
+    <atom:link href="http://xumf.net/tags/lock/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Synchronized</title>
+      <link>http://xumf.net/blog/synchronized/</link>
+      <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
+      <guid>http://xumf.net/blog/synchronized/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>
