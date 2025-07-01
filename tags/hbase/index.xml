@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HBase on 小蜜蜂</title>
-    <link>http://localhost:1313/tags/hbase/</link>
+    <link>https://xumf.net/tags/hbase/</link>
     <description>Recent content in HBase on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 15 Aug 2018 15:43:54 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/hbase/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/tags/hbase/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HBase 深入浅出</title>
-      <link>http://localhost:1313/blog/hbase/</link>
+      <link>https://xumf.net/blog/hbase/</link>
       <pubDate>Wed, 15 Aug 2018 15:43:54 +0800</pubDate>
-      <guid>http://localhost:1313/blog/hbase/</guid>
+      <guid>https://xumf.net/blog/hbase/</guid>
       <description>1. HBase 核心组件源码深度解析 1.1 HMaster 源码路径：org.apache.hadoop.hbase.master.HMaster&#xA;核心职责： 元数据管理： 管理表创建、删除、修改等 DDL 操作 维护 hbase:meta 表，记录所有 Region 的分布信息 负载均衡： 监控 RegionServer 的状态，分配 Region 到 RegionServer 处理 RegionServer 的故障恢复 协调分裂与合并 当 Region 大小超过阈值时，触发 Region 分裂 合并小 Region，减少元数据开销 源码关键点：&#xA;启动流程： 初始化 ZooKeeper 链接，注册 HMaster 节点 加载 hbase:meta 表，获取所有 Region 的分布信息 启动后台线程，监控 RegionServer 状态 Region 分配 通过 AssignmentManager 将 Region 分配到 RegionServer 使用 ZooKeeper 协调 Region 的分配和迁移 面试题：&#xA;HMaster 宕机后，HBase 还能正常工作吗？ 可以，HBase 的读写操作有 RegionServer 直接处理，HMaster 宕机不会影响已有表的读写，但会影响表的元数据操作（如创建表） HMaster 如何实现高可用？ 通过 ZooKeeper 选举机制，确保只有一个活跃的 HMaster 1.</description>
     </item>
   </channel>

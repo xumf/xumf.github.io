@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>了解我 on 小蜜蜂</title>
-    <link>http://localhost:1313/about/</link>
+    <link>https://xumf.net/about/</link>
     <description>Recent content in 了解我 on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Fri, 20 Apr 2018 20:50:41 +0700</lastBuildDate>
-    <atom:link href="http://localhost:1313/about/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/about/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>License</title>
-      <link>http://localhost:1313/about/license/</link>
+      <link>https://xumf.net/about/license/</link>
       <pubDate>Fri, 20 Apr 2018 20:50:41 +0700</pubDate>
-      <guid>http://localhost:1313/about/license/</guid>
+      <guid>https://xumf.net/about/license/</guid>
       <description>The MIT License (MIT)&#xA;Copyright (c) 2018 Xumf&#xA;Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &amp;ldquo;Software&amp;rdquo;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</description>
     </item>
   </channel>

@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spring Cloud Gateway on 小蜜蜂</title>
-    <link>http://localhost:1313/tags/spring-cloud-gateway/</link>
+    <link>https://xumf.net/tags/spring-cloud-gateway/</link>
     <description>Recent content in Spring Cloud Gateway on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Thu, 18 Jul 2024 23:13:45 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/spring-cloud-gateway/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/tags/spring-cloud-gateway/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Spring Cloud Gateway</title>
-      <link>http://localhost:1313/blog/springcloudgateway/</link>
+      <link>https://xumf.net/blog/springcloudgateway/</link>
       <pubDate>Thu, 18 Jul 2024 23:13:45 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springcloudgateway/</guid>
+      <guid>https://xumf.net/blog/springcloudgateway/</guid>
       <description>Spring Cloud Gateway 核心原理 架构组成 Client -&amp;gt; Gateway -&amp;gt; Route Predicate -&amp;gt; Gateway Filter -&amp;gt; Target Service 核心概念 Route：路由，包含、目标 URI、Predicate 结合和 Filter 集合 Predicate：断言，用于匹配 Http 请求 Filter：过滤器，用于修改请求和响应 工作流程 1. 客户端发起请求 2. Gateway Handler Mapping 查找匹配的路由 3. 执行 Gateway Filter 链（pre filters） 4. 代理请求到目标服务 5. 执行 Gateway Filter 链（post filters） 6. 返回响应给客户端 关键组件 RouteLocator：路由定位器 GatewayFilter：网关过滤器 RoutePredicateHandlerMapping：路由断言处理器映射 WebHandler：Web 请求处理器 重要知识点 Spring Cloud Gateway 和 Zuul 的区别是什么？ 架构模型：Gateway 是异步非阻塞，Zuul 1.x 是同步阻塞 性能：Gateway 性能更高 过滤器：Gateway 的过滤器更轻量 协议支持：Gateway 原生支持 HTTP/2 Gateway 的核心组件有哪些？ Route Predicate Filter RouteLocator GatewayFilterFactory 如何自定义过滤器 // .</description>
     </item>
   </channel>

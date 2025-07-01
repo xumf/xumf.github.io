@@ -2,172 +2,172 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>博客 on 小蜜蜂</title>
-    <link>http://localhost:1313/blog/</link>
+    <link>https://xumf.net/blog/</link>
     <description>Recent content in 博客 on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 07 May 2025 23:04:30 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/blog/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Zuul</title>
-      <link>http://localhost:1313/blog/zuul/</link>
+      <link>https://xumf.net/blog/zuul/</link>
       <pubDate>Wed, 07 May 2025 23:04:30 +0800</pubDate>
-      <guid>http://localhost:1313/blog/zuul/</guid>
+      <guid>https://xumf.net/blog/zuul/</guid>
       <description>Zuul 的核心概念 （1）Zuul 是什么？ Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡 主要功能： 路由：将客户端请求转发到后端服务 过滤：在请求和响应的生命周期中执行自定义逻辑 负载均衡：与 Ribbon 集成，实现客户端负载均衡 （2）Zuul 的工作流程 路由：根据配置请求转发到对应的微服务 过滤：在请求到达目标服务之前或之后执行过滤逻辑 负载均衡：通过 Ribbon 集成，实现客户端负载均衡 Zuul 的配置 （1）依赖配置 在 pom.xml 添加 Zuul 依赖： &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-cloud-starter-netflix-zuul&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; （2）启用 Zuul 在启动类中添加 @EnableZuulProxy 注解： @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } （3）路由配置 在 application.yml 中配置路由规则： zuul: routes: user-service: # 路径名称 path: /user/** # 路径配置 serviceId: user-service # 目标服务名称 order-service: path: /order/** serviceId: order-service 解释： user-service 和 order-service 是路由的名称，可以自定义 path 是匹配的 URL 路径 serviceId 是 Eureka 中注册的服务名称 自定义路由 如果不想使用服务名称作为路由前缀，可以自定义路由： zuul: routes: custom-user-service: # 路由策略 path: /api/user/** # 匹配路径 url: http://localhost:8081 # 目标服务地址 负载均衡配置 （1）集成 Ribbon Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡 在 application.</description>
     </item>
     <item>
       <title>Zipkin</title>
-      <link>http://localhost:1313/blog/zipkin/</link>
+      <link>https://xumf.net/blog/zipkin/</link>
       <pubDate>Mon, 03 Mar 2025 22:19:24 +0800</pubDate>
-      <guid>http://localhost:1313/blog/zipkin/</guid>
+      <guid>https://xumf.net/blog/zipkin/</guid>
       <description>Zipkin 核心原理 1. 架构组成 +-----------+ +-----------+ +-----------+ | Collector | &amp;lt;-- | Reporter | &amp;lt;-- | Instrument| +-----------+ +-----------+ +-----------+ | | v v +-----------+ +-----------+ | Storage | | UI | +-----------+ +-----------+ 2. 核心概念 Trace：一次完整的请求链路 span：一个工作单元 Annotation：关键事件标记 BinaryAnnotation：附加的键值信息 1. cs (Client Sent): 客户端发送请求的时间。 2. sr (Server Received): 服务器接收到请求的时间。 3. ss (Server Sent): 服务器发送响应的时间。 4. cr (Client Received): 客户端接收到响应的时间。 5. ca (Client Address): 客户端的地址信息。 6. sa (Server Address): 服务器的地址信息。 7.</description>
     </item>
     <item>
       <title>Spring 三级缓存</title>
-      <link>http://localhost:1313/blog/springthridlevelcache/</link>
+      <link>https://xumf.net/blog/springthridlevelcache/</link>
       <pubDate>Thu, 30 Jan 2025 22:39:17 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springthridlevelcache/</guid>
+      <guid>https://xumf.net/blog/springthridlevelcache/</guid>
       <description>三级缓存 在 Spring 框架中，三级缓存机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。&#xA;三级缓存的组成： Spring的DefaultSingletonBeanRegistry类三级缓存对象&#xA;private final Map&amp;lt;String, Object&amp;gt; singletonObjects = new ConcurrentHashMap&amp;lt;&amp;gt;(256); private final Map&amp;lt;String, Object&amp;gt; earlySingletonObjects = new ConcurrentHashMap&amp;lt;&amp;gt;(16); private final Map&amp;lt;String, ObjectFactory&amp;lt;?&amp;gt;&amp;gt; singletonFactories = new HashMap&amp;lt;&amp;gt;(16); 一级缓存（singletonObjects）：存放完全初始化的单例 Bean 实例。当请求一个 Bean 时，Spring 首先从一级缓存中查找，如果存在，则直接返回实例。 二级缓存（earlySingletonObjects）：存放尚未完全初始化的单例 Bean 实例，通常是指构造函数已执行完毕，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中，以便在依赖注入过程中，其它 Bean 可以获取该 Bean 的早期引用，从而解决循环依赖。 三级缓存（singletonFactories）：存放用于创建单例 Bean 的工厂对象（ObjectFactory）。当 Bean 正在创建过程中，且需要提前暴露其引用时，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取正在创建中的 Bean 的引用。 三级缓存解决下循环依赖的流程 实例化 Bean：当 Spring 需要创建一个 Bean 时，首先会检查一级缓存中是否已有该 Bean 的实例。如果没有，则开始实例化该 Bean。 放入三级缓存：在实例化过程中，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。这样，其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取到正在创建中的 Bean 的引用。 放入二级缓存：当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中。此时，其它 Bean 可以从二级缓存中获取到该 Bean 的早期引用。 放入一级缓存：当 Bean 的属性填充和初始化方法执行完毕后，Spring 会将其放入一级缓存，表示该 Bean 已完全初始化。此时，其它 Bean 可以从一级缓存中获取到该 Bean 的实例。 为什么需要三级缓存？ 虽然二级缓存可以解决大部分循环依赖问题，但在涉及 AOP（面向切面编程）时，三级缓存显得尤为重要。在 AOP 代理的情况下，Bean 的创建过程需要通过代理工厂来生成代理对象。三级缓存缓存中的工厂对象正是用于创建这些代理对象的。如果没有三级缓存，Spring 将无法在 Bean 创建过程中提前暴露代理对象，从而导致循环依赖无法解决。</description>
     </item>
     <item>
       <title>Synchronized</title>
-      <link>http://localhost:1313/blog/synchronized/</link>
+      <link>https://xumf.net/blog/synchronized/</link>
       <pubDate>Wed, 22 Jan 2025 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/synchronized/</guid>
+      <guid>https://xumf.net/blog/synchronized/</guid>
       <description></description>
     </item>
     <item>
       <title>Spring Cloud Sleuth</title>
-      <link>http://localhost:1313/blog/springcloudsleuth/</link>
+      <link>https://xumf.net/blog/springcloudsleuth/</link>
       <pubDate>Thu, 01 Aug 2024 13:54:50 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springcloudsleuth/</guid>
+      <guid>https://xumf.net/blog/springcloudsleuth/</guid>
       <description>Spring Cloud Sleuth 核心原理 1. 分布式追踪概念 Trace：一次完整的请求链路 Span：一个工作单元，包含开始和结束时间 Annotation：关键事件标记（如 cs、sr、ss、cr） cs (Client Sent)：标识客户端发起请求的时间点。 sr (Server Received)：标识服务端接收到请求并开始处理的时间点。 ss (Server Sent)：标识服务端处理完请求并准备返回响应的时间点。 cr (Client Received)：标识客户端接收到服务端响应的时间点。 2. 核心功能 自动生成和传播 Trace ID 和 Span ID 集成 Zipkin 等追踪系统 支持多种通信协议（HTTP、MQ、RPC等） 提供丰富的上下文信息 3. 数据模型 Trace ├── Span 1 │ ├── Annotation: cs │ ├── Annotation: sr │ ├── Annotation: ss │ └── Annotation: cr └── Span 2 ├── Annotation: cs └── Annotation: cr 源码分析 1. Tracer 核心类 public interface Tracer { Span nextSpan(); Span nextSpan(Span parent); Span newTrace(); void continueSpan(Span span); void close(Span span); Span currentSpan(); // .</description>
     </item>
     <item>
       <title>Spring Cloud Gateway</title>
-      <link>http://localhost:1313/blog/springcloudgateway/</link>
+      <link>https://xumf.net/blog/springcloudgateway/</link>
       <pubDate>Thu, 18 Jul 2024 23:13:45 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springcloudgateway/</guid>
+      <guid>https://xumf.net/blog/springcloudgateway/</guid>
       <description>Spring Cloud Gateway 核心原理 架构组成 Client -&amp;gt; Gateway -&amp;gt; Route Predicate -&amp;gt; Gateway Filter -&amp;gt; Target Service 核心概念 Route：路由，包含、目标 URI、Predicate 结合和 Filter 集合 Predicate：断言，用于匹配 Http 请求 Filter：过滤器，用于修改请求和响应 工作流程 1. 客户端发起请求 2. Gateway Handler Mapping 查找匹配的路由 3. 执行 Gateway Filter 链（pre filters） 4. 代理请求到目标服务 5. 执行 Gateway Filter 链（post filters） 6. 返回响应给客户端 关键组件 RouteLocator：路由定位器 GatewayFilter：网关过滤器 RoutePredicateHandlerMapping：路由断言处理器映射 WebHandler：Web 请求处理器 重要知识点 Spring Cloud Gateway 和 Zuul 的区别是什么？ 架构模型：Gateway 是异步非阻塞，Zuul 1.x 是同步阻塞 性能：Gateway 性能更高 过滤器：Gateway 的过滤器更轻量 协议支持：Gateway 原生支持 HTTP/2 Gateway 的核心组件有哪些？ Route Predicate Filter RouteLocator GatewayFilterFactory 如何自定义过滤器 // .</description>
     </item>
     <item>
       <title>Spring Cloud Config</title>
-      <link>http://localhost:1313/blog/springcloudconfig/</link>
+      <link>https://xumf.net/blog/springcloudconfig/</link>
       <pubDate>Tue, 11 Jun 2024 15:40:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springcloudconfig/</guid>
+      <guid>https://xumf.net/blog/springcloudconfig/</guid>
       <description>核心概念 （1）什么是 Spring Cloud Config？ Spring Cloud Config 是一个分布式配置管理工具，用于集中管理微服务应用的配置文件 支持从 Git、SVN、本地文件系统等存储后端加载配置 （2）Spring Cloud Config 的组成 Config Server：配置中心服务器，负责从存储后端加载配置并提供客户端 Config Client：配置客户端，从 Config Server 获取配置并应用到应用中。 （3）Spring Cloud Config 的特点 集中化管 将微服务应用的配置文件集中存储在配置中心（如 Git 仓库），便于统一管理和维护 避免配置文件分散在各个微服务中，降低管理成本 动态刷新 支持配置的动态刷新，无需重启应用 通过 Spring Cloud Bus 或者手动出发 /actuator/refresh 端点实现配置的动态更新 多环境支持 支持不同环境（如 dev、test、prod）的配置文件 通过 spring.profiles.active 指定当前环境，自动加载对应配置 安全性 支持配置文件的加密和解密，保护敏感信息（如数据库密码、API 密钥等）。 使用对称加密（如 AES）或非对称加密（如 RSA）对配置文件中的敏感字段进行加密 版本控制 Git 集成：Spring Cloud Config 默认支持 Git 作为存储后端，天然具备版本控制能力 可以查看配置文件提交历史，方便回滚到之前的版本 支持分支和标签，便于管理不同版本的配置 SVN 集成：如果需要，也可以使用 SVN 作为存储后端，同样支持版本控制 权限控制 Git 仓库权限：通过 Git 仓库的权限控制机制（如 GitHub/GitLab 的访问令牌、SSH 密钥等），限制对配置文件的访问 只对授权的用户或者服务才能拉取配置文件 Config Server 权限：可以通过 Spring Security 对 Config Server 的访问进行权限控制 例如：限制只有特定的微服务或者用户才能访问 Config Server 的配置接口 高可用性 Config Server 支持集群部署，避免单点故障 通过 Eureka 注册中心实现 Config Server 的自动发现和负载均衡 多种存储后端支持 支持 Git、SVN、本地文件系统、JDBC、Vault 等多种存储后端 根据实际需求选择合适的存储后端 工作原理 （1）Config Server Config Server 从存储后端（如 Git）加载配置文件 通过 Http 接口将配置提供给 Config Client （2）Config Client Config Client 在启动时从 Config Server 获取配置 支持配置的动态刷新（通过 Spring Cloud Bus 或手动触发） （3）配置文件的加载顺序 Config Client 会按照一下顺序加载配置： bootstrap.</description>
     </item>
     <item>
       <title>Spring Cloud Bus</title>
-      <link>http://localhost:1313/blog/springcloudbus/</link>
+      <link>https://xumf.net/blog/springcloudbus/</link>
       <pubDate>Fri, 05 Jan 2024 13:42:22 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springcloudbus/</guid>
+      <guid>https://xumf.net/blog/springcloudbus/</guid>
       <description>Spring Cloud Bus 的核心概念 （1）什么是 Spring Cloud Bus？ Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新） 它基于消息中间件（如 RabbitMQ、Kafka）实现，支持全局配置刷新、服务状态同步等功能 （2）Spring Cloud Bus 的组成 消息中间件：RabbitMQ 或 Kafka，负责传递事件 事件生产者：Config Server 或其他微服务，发送事件 事件消费者：Config Client 或其他微服务，接收事件并执行相应操作 （3）Spring Cloud Bus 的特点 全局配置刷新：通过 **/actuator/bus-refresh **端点触发全局配置刷新 服务状态同步：通过事件传播实现服务状态同步 多消息中间件支持：支持 RabbitMQ 和 Kafka Spring Cloud Bus 的工作原理 （1）事件传播流程 事件生产者（如 Config Server）发送事件到消息中间件 消息中间件将事件广播给所有订阅者 事件消费者（如 Config Client）接收到事件并执行相应操作 （2）全局配置刷新流程 Config Server 接收到 /actuator/bus-refresh 请求 Config Server 通过消息中间件广播一个刷新事件 所有 Config Client 接收到刷新事件 Config Client 调用 RefreshScope.refreshAll()，刷新标记为 @RefreshScope 的 Bean Spring Cloud Bus 配置 （1）Kafka 配置 如果你使用 Kafka 作为消息中间件，可以这样配置： spring: kafka: bootstrap-servers: localhost:9092 consumer: group-id: my-group （2）启用 Spring Cloud Bus 在 pom.</description>
     </item>
     <item>
       <title>SpringBoot 启动流程</title>
-      <link>http://localhost:1313/blog/springbootstartflow/</link>
+      <link>https://xumf.net/blog/springbootstartflow/</link>
       <pubDate>Tue, 09 May 2023 23:36:22 +0800</pubDate>
-      <guid>http://localhost:1313/blog/springbootstartflow/</guid>
+      <guid>https://xumf.net/blog/springbootstartflow/</guid>
       <description>核心的 BeanPostProcessor AutowiredAnnotationBeanPostProcessor 作用：处理@Autowired 、@Value 、@Inject 等注解，实现依赖注入。 触发时机： postProcessBeforeInitialization：在 Bean 初始化之前，解析并注入依赖 postProcessAfterInitialization：在 Bean 初始化之后，通常不执行额外逻辑 源码类：org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor CommonAnnotationBeanPostProcessor 作用：处理 JSR-250 标准注解，如 @Resource 、@PostConstruct 、@PreDestory @Resource ：按名称或类型注入 Bean @PostConstruct ：在 Bean 初始化后执行 @PreDestory ：在 Bean 销毁前执行 触发时机： postProcessBeforeInitialization：在 Bean 初始化之前，处理 @PostConstruct 注解的方法 postProcessAfterInitialization：在 Bean 初始化之后，处理 @PreDestroy 注解的方法 源码类：org.springframework.context.annotation.CommonAnnotationBeanPostProcessor RequiredAnnotationBeanPostProcessor 作用：检查 @Required 注解标注的属性是否已注入，未注入则抛出异常 触发时机： postProcessoBeforeInitialization：在 Bean 初始化前，检查 @Required 属性是否已注入 源码类：org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor ApplicationContextAwareProcessor 作用：处理 ApplicationContextAware 接口，向 Bean 注入 ApplicationContext 触发时机： postProcessorBeforeInitialization：在 Bean 初始化之前，调用 setApplicationContext() 方法 源码类：org.springframework.context.support.ApplicationContextAwareProcessor InitDestroyAnnotationBeanPostProcessor 作用：处理 @PostConstruct 和 @PreDestory 注解，分别在 Bean 初始化和销毁时执行 触发时机： postProcessBeforeInitialization ：在 Bean 初始化之前，执行 @PostConstruct 注解的方法 postProcessAfterInitialization：在 Bean 初始化之后，注册 @PreDestory 注解的方法，以便在 Bean 销毁时执行 InfrastructureAdvisorAutoProxyCreator 作用：为 Bean 创建代理，支持 AOP （面向切面编程） 触发时机： postProcessAfterInitialization：在 Bean 初始化之后，根据切面规则生成代理对象 源码类：org.</description>
     </item>
     <item>
       <title>Ribbon</title>
-      <link>http://localhost:1313/blog/ribbon/</link>
+      <link>https://xumf.net/blog/ribbon/</link>
       <pubDate>Wed, 19 Apr 2023 21:09:25 +0800</pubDate>
-      <guid>http://localhost:1313/blog/ribbon/</guid>
+      <guid>https://xumf.net/blog/ribbon/</guid>
       <description>核心概念 主要功能：负载均衡、故障转移、重试机制&#xA;特点：&#xA;客户端负载均衡：负载均衡逻辑在客户端实现，而不是在服务端。 集成Spring Cloud：与 Spring Cloud 深度集成，常用于 Feign 和 RestTemplate 可扩展性：支持自定义负载均衡策略和规则 工作原理 服务发现 Ribbon 从服务注册中心（如 Eureka）获取服务实例列表 服务实例列表动态更新，确保 Ribbon 能够感知服务实例变化 负载均衡 Ribbon 根据配置的负载均衡策略，从服务实例列表中选择一个实例 常见的负载均衡策略 轮询（Round Robin）：依次选择每个实例 随机（Random）：随机选择一个实例 加权响应时间（Weighted Response Time）：根据实例的响应时间分配权重 区域感知（Zone Aware）：优先选择同一区域的实例 故障转移 如果选择的实例不可用，Ribbon 会自动重试其他实例 重试次数和超时时间可以通过配置调整 请求分发 Ribbon 将请求分发到选定的服务实例，并处理响应 配置 负载均衡策略 通过配置文件负载均衡策略： service-name: ribbon: NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule 通过代码配置负载均衡策略： @RibbonClient(name = &amp;#34;service-name&amp;#34;, configuration = MyRibbonConfig.class) public class MyRibbonConfig { @Bean public IRule ribbonRule() { return new RoundRobinRule(); // 轮询策略 // return new RandomRule(); // 随机策略 // return new WeightedResponseTimeRule(); // 加权响应时间策略 // return new ZoneAvoidanceRule(); // 区域感知策略 } } 重试机制 通过配置文件配置重试次数和超时时间 service-name: ribbon: MaxAutoRetries: 3 MaxAutoRetriesNextServer: 1 ConnectTimeout: 1000 ReadTimeout: 3000 通过代码方式配置重试次数和超时时间 @RibbonClient(name = &amp;#34;service-name&amp;#34;, configuration = MyRibbonConfig.</description>
     </item>
     <item>
       <title>RabbitMQ 深入浅出</title>
-      <link>http://localhost:1313/blog/rabbitmq/</link>
+      <link>https://xumf.net/blog/rabbitmq/</link>
       <pubDate>Fri, 03 Mar 2023 20:54:29 +0800</pubDate>
-      <guid>http://localhost:1313/blog/rabbitmq/</guid>
+      <guid>https://xumf.net/blog/rabbitmq/</guid>
       <description>RabbitMQ 知识架构 1. AMQP 协议基础 RabbitMQ 是 AMQP 0-9-1 协议的实现，其核心模型基于信道(Channel)、**交换机(Exchange)和队列(Queue)**的协作。&#xA;AMQP 协议分层：分为 Module Layer（定义业务命令）、Session Layer（处理命令传输与同步）、Transpot Layer（二进制数据传输）。 信道(Channel)：基于 TCP 连接的虚拟链路，复用 TCP 连接以降低开销，每个信道独立处理消息路由，支持多线程并发操作。 虚拟主机(VHost)：逻辑隔离的独立环境，每个 VHost 拥有自己的交换机、队列和权限。 帧(Frame)：AMQP 数据传输的最小单位，包含帧头、帧体和帧尾，用于封装消息和协议指令。 2. 消息流转原理 消息从生产者到消费者的完整生命周期如下：&#xA;(1)生产者发送消息&#xA;连接建立：生产者通过 TCP 连接到 RabbitMQ 节点，并创建信道。 消息封装：消息包含有效负载(Playload) + 元数据(Headers、Routing Key、Delivery Mode 等)。 发送到交换器：生产者通过basic.publish 方法将消息发送到指定的交换器。 关键参数：exchange （目标交换器）、routing_key （路由键）、mandatory （消息无法路由时是否返回错误）。 (2)交换器路由消息&#xA;交换器根据类型和绑定规则将消息路由到队列：&#xA;Direct Exchange：精确匹配routing_key 和binding_key ，类似哈希表查找。 Fanout Exchange：广播到所有绑定的队列，忽略routing_key 。 Topic Exchange：基于通配符的层次化匹配，内部使用Trie 树或哈希表优化路由效率。 Headers Exchange：通过headers 键值对匹配，性能较低，适用于复杂条件路由。 (3)队列存储消息&#xA;消息进入队列后，按**先进先出(FIFO)**顺序存储，但优先级队列(Priority Queue)可调整顺序。&#xA;持久化队列：元数据和消息（若标记为持久化）写入磁盘，重启后恢复。 内存队列：仅存储在内存，重启后丢失。 (4)消息者拉取消息&#xA;订阅队列：消费者通过basic.consume 订阅队列，进入阻塞等待状态。 消息推送：RabbitMQ 通过basic.</description>
     </item>
     <item>
       <title>Netty知识</title>
-      <link>http://localhost:1313/blog/netty/</link>
+      <link>https://xumf.net/blog/netty/</link>
       <pubDate>Wed, 22 Jun 2022 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/netty/</guid>
+      <guid>https://xumf.net/blog/netty/</guid>
       <description>一、Netty 线程模型与 Reactor 模式 主从 Reactor 多线程模型 Netty 采用主从 Reactor 模型，核心组件为EventLoopGroup ：&#xA;BossGroup(主 Reactor)：负责监听客户端连接，通过Selector 将新连接注册到 WorkerGroup 中的某个EventLoop 。 WorkerGroup(从 Reactor)：处理已建立连接的 I/O 事件（入读写）及业务逻辑，每个EventLoop 绑定一个线程，通过轮询Selector 监听多个Channel 事件，避免线程切换开销。 主从 Reactor 配置示例&#xA;EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只需1个线程处理连接 EventLoopGroup workerGroup = new NioEventLoopGroup(); // 从Reactor，默认线程数=CPU核心*2 ServerBootstrap b = new ServerBootstrap(); b.group(bossGroup, workerGroup) .channel(NioServerSocketChannel.class) .childHandler(new ChannelInitializer&amp;lt;SocketChannel&amp;gt;() { @Override protected void initChannel(SocketChannel ch) { ch.pipeline().addLast(new MyBusinessHandler()); } }); 调优点： * bossGroup 线程数通常为1（除非需要多端口监听） * workerGroup 线程数根据业务类型调整： * CPU 密集型：线程数 ≈ CPU 核心数 * I/O 密集型：线程数 ≈ CPU 核心数 * 2 * 使用 Epoll 模式（Linux 环境）：</description>
     </item>
     <item>
       <title>Nacos</title>
-      <link>http://localhost:1313/blog/nacos/</link>
+      <link>https://xumf.net/blog/nacos/</link>
       <pubDate>Tue, 03 May 2022 20:54:29 +0800</pubDate>
-      <guid>http://localhost:1313/blog/nacos/</guid>
+      <guid>https://xumf.net/blog/nacos/</guid>
       <description>一、Nacos 核心概念 是什么？ Nacos（Dynamic Naming and Configuration Server）是阿里开源的服务发现+配置管理+服务治理平台，核心功能：&#xA;服务发现与健康监测：服务注册、心跳机制、DNS 查询 动态配置管理：配置发布、监听、版本管理 动态 DNS：基于权重的路由、地域就近访问 服务元数据管理：支持应用/版本/环境等元数据 关键特性 双模式：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现） 配置实时推送：基于长轮询（减少无效请求） 生态兼容：无缝集成 Spring Cloud、Dubbo、Kubernetes 二、核心架构与原理 服务注册与发现流程 注册：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPc） 心跳：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除 发现：消费者通过订阅机制获取服务列表，本地缓存+增量更新 配置管理机制 发布配置：通过控制台/API发布配置，存储与 Derby 或 MySQL 监听配置：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回 历史版本：支持配置回滚和版本对比 一致性协议 CP 模式：使用 Raft 协议（配置管理场景） AP 模式：自研 Distro 协议（服务发现场景，最终一致性） 三、重要知识点 Nacos vs Eureka vs Zookeeper？ Eureka：AP 设计，适合服务发现，但功能单一 Zookeeper：CP 设计，强一致性，但写性能低 Nacos：AP/CP 可切换，集成服务发现+配置管理，生态更全面 长轮询如何实现配置实时推送？ 客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回 对比传统轮询：减少无效请求，提升实时性 Nacos 集群如何保证数据一致性？ Distro 模式（AP 模式）：每个节点负责部分数据，通过异步复制保证最终一致性 Raft 协议（CP 模式）：选举 Leader，多数节点写成功才返回 Nacos 2.</description>
     </item>
     <item>
       <title>JMM</title>
-      <link>http://localhost:1313/blog/javamemorymodel/</link>
+      <link>https://xumf.net/blog/javamemorymodel/</link>
       <pubDate>Fri, 09 Jul 2021 23:36:22 +0800</pubDate>
-      <guid>http://localhost:1313/blog/javamemorymodel/</guid>
+      <guid>https://xumf.net/blog/javamemorymodel/</guid>
       <description>1：基本操作流程（单线程） sequenceDiagram participant 主内存 participant 工作内存 participant 线程 Note over 主内存,工作内存: 读取变量（主内存 → 工作内存） 线程 -&gt;&gt; 主内存: read(var) 主内存 --&gt;&gt; 工作内存: 传输变量值 线程 -&gt;&gt; 工作内存: load(var) Note over 工作内存: 修改变量（工作内存内操作） 线程 -&gt;&gt; 工作内存: assign(var, newValue) Note over 工作内存,主内存: 写回变量（工作内存 → 主内存） 线程 -&gt;&gt; 工作内存: store(var) 工作内存 --&gt;&gt; 主内存: 传输变量值 线程 -&gt;&gt; 主内存: write(var) 2：多线程下的原子性问题 sequenceDiagram participant 主内存 participant 工作内存A participant 线程A participant 工作内存B participant 线程B rect rgba(255, 0, 0, 0.1) Note left of 线程A: 线程A操作 线程A -&gt;&gt; 主内存: read(var) 主内存 --&gt;&gt; 工作内存A: var=0 线程A -&gt;&gt; 工作内存A: load(var) 线程A -&gt;&gt; 工作内存A: assign(var, 1) 线程A -&gt;&gt; 工作内存A: store(var) 工作内存A --&gt;&gt; 主内存: 准备写入var=1 end rect rgba(0, 255, 0, 0.</description>
     </item>
     <item>
       <title>JVM 问题排查</title>
-      <link>http://localhost:1313/blog/jvmissuesolution/</link>
+      <link>https://xumf.net/blog/jvmissuesolution/</link>
       <pubDate>Sun, 12 Jul 2020 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/jvmissuesolution/</guid>
+      <guid>https://xumf.net/blog/jvmissuesolution/</guid>
       <description>可正常运行系统： 通过jmap来查看JVM中各个区域的使用情况 通过jstack来查看线程的运行情况，比如哪些线程阻塞、是否出现死锁 通过jstat来查看垃圾回收情况，特别是fullgc，如果发现fullgc比较频繁，那么就得进行调优 通过各个命令的结果或者jvisualvm等工具来进行分析 首先：初步猜测频发发送fullgc的原因，如果频繁发生fullgc，但是又一直没有出现内存溢出，那么表示fullgc实际上回收了很多对象，所以这些对象最好能在younggc过程中直接回收掉，避免这些对象进入到老年代，对于这种情况，就要考虑这些存活时间不长的对象是不是比较大，导致年轻代放不下，直接进入到老年代，尝试加大年轻代的大小，如果改完之后，fullgc减少，则证明修改有效 同时，还可以找到占用CPU最多的线程，定位到具体的方法，优化这个方法的执行，看是否能避免某些对象的创建，从而节省内存 运行中发生OOM的系统： 一般生产系统中都会设置当前系统发生了OOM时，生成当时的dump文件（-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/base） 我们可以利用jvisualvm等工具来分析dump文件 根据dump文件找到异常的实例对象和异常的线程（占用CPU高），定位到具体代码 然后再进行详细的分析和调试 </description>
     </item>
     <item>
       <title>Kubernetes 深入浅出</title>
-      <link>http://localhost:1313/blog/kubernetes/</link>
+      <link>https://xumf.net/blog/kubernetes/</link>
       <pubDate>Tue, 24 Mar 2020 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/kubernetes/</guid>
+      <guid>https://xumf.net/blog/kubernetes/</guid>
       <description>Kubernetes 核心概念 1. 基本概念 Pod：最小的部署单元，包含一个或多个容器 Node：工作节点，运行 Pod Cluster：由多个 Node 组成的集群 Namespace：资源隔离和分组 2. 核心组件 Master 组件： API Server：提供 Restful API，是集群的前端接口 Scheduler：负责调度 Pod 到合适的 Node Controller Manager：运行各种控制器，如 Replication Controller、Node Controller 等 etcd： 分布式键值存储，保存集群的所有配置数据 Node 组件 Kubelet：负责管理 Pod 和容器的生命周期 Kube Proxy：负责网络代理和负载均衡 Container Runtime： 运行容器的软件，如 Docker、containerd 3. 资源对象 Pod 最小的部署单元 包含一个或多个容器 共享网络和存储 Deployment 声明式更新 Pod 和 ReplicaSet 支持滚动更新和回滚 示例： apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment spec: replicas: 3 selector: matchLabels: app: nginx template: metadata: labels: app: nginx spec: containers: - name: nginx image: nginx:1.</description>
     </item>
     <item>
       <title>Hystrix</title>
-      <link>http://localhost:1313/blog/hystrix/</link>
+      <link>https://xumf.net/blog/hystrix/</link>
       <pubDate>Wed, 22 May 2019 15:49:23 +0800</pubDate>
-      <guid>http://localhost:1313/blog/hystrix/</guid>
+      <guid>https://xumf.net/blog/hystrix/</guid>
       <description>功能 服务熔断 服务降级 资源隔离 请求缓存 请求合并 核心思想 防止服务雪崩 当一个服务发生故障时，避免故障扩散到整个系统 快速失败 通过熔断机制快速失败。避免资源耗尽。 优雅降级 在服务不可用的时候，提供备用方案（Fallback） 熔断器（Circuit Breaker） 原理 当服务的容错率超过阈值时，熔断器会被打开，后续请求会直接失败，不再调用目标服务 熔断器打开一段时间后，会进入半打开状态，尝试恢复服务 关键参数 circuitBreaker.requestVolumeThreshold：触发熔断器需要最小请求数 circuitBreaker.errorThresholdPercentage：错误率阈值（默认为50%） circuitBreaker.sleepWindowInMilliseconds：熔断器打开后的休眠时间（默认为5秒） 资源隔离 线程池隔离 每个服务调用使用独立的线程池，避免资源竞争 通过 HystrixThreadPoolKey 配置线程池 信号量隔离 使用信号量限制并发数，适用于轻量级调用（执行时间短的任务） 服务降级 原理 当服务调用失败或者熔断器打开时，执行降级逻辑 降级逻辑可以是返回默认值、调用备用服务等 实现 通过 HystrixCommand(fallbackMethod = &amp;ldquo;fallbackMethod&amp;rdquo;) 指定降级方法 请求缓存 原理 对相同请求参数，Hystrix 可以缓存结果，减少重复调用 实现 使用 @CacheResult 和 @CacheKey 注解 请求合并 原理 将多个请求合并为一个批量请求，减少网络开销 实现 使用 @HystrixCollapser 注解 工作流程 请求进入： 请求被 Hystrix 拦截 检查熔断器状态 如果熔断器打开，直接执行降级逻辑 资源隔离 根据配置选择线程池隔离或信号量隔离 执行目标服务 调用目标服务，记录成功或者失败 更新熔断器状态 根据调用结果更新熔断器状态 执行降级逻辑 如果调用失败或者熔断器打开，执行降级逻辑 返回结果 返回调用结果或者降级结果 sequenceDiagram participant Client as 客户端 participant Hystrix as Hystrix participant TargetService as 目标服务 participant Fallback as 降级逻辑 Client-&gt;&gt;Hystrix: 1.</description>
     </item>
     <item>
       <title>HBase 深入浅出</title>
-      <link>http://localhost:1313/blog/hbase/</link>
+      <link>https://xumf.net/blog/hbase/</link>
       <pubDate>Wed, 15 Aug 2018 15:43:54 +0800</pubDate>
-      <guid>http://localhost:1313/blog/hbase/</guid>
+      <guid>https://xumf.net/blog/hbase/</guid>
       <description>1. HBase 核心组件源码深度解析 1.1 HMaster 源码路径：org.apache.hadoop.hbase.master.HMaster&#xA;核心职责： 元数据管理： 管理表创建、删除、修改等 DDL 操作 维护 hbase:meta 表，记录所有 Region 的分布信息 负载均衡： 监控 RegionServer 的状态，分配 Region 到 RegionServer 处理 RegionServer 的故障恢复 协调分裂与合并 当 Region 大小超过阈值时，触发 Region 分裂 合并小 Region，减少元数据开销 源码关键点：&#xA;启动流程： 初始化 ZooKeeper 链接，注册 HMaster 节点 加载 hbase:meta 表，获取所有 Region 的分布信息 启动后台线程，监控 RegionServer 状态 Region 分配 通过 AssignmentManager 将 Region 分配到 RegionServer 使用 ZooKeeper 协调 Region 的分配和迁移 面试题：&#xA;HMaster 宕机后，HBase 还能正常工作吗？ 可以，HBase 的读写操作有 RegionServer 直接处理，HMaster 宕机不会影响已有表的读写，但会影响表的元数据操作（如创建表） HMaster 如何实现高可用？ 通过 ZooKeeper 选举机制，确保只有一个活跃的 HMaster 1.</description>
     </item>
     <item>
       <title>垃圾回收器</title>
-      <link>http://localhost:1313/blog/garbagecollector/</link>
+      <link>https://xumf.net/blog/garbagecollector/</link>
       <pubDate>Wed, 18 Jul 2018 15:43:54 +0800</pubDate>
-      <guid>http://localhost:1313/blog/garbagecollector/</guid>
+      <guid>https://xumf.net/blog/garbagecollector/</guid>
       <description>一、JVM 垃圾回收器概述 常见的垃圾回收器：&#xA;Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC（Garbage First） ZGC（Z Garbage Collector） Shenandoah GC 二、垃圾回收器的特点与回收流程 Serial GC 特点： 单线程垃圾回收 适用于单核 CPU 或小型应用 回收时会暂停所有应用线程（Stop-The-World，STW） 回收流程： 新生代：使用复制算法（Copying） 老年代：使用标记-整理算法（Mark-Compact） 适用场景： 客户端应用和小型服务端应用 重要参数： -XX:UseSerialGC ：启用 Serial GC Parallel GC（Throughput GC） 特点： 多线程垃圾回收器 目标是最大化吞吐量（Throughput） 回收时会暂停所有应用线程（STW） 回收流程： 新生代：使用复制算法（Copying） 老年代：使用标记-整理算法（Mark-Compact） 适用场景： 多核 CPU 且对吞吐量要求高的应用 重要参数： -XX:+UseParallelGC ：启用 Parallel GC -XX:ParallelGCThreads ：设置并行 GC 线程数 -XX:MaxGCPauseMillis ：设置最大 CG 暂停时间目标 -XX:GCTimeRatio ：设置吞吐量目标（GC 时间与总时间目标） CMS GC（Concurrent Mark Sweep） 特点： 并发垃圾回收器，尽量减少 STW 时间 适用于对延迟敏感的应用 使用标记-清除算法（Mark-Sweep），会产生内存碎片 回收流程： 初始标记（STW）：标记 GC Roots 直接关联对象 并发标记：并发标记所有可达对象 重新标记（STW）：修正并发标记期间的变化 并发清除：并发清除不可达对象 适用场景： 对延迟敏感的应用，如 Web 服务 重要参数： -XX:+UseConcMarkSweepGC ：启用 CMS GC -XX:CMSInitiatingOccupancyFraction ：设置老年代使用率触发 CMS 的阈值（默认 68%） -XX:UseCMSCompactAtFullCollection ：在 Full GC 时进行内存整理 -XX:CMSFullGCsBeforeCompaction ：设置多少次 Full GC 后进行内存整理 G1 GC（Garbage First） 特点： 面向服务端应用的垃圾回收器 将堆内存划分为多个 Region，优先回收垃圾最多的 Region 目标是平衡吞吐量和延迟 回收流程： 初始标记（STW）：标记 GC Roots 直接关联的对象 并发标记：标记所有的可达对象 最终标记（STW）：修正并发标记期间的变化 筛选回收（STW）：根据回收价值排序 Region，优先回收垃圾最多的 Region 适用场景： 大内存、多核 CPU 的应用 重要参数： -XX:+UseG1GC ：启用 G1 GC -XX:MaxGCPauseMillis ：设置最大 GC 暂停时间的目标（默认 200ms） -XX:G1HeapRegionSize ：设置 G1 Region 的大小 -XX:InitiatingHeapOccupancyPercent ：设置堆使用率触发并发标记的阈值（默认 45%） ZGC（Z Garbage Collector） 特点： 低延迟垃圾回收器，STW 时间极短（通常少于 10ms） 支持最大堆内存（TB 级别） 使用染色指针（Colored Pointers）和读屏障（Load Barrier）技术 回收流程： 1.</description>
     </item>
     <item>
       <title>Feign</title>
-      <link>http://localhost:1313/blog/feign/</link>
+      <link>https://xumf.net/blog/feign/</link>
       <pubDate>Fri, 15 Jun 2018 15:43:54 +0800</pubDate>
-      <guid>http://localhost:1313/blog/feign/</guid>
+      <guid>https://xumf.net/blog/feign/</guid>
       <description>什么是Feign Feign 是 Netflix 开源的声明式 HTTP 客户端，用于简化 RESTful 服务的调用 通过定义接口和注解，Feign 可以自动生成HTTP请求的实现 特点 声明式 API ：通过接口注解定义 HTTP 请求，无需手动编写 HTTP 客户端代码 集成 Ribbon ：默认集成 Ribbon ，支持客户端负载均衡 集成 Hystrix ：支持熔断和降级机制 可扩展性：支持自定义编码器、解码器和拦截器 工作原理 （1）接口定义 使用 @FeignClient 注解定义 Feign 客户端接口 通过方法注解（如 @GetMapping、@PostMapping）定义 HTTP 请求 （2）动态代理 Feign 通过动态代理技术生成接口的实现类 在运行时，Feign 会将方法调用转换为 Http 请求 （3）请求处理 Feign 根据接口定义生成 HTTP 请求，并通过 Ribbon 进行负载均衡 请求结果通过解码器为 Java 对象 （4）集成 Ribbon 和 Hystrix Feign 默认集成了 Ribbon，支持客户端负载均衡 通过配置可以启用 Hystrix，实现熔断和降级 Feign 的配置 （1）基本配置 使用 @FeignClient 注解定义 Feign 客户端： @FeignClient(name = &amp;#34;service-name&amp;#34;, url = &amp;#34;http://localhost:8080&amp;#34;) public interface MyFeignClient { @GetMapping(&amp;#34;/endpoint&amp;#34;) String getResponse(); } （2）负载均衡 * Feign 默认集成了 Ribbon，无需额外配置 * 可以通过配置文件自定义 Ribbon 的负载均衡策略： service-name: ribbon: NFLoadBalancerRuleClassName: com.</description>
     </item>
     <item>
       <title>Eureka</title>
-      <link>http://localhost:1313/blog/eureka/</link>
+      <link>https://xumf.net/blog/eureka/</link>
       <pubDate>Tue, 01 May 2018 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/eureka/</guid>
+      <guid>https://xumf.net/blog/eureka/</guid>
       <description>Eureka 配置中心核心功能：&#xA;集中化管理 版本管理 动态更新 权限控制 环境隔离 基本功能：&#xA;服务发现 eureka客户端可以向eureka服务端获取服务实例列表&#xA;服务注册 eureka客户端启动的时候&#xA;三级缓存&#xA;读缓存 ReadOnlyCache 写缓存 WriteCache 注册表缓存 自我保护机制 在网络通讯产生问题时，避免大量正常客服端实例被清除&#xA;eureka 自我保护机制服务端相关影响配置 eureka: server: enable-self-preservation: true # 默认true，开启自我保护 renewal-percent-threshold: 0.85 # 续约百分比阈值，默认0.85 renewal-threshold-update-interval-ms: 900000 # 更新阈值的时间间隔，默认15分钟 eureka 自我保护机制客户端相关影响配置 eureka: instance: lease-renewal-interval-in-seconds: 30 # 客户端续约间隔，默认30秒 lease-expiration-duration-in-seconds: 90 # 服务过期时间，默认90秒 客户端服务注册流程 每当有客服端服务启动时，客户端会根据配置eureka服务端的地址，向服务端发起注册动作，服务端收到注册请求，会更新注册表缓冲信息，增加新的客户端信息到注册表缓冲，然后将注册表信息更新到写缓存。&#xA;客户端读取数据流程 客户端查看本地缓存是否存在 存在：直接返回本地缓存中的数据 不存在：请求服务端获取数据 获取读缓存，存在直接返回；不存在直接进入下一步 获取写缓存，存在直接返回，并且将数据更新到读缓存；不存在直接进入下一步 获取注册表缓存，存在直接返回，并且将数据更新到读缓存与写缓存 缓存更新场景 注册表更新场景：&#xA;服务实例注册 服务实例注销 服务实例续约（心跳） 服务实例状态变更 写缓存更新场景：&#xA;每当注册表发生变化时，写缓存会被同时更新到最新的注册表信息 读缓存更新场景：&#xA;每隔30s会同步写缓存数据 Eureka 中服务实例的状态主要包括以下几种： UP：服务实例正常运行，可接收请求。 当eureka服务实例发起服务注册时 当eureka服务实例发起心跳，进行续期成功后，保持UP状态 当eureka服务实例启动成功后，将状态从STARTING更改为UP DOWN：服务实例不可用。 当eureka服务实例主动注销 当eureka实例在规定的时间（默认90s）内没有发送心跳消息 STARTING：服务实例正在启动。 当服务器启动时 OUT_OF_SERVICE：服务实例被手动下线，不可用。 通过Eureka的管理接口或者UI，可以手动将状态从UP更改为OUT_OF_SERVICE UNKNOWN：服务实例状态未知。 当网络分区时（网络问题导致服务之间无法通讯），Eureka服务端无法确认服务实例的状态时，就会将状态改为 UNKNOWN Eureka各端缓存应用交互 sequenceDiagram participant Client as 客户端 participant LocalCache as 本地缓存 participant EurekaServer as Eureka 服务器 participant ServiceInstance as 服务实例 Client-&gt;&gt;LocalCache: 1.</description>
     </item>
     <item>
       <title>ElasticSearch 知识</title>
-      <link>http://localhost:1313/blog/elasticsearch/</link>
+      <link>https://xumf.net/blog/elasticsearch/</link>
       <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/elasticsearch/</guid>
+      <guid>https://xumf.net/blog/elasticsearch/</guid>
       <description>1. Elasticsearch 概念与架构 集群(Cluster)：Elasticsearch 中的多个节点(Node)组成集群。一个集群中有一个主节点(Master Node)，负责集群管理，其它节点可能是数据节点(Data Node)、协调节点(Coordinating Node)、以及 Ingest 节点等。 节点(Node)：每个 Elasticsearch 实例都被称为节点，节点存储数据并处理请求。节点可以有不同角色，如master 、data 、ingest 等。 索引(Index)：Elasticsearch 中数据的存储单位，每个索引包含多个分片(Shards)，可以进行高效的存储与查询。 分片(Shard)：每个索引会被分割成多个分片，分片是数据存储的基本单位，主分片和副本分片提供了数据的分布与冗余 2. 核心原理 1.1 倒排索引(Inverted Index) 原理：通过词项(Term)映射到文档表，实现快速全文检索 构建过程：文档分词→生成词项→记录词项所在文档及位置 优势：高效查询，支持复杂搜索(如布尔逻辑、短语匹配) 与正排索引对比：正排索引通过文档 ID 查找内容，倒排索引通过词项找文档 1.2 分布式架构 分片(Shard)： 主分片(Primary)*：*处理写操作，数量创建索引时固定 副本分片(Replica)：提供读高可用，数量可调整 节点角色： Master 节点：管理集群状态(如索引创建、节点上下线) Data 节点：存储分片，处理数据 CURD Coordinating 节点：路由请求，聚合结果(默认所有节点均可担任) Ingest 节点： 数据预处理 功能：通过定义 Pipeline(处理管道)，对原始数据进行加工，例如： 解析结构：如将日志中的非结构化文本解析为结构化字段(使用Grok 处理器)。 字段转换：如转换时间格式、大小写转、类型转换(字符串转数字)。 数据增强：如添加地理位置信息、基于 IP 生成 GeoIP 字段。 字段过滤：删除无用字段、重命名字段。 条件处理：根据字段内容动态决定是否执行某些操作。 减轻数据节点负载 职责分离：将计算密集型的预处理任务从 Data 节点剥离，避免影响索引和查询功能。 资源优化：专用 Ingest 节点可配置更高 CPU 资源，专注于数据处理。 简化架构 替代部分 Logstash 功能：在不需要复杂 ETL 的场景中，可直接通过 Elasticsearch 完成数据处理，减少外部组件依赖。 1.</description>
     </item>
     <item>
       <title>ZooKeeper</title>
-      <link>http://localhost:1313/blog/zookeeper/</link>
+      <link>https://xumf.net/blog/zookeeper/</link>
       <pubDate>Thu, 22 Mar 2018 22:21:04 +0800</pubDate>
-      <guid>http://localhost:1313/blog/zookeeper/</guid>
+      <guid>https://xumf.net/blog/zookeeper/</guid>
       <description>ZooKeeper 核心原理 数据模型： ZNode：树形结构中的节点，存储数据（&amp;lt;=1MB） 节点类型 持久节点：手动删除 临时节点：会话结束自动删除 顺序节点：名称追加单调递增序号 版本号：每个 ZNode 有版本号， 用于 CAS操作 架构与角色： Leader：处理写请求，发起提案 Follower：参与选举，处理读请求 Observer：拓展读性能，不参与选举 ZAB 协议（ZooKeeper Atomic Broadcast） 恢复模式：选举 Leader （基于 zxid 和 myid，半数以上投票） 广播模式：Leader 提出事物，半数以上 Follower 确认后提交 一致性保护： 顺序一致性（客户端操作按顺序执行） 原子性（事物要么全成功要么全失败） 最终一致性（读请求可能返回旧值，但最终同步） Watch 机制： 客户端监听 ZNode 变化（如节点删除，数据更新） 一次性触发，需要重新注册 异步通知，可能存在延迟或丢失 典型应用场景 分布式锁：通过临时顺序节点实现，避免惊群效应 配置管理：集中存储配置，客户端监听变更 服务注册与发现：临时节点表示服务实例在线状态 选主（Leader Election）：最小序号节点成为 Master 分布式队列：顺序节点实现生产消费模型 重要知识点 ZooKeeper 如何保证数据一致性？ 答：通过 ZAB 协议，写操作需要半数以上节点确认，保证顺序一致性和原子性。读请求可能来自任意节点（可能读到旧数据），但可通过 sync 操作强制读取最新值。 临时节点的作用时什么？ 答：临时节点在会话结束后自动删除，常用于服务注册（服务下线自动清除）和分布式锁（客户端崩溃自动释放锁）。 如何处理脑裂问题？ 答：ZAB 协议要求写操作必须由 Leader 发起，且需要半数以上节点确认。网络分区时，仅拥有多数节点的分区能选举 Leader，另一个分区无法写入，避免数据不一致。 Watcher 机制有哪些主要事项？ 答：一次性触发、通知可能延迟、需要处理事件丢失（如 Watch 注册期间发生变更）。需在回调中重新注册 Watcher。 Leader 选举过程是怎样的？ 答：节点启动时进入选举状态，投票优先给 zxid 最大的节点，zxid 相同则选 myid 更大的。获得半数以上投票的节点成为 Leader。 如何实现分布式锁？ 答：客户端创建临时顺序节点，检查是否为最小序号节点。若是则获得锁；否则监听前一个节点的删除事件，使用 exists() +Watcher 避免轮询。 性能与优化 写性能：依赖半数以上节点确认，建议集群节点数为奇数（如3、5）。 读性能：可直接从本地节点读取，高吞吐。 快照与日志：定期生成快照（snapshot）和事务日志（txn log），加速恢复。 配置与运维 会话超时：tickTime 为基本时间单位，sessionTimeout 建议2-20倍tickTime 。 数据持久化：事务日志和快照存储于dataDir 和dataLogDir 。 ACL 控制：支持IP、Digest等多种认证方式，精细化权限管理。 </description>
     </item>
   </channel>

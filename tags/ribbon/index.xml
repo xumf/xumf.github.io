@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ribbon on 小蜜蜂</title>
-    <link>http://localhost:1313/tags/ribbon/</link>
+    <link>https://xumf.net/tags/ribbon/</link>
     <description>Recent content in Ribbon on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 19 Apr 2023 21:09:25 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/ribbon/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/tags/ribbon/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Ribbon</title>
-      <link>http://localhost:1313/blog/ribbon/</link>
+      <link>https://xumf.net/blog/ribbon/</link>
       <pubDate>Wed, 19 Apr 2023 21:09:25 +0800</pubDate>
-      <guid>http://localhost:1313/blog/ribbon/</guid>
+      <guid>https://xumf.net/blog/ribbon/</guid>
       <description>核心概念 主要功能：负载均衡、故障转移、重试机制&#xA;特点：&#xA;客户端负载均衡：负载均衡逻辑在客户端实现，而不是在服务端。 集成Spring Cloud：与 Spring Cloud 深度集成，常用于 Feign 和 RestTemplate 可扩展性：支持自定义负载均衡策略和规则 工作原理 服务发现 Ribbon 从服务注册中心（如 Eureka）获取服务实例列表 服务实例列表动态更新，确保 Ribbon 能够感知服务实例变化 负载均衡 Ribbon 根据配置的负载均衡策略，从服务实例列表中选择一个实例 常见的负载均衡策略 轮询（Round Robin）：依次选择每个实例 随机（Random）：随机选择一个实例 加权响应时间（Weighted Response Time）：根据实例的响应时间分配权重 区域感知（Zone Aware）：优先选择同一区域的实例 故障转移 如果选择的实例不可用，Ribbon 会自动重试其他实例 重试次数和超时时间可以通过配置调整 请求分发 Ribbon 将请求分发到选定的服务实例，并处理响应 配置 负载均衡策略 通过配置文件负载均衡策略： service-name: ribbon: NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule 通过代码配置负载均衡策略： @RibbonClient(name = &amp;#34;service-name&amp;#34;, configuration = MyRibbonConfig.class) public class MyRibbonConfig { @Bean public IRule ribbonRule() { return new RoundRobinRule(); // 轮询策略 // return new RandomRule(); // 随机策略 // return new WeightedResponseTimeRule(); // 加权响应时间策略 // return new ZoneAvoidanceRule(); // 区域感知策略 } } 重试机制 通过配置文件配置重试次数和超时时间 service-name: ribbon: MaxAutoRetries: 3 MaxAutoRetriesNextServer: 1 ConnectTimeout: 1000 ReadTimeout: 3000 通过代码方式配置重试次数和超时时间 @RibbonClient(name = &amp;#34;service-name&amp;#34;, configuration = MyRibbonConfig.</description>
     </item>
   </channel>

@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Netty on 小蜜蜂</title>
-    <link>http://localhost:1313/tags/netty/</link>
+    <link>https://xumf.net/tags/netty/</link>
     <description>Recent content in Netty on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 22 Jun 2022 13:16:53 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/netty/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/tags/netty/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Netty知识</title>
-      <link>http://localhost:1313/blog/netty/</link>
+      <link>https://xumf.net/blog/netty/</link>
       <pubDate>Wed, 22 Jun 2022 13:16:53 +0800</pubDate>
-      <guid>http://localhost:1313/blog/netty/</guid>
+      <guid>https://xumf.net/blog/netty/</guid>
       <description>一、Netty 线程模型与 Reactor 模式 主从 Reactor 多线程模型 Netty 采用主从 Reactor 模型，核心组件为EventLoopGroup ：&#xA;BossGroup(主 Reactor)：负责监听客户端连接，通过Selector 将新连接注册到 WorkerGroup 中的某个EventLoop 。 WorkerGroup(从 Reactor)：处理已建立连接的 I/O 事件（入读写）及业务逻辑，每个EventLoop 绑定一个线程，通过轮询Selector 监听多个Channel 事件，避免线程切换开销。 主从 Reactor 配置示例&#xA;EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只需1个线程处理连接 EventLoopGroup workerGroup = new NioEventLoopGroup(); // 从Reactor，默认线程数=CPU核心*2 ServerBootstrap b = new ServerBootstrap(); b.group(bossGroup, workerGroup) .channel(NioServerSocketChannel.class) .childHandler(new ChannelInitializer&amp;lt;SocketChannel&amp;gt;() { @Override protected void initChannel(SocketChannel ch) { ch.pipeline().addLast(new MyBusinessHandler()); } }); 调优点： * bossGroup 线程数通常为1（除非需要多端口监听） * workerGroup 线程数根据业务类型调整： * CPU 密集型：线程数 ≈ CPU 核心数 * I/O 密集型：线程数 ≈ CPU 核心数 * 2 * 使用 Epoll 模式（Linux 环境）：</description>
     </item>
   </channel>

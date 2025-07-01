@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Zuul on 小蜜蜂</title>
-    <link>http://localhost:1313/tags/zuul/</link>
+    <link>https://xumf.net/tags/zuul/</link>
     <description>Recent content in Zuul on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 07 May 2025 23:04:30 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/zuul/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://xumf.net/tags/zuul/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Zuul</title>
-      <link>http://localhost:1313/blog/zuul/</link>
+      <link>https://xumf.net/blog/zuul/</link>
       <pubDate>Wed, 07 May 2025 23:04:30 +0800</pubDate>
-      <guid>http://localhost:1313/blog/zuul/</guid>
+      <guid>https://xumf.net/blog/zuul/</guid>
       <description>Zuul 的核心概念 （1）Zuul 是什么？ Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡 主要功能： 路由：将客户端请求转发到后端服务 过滤：在请求和响应的生命周期中执行自定义逻辑 负载均衡：与 Ribbon 集成，实现客户端负载均衡 （2）Zuul 的工作流程 路由：根据配置请求转发到对应的微服务 过滤：在请求到达目标服务之前或之后执行过滤逻辑 负载均衡：通过 Ribbon 集成，实现客户端负载均衡 Zuul 的配置 （1）依赖配置 在 pom.xml 添加 Zuul 依赖： &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-cloud-starter-netflix-zuul&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; （2）启用 Zuul 在启动类中添加 @EnableZuulProxy 注解： @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } （3）路由配置 在 application.yml 中配置路由规则： zuul: routes: user-service: # 路径名称 path: /user/** # 路径配置 serviceId: user-service # 目标服务名称 order-service: path: /order/** serviceId: order-service 解释： user-service 和 order-service 是路由的名称，可以自定义 path 是匹配的 URL 路径 serviceId 是 Eureka 中注册的服务名称 自定义路由 如果不想使用服务名称作为路由前缀，可以自定义路由： zuul: routes: custom-user-service: # 路由策略 path: /api/user/** # 匹配路径 url: http://localhost:8081 # 目标服务地址 负载均衡配置 （1）集成 Ribbon Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡 在 application.</description>
     </item>
   </channel>
