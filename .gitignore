@@ -7,3 +7,6 @@ themes/hugo-lithium-theme
 themes/hugo-nuo
 themes/manis
 themes/minimo
+.hugo_build.lock
+
+resources

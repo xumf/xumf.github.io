@@ -1,4 +1,4 @@
-baseURL = "http://xumf.net/"
+baseURL = "https://xumf.net/"
 title = "小蜜蜂"
 theme = "manis"
 # Copyright notice. Note: You can use HTML tag here
@@ -8,23 +8,41 @@ pluralizeListTitles = false
 paginate = 10
 canonifyURL = true
 # Your disqus shortname
-disqusShortname = "xumf"
+# disqusShortname = "xumf"
 # Edit this if you want to translate your blog
 defaultContentLanguage = "zh"
-
+pygmentsCodeFences = true
+pygmentsUseClasses = true
 googleAnalytics = "UA-118288238-1"
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.parser]
+      attribute = true
+	  
+[frontmatter]
+  [frontmatter.defaults]
+    [frontmatter.defaults.values]
+      slug = "{{ .Name | urlize }}"
+
 [taxonomies]
-	tag = "tags"
-	category = "categories"
+  tag = "tags"
+  category = "categories"
+
+[permalinks]
+  tags = "/tags/:slug/"
+  categories = "/categories/:slug/"
 
 [params]
 	# If false, use minified CSS (ui.min.css)
 	debugCSS = false
+  	enableMermaid = true
 	# List of sections support disqus comments
-	disqusSections = ["blog"]
+	# disqusSections = ["blog"]
 	# Site meta description
-	description = "Sweet little Hugo's theme for personal website or blog."
+  	description = "一个热爱技术、开朗积极的开发者的博客"
 	# Site's Tagline (Subtitle or Keyword)
 	tagline = "Code Farming Engineer"
 	# If true give attribution to this theme
@@ -56,9 +74,8 @@ googleAnalytics = "UA-118288238-1"
 	highlightJsStyle = "atelier-savanna-light"
 
 	# Social Links
-	email = "mail@xumf.net"
+	email = "xumf.net@gmail.com"
 	github = "https://github.com/xumf/"
-	gitlab = "http://gitlab.xumf.net"
 	# twitter = "https://twitter.com/yuri_boya"
 
 

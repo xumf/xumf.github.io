@@ -7,5 +7,5 @@ tags : [
   "tutorial",
   "opini"
 ]
-draft : false
+
 ---

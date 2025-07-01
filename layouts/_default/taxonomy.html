@@ -1,0 +1,23 @@
+{{ partial "header" . }}
+
+<article>
+  <header>
+    {{ partial "title" . }}
+    <hgroup id="brand">
+      <h1>{{ .Data.Term | humanize }}</h1>
+    </hgroup>
+    {{ with .Content }}{{ . }}{{ end }}
+  </header>
+
+  {{ if .Pages }}
+    <ul class="post-list">
+      {{ range .Pages.ByDate.Reverse }}
+        {{ partial "li" . }}
+      {{ end }}
+    </ul>
+  {{ else }}
+    <p>没有相关文章。</p>
+  {{ end }}
+</article>
+
+{{ partial "footer" . }}
