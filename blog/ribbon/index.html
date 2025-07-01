@@ -58,7 +58,7 @@
 	<h1>Ribbon</h1>
 	<h5>
 		
-		<time datetime="2018-04-19 21:09:25 &#43;0800 CST">2018年 4月 19日</time>
+		<time datetime="2023-04-19 21:09:25 &#43;0800 CST">2023年 4月 19日</time>
 		<span class="no-print">
 			-
 				
@@ -120,62 +120,62 @@
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">service-name</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">NFLoadBalancerRuleClassName</span>: <span style="color:#ae81ff">com.netflix.loadbalancer.RoundRobinRule</span>
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">service-name</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ribbon</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">NFLoadBalancerRuleClassName</span><span class="p">:</span><span class="w"> </span><span class="l">com.netflix.loadbalancer.RoundRobinRule</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li>通过代码配置负载均衡策略：</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@RibbonClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, configuration <span style="color:#f92672">=</span> MyRibbonConfig.<span style="color:#a6e22e">class</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRibbonConfig</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IRule <span style="color:#a6e22e">ribbonRule</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RoundRobinRule(); <span style="color:#75715e">// 轮询策略</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// return new RandomRule(); // 随机策略</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// return new WeightedResponseTimeRule(); // 加权响应时间策略</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// return new ZoneAvoidanceRule(); // 区域感知策略</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RibbonClient</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;service-name&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyRibbonConfig</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyRibbonConfig</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">IRule</span><span class="w"> </span><span class="nf">ribbonRule</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RoundRobinRule</span><span class="p">();</span><span class="w"> </span><span class="c1">// 轮询策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// return new RandomRule(); // 随机策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// return new WeightedResponseTimeRule(); // 加权响应时间策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// return new ZoneAvoidanceRule(); // 区域感知策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li>重试机制
 <ol>
 <li>通过配置文件配置重试次数和超时时间</li>
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>  <span style="color:#f92672">service-name</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">MaxAutoRetries</span>: <span style="color:#ae81ff">3</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">MaxAutoRetriesNextServer</span>: <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ConnectTimeout</span>: <span style="color:#ae81ff">1000</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ReadTimeout</span>: <span style="color:#ae81ff">3000</span>
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">service-name</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ribbon</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">MaxAutoRetries</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">MaxAutoRetriesNextServer</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">ConnectTimeout</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">ReadTimeout</span><span class="p">:</span><span class="w"> </span><span class="m">3000</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li>通过代码方式配置重试次数和超时时间</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@RibbonClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, configuration <span style="color:#f92672">=</span> MyRibbonConfig.<span style="color:#a6e22e">class</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRibbonConfig</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IRule <span style="color:#a6e22e">ribbonRule</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RoundRobinRule(); <span style="color:#75715e">// 轮询策略</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> RetryHandler <span style="color:#a6e22e">retryHandler</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DefaultLoadBalancerRetryHandler(3, 1, <span style="color:#66d9ef">true</span>); <span style="color:#75715e">// 重试配置</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RibbonClient</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;service-name&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyRibbonConfig</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyRibbonConfig</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">IRule</span><span class="w"> </span><span class="nf">ribbonRule</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RoundRobinRule</span><span class="p">();</span><span class="w"> </span><span class="c1">// 轮询策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RetryHandler</span><span class="w"> </span><span class="nf">retryHandler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultLoadBalancerRetryHandler</span><span class="p">(</span><span class="n">3</span><span class="p">,</span><span class="w"> </span><span class="n">1</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w"> </span><span class="c1">// 重试配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ol start="3">
 <li>自定义配置
 3. 通过 **@RibbonClient **注解指定自定义配置：</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#a6e22e">@RibbonClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, configuration <span style="color:#f92672">=</span> MyRibbonConfig.<span style="color:#a6e22e">class</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRibbonConfig</span> {
-</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">public</span> IRule <span style="color:#a6e22e">ribbonRule</span>() {
-</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RandomRule();
-</span></span><span style="display:flex;"><span>      }
-</span></span><span style="display:flex;"><span>  }
-</span></span></code></pre></div><h2 id="heading"></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@RibbonClient</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;service-name&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyRibbonConfig</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyRibbonConfig</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kd">public</span><span class="w"> </span><span class="n">IRule</span><span class="w"> </span><span class="nf">ribbonRule</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RandomRule</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="heading"></h2>
 <h2 id="使用场景">使用场景</h2>
 <ol>
 <li>与 RestTemplate 集成
@@ -184,16 +184,16 @@
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">@LoadBalanced</span>
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> RestTemplate <span style="color:#a6e22e">restTemplate</span>() {
-</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RestTemplate();
-</span></span><span style="display:flex;"><span>  }
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@LoadBalanced</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">RestTemplate</span><span class="w"> </span><span class="nf">restTemplate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RestTemplate</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li>调用服务时，Ribbon 会自动选择服务实例</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  String response <span style="color:#f92672">=</span> restTemplate.<span style="color:#a6e22e">getForObject</span>(<span style="color:#e6db74">&#34;http://service-name/endpoint&#34;</span>, String.<span style="color:#a6e22e">class</span>);
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="n">String</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">restTemplate</span><span class="p">.</span><span class="na">getForObject</span><span class="p">(</span><span class="s">&#34;http://service-name/endpoint&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li>与 Feign 集成
 <ol>
 <li>Feign 默认集成了 Ribbon，无需额外配置</li>
@@ -201,12 +201,12 @@
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#a6e22e">@FeignClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>)
-</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyFeignClient</span> {
-</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">@GetMapping</span>(<span style="color:#e6db74">&#34;/endpoint&#34;</span>)
-</span></span><span style="display:flex;"><span>      String <span style="color:#a6e22e">getResponse</span>();
-</span></span><span style="display:flex;"><span>  }
-</span></span></code></pre></div><h2 id="底层原理">底层原理</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="w">  </span><span class="nd">@FeignClient</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;service-name&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">MyFeignClient</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/endpoint&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">String</span><span class="w"> </span><span class="nf">getResponse</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="底层原理">底层原理</h2>
 <ol>
 <li>负载均衡器（LoadBalancer）
 <ol>
@@ -215,34 +215,34 @@
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicServerListLoadBalancer</span><span style="color:#f92672">&lt;</span>T <span style="color:#66d9ef">extends</span> Server<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> BaseLoadBalancer {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ServerList<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> serverList; <span style="color:#75715e">// 服务实例列表</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ServerListUpdater serverListUpdater; <span style="color:#75715e">// 服务实例列表更新器</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setServersList</span>(List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> servers) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#a6e22e">setServersList</span>(servers); <span style="color:#75715e">// 更新服务实例列表</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">updateListOfServers</span>() {
-</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> servers <span style="color:#f92672">=</span> serverList.<span style="color:#a6e22e">getUpdatedListOfServers</span>(); <span style="color:#75715e">// 获取最新的服务实例列表</span>
-</span></span><span style="display:flex;"><span>        setServersList(servers); <span style="color:#75715e">// 更新负载均衡器中的服务实例列表</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">start</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>.<span style="color:#a6e22e">start</span>();
-</span></span><span style="display:flex;"><span>        serverListUpdater.<span style="color:#a6e22e">start</span>(<span style="color:#66d9ef">new</span> UpdateAction()); <span style="color:#75715e">// 启动服务实例列表更新任务</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UpdateAction</span> <span style="color:#66d9ef">implements</span> ServerListUpdater.<span style="color:#a6e22e">UpdateAction</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doUpdate</span>() {
-</span></span><span style="display:flex;"><span>            updateListOfServers(); <span style="color:#75715e">// 执行服务实例列表更新</span>
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DynamicServerListLoadBalancer</span><span class="o">&lt;</span><span class="n">T</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Server</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseLoadBalancer</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ServerList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">serverList</span><span class="p">;</span><span class="w"> </span><span class="c1">// 服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ServerListUpdater</span><span class="w"> </span><span class="n">serverListUpdater</span><span class="p">;</span><span class="w"> </span><span class="c1">// 服务实例列表更新器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setServersList</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">servers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">.</span><span class="na">setServersList</span><span class="p">(</span><span class="n">servers</span><span class="p">);</span><span class="w"> </span><span class="c1">// 更新服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateListOfServers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">servers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">serverList</span><span class="p">.</span><span class="na">getUpdatedListOfServers</span><span class="p">();</span><span class="w"> </span><span class="c1">// 获取最新的服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">setServersList</span><span class="p">(</span><span class="n">servers</span><span class="p">);</span><span class="w"> </span><span class="c1">// 更新负载均衡器中的服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">start</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">.</span><span class="na">start</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">serverListUpdater</span><span class="p">.</span><span class="na">start</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">UpdateAction</span><span class="p">());</span><span class="w"> </span><span class="c1">// 启动服务实例列表更新任务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">class</span> <span class="nc">UpdateAction</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ServerListUpdater</span><span class="p">.</span><span class="na">UpdateAction</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">doUpdate</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">updateListOfServers</span><span class="p">();</span><span class="w"> </span><span class="c1">// 执行服务实例列表更新</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li>负载均衡策略（IRule）
 <ol>
 <li><strong>IRule</strong> 接口定义了负载均衡策略，常见实现包括：
@@ -262,38 +262,38 @@
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DiscoveryEnabledNIWSServerList</span> <span style="color:#66d9ef">extends</span> AbstractServerList<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> EurekaClient eurekaClient; <span style="color:#75715e">// Eureka 客户端</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> String serviceId; <span style="color:#75715e">// 服务名称</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getInitialListOfServers</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> obtainServersViaDiscovery(); <span style="color:#75715e">// 从 Eureka 获取初始服务实例列表</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getUpdatedListOfServers</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> obtainServersViaDiscovery(); <span style="color:#75715e">// 从 Eureka 获取更新后的服务实例列表</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">obtainServersViaDiscovery</span>() {
-</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>DiscoveryEnabledServer<span style="color:#f92672">&gt;</span> serverList <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;</span>();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (eurekaClient <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span>) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> serverList;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 从 Eureka 获取服务实例信息</span>
-</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>InstanceInfo<span style="color:#f92672">&gt;</span> listOfInstanceInfo <span style="color:#f92672">=</span> eurekaClient.<span style="color:#a6e22e">getInstancesByVipAddress</span>(serviceId, <span style="color:#66d9ef">false</span>);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (InstanceInfo instanceInfo : listOfInstanceInfo) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (instanceInfo.<span style="color:#a6e22e">getStatus</span>() <span style="color:#f92672">==</span> InstanceInfo.<span style="color:#a6e22e">InstanceStatus</span>.<span style="color:#a6e22e">UP</span>) {
-</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 将 Eureka 的 InstanceInfo 转换为 Ribbon 的 Server</span>
-</span></span><span style="display:flex;"><span>                serverList.<span style="color:#a6e22e">add</span>(<span style="color:#66d9ef">new</span> DiscoveryEnabledServer(instanceInfo, <span style="color:#66d9ef">false</span>, <span style="color:#66d9ef">true</span>));
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> serverList;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol start="4">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DiscoveryEnabledNIWSServerList</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractServerList</span><span class="o">&lt;</span><span class="n">DiscoveryEnabledServer</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">EurekaClient</span><span class="w"> </span><span class="n">eurekaClient</span><span class="p">;</span><span class="w"> </span><span class="c1">// Eureka 客户端</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">serviceId</span><span class="p">;</span><span class="w"> </span><span class="c1">// 服务名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DiscoveryEnabledServer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getInitialListOfServers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">obtainServersViaDiscovery</span><span class="p">();</span><span class="w"> </span><span class="c1">// 从 Eureka 获取初始服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DiscoveryEnabledServer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getUpdatedListOfServers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">obtainServersViaDiscovery</span><span class="p">();</span><span class="w"> </span><span class="c1">// 从 Eureka 获取更新后的服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DiscoveryEnabledServer</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">obtainServersViaDiscovery</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DiscoveryEnabledServer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">serverList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">eurekaClient</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">serverList</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 从 Eureka 获取服务实例信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">InstanceInfo</span><span class="o">&gt;</span><span class="w"> </span><span class="n">listOfInstanceInfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eurekaClient</span><span class="p">.</span><span class="na">getInstancesByVipAddress</span><span class="p">(</span><span class="n">serviceId</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">InstanceInfo</span><span class="w"> </span><span class="n">instanceInfo</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">listOfInstanceInfo</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">instanceInfo</span><span class="p">.</span><span class="na">getStatus</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">InstanceInfo</span><span class="p">.</span><span class="na">InstanceStatus</span><span class="p">.</span><span class="na">UP</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="c1">// 将 Eureka 的 InstanceInfo 转换为 Ribbon 的 Server</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">serverList</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">DiscoveryEnabledServer</span><span class="p">(</span><span class="n">instanceInfo</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">serverList</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ol start="4">
 <li>故障转移（Retry）
 <ol>
 <li>Ribbon 通过 <strong>RetryHandler</strong> 实现故障转移，支持重试和超时处理</li>
@@ -304,12 +304,28 @@
 </article>
 <nav class="no-print post-nav">
 
+	<a class="prev-post" href="https://xumf.net/blog/rabbitmq/">
+		<img class="icon-text" src="/img/prev.svg"/>RabbitMQ 深入浅出</a>
 
-	<a class="next-post" href="http://xumf.net/blog/synchronized/">Synchronized<img class="icon-text" src="/img/next.svg"/>
+
+	<a class="next-post" href="https://xumf.net/blog/springbootstartflow/">SpringBoot 启动流程<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
 
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/nacos/">Nacos</a></li>
+  	
+  	<li><a href="/blog/hystrix/">Hystrix</a></li>
+  	
+  	<li><a href="/blog/feign/">Feign</a></li>
+  	
+  </ul>
+</section>
 
 
 
@@ -334,3 +350,22 @@
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

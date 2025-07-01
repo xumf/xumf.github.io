@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spring Cloud Bus on 小蜜蜂</title>
-    <link>http://xumf.net/tags/spring-cloud-bus/</link>
+    <link>https://xumf.net/tags/spring-cloud-bus/</link>
     <description>Recent content in Spring Cloud Bus on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 22 Apr 2018 13:42:22 +0800</lastBuildDate>
-    <atom:link href="http://xumf.net/tags/spring-cloud-bus/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 05 Jan 2024 13:42:22 +0800</lastBuildDate>
+    <atom:link href="https://xumf.net/tags/spring-cloud-bus/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Spring Cloud Bus</title>
-      <link>http://xumf.net/blog/springcloudbus/</link>
-      <pubDate>Sun, 22 Apr 2018 13:42:22 +0800</pubDate>
-      <guid>http://xumf.net/blog/springcloudbus/</guid>
+      <link>https://xumf.net/blog/springcloudbus/</link>
+      <pubDate>Fri, 05 Jan 2024 13:42:22 +0800</pubDate>
+      <guid>https://xumf.net/blog/springcloudbus/</guid>
       <description>Spring Cloud Bus 的核心概念 （1）什么是 Spring Cloud Bus？ Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新） 它基于消息中间件（如 RabbitMQ、Kafka）实现，支持全局配置刷新、服务状态同步等功能 （2）Spring Cloud Bus 的组成 消息中间件：RabbitMQ 或 Kafka，负责传递事件 事件生产者：Config Server 或其他微服务，发送事件 事件消费者：Config Client 或其他微服务，接收事件并执行相应操作 （3）Spring Cloud Bus 的特点 全局配置刷新：通过 **/actuator/bus-refresh **端点触发全局配置刷新 服务状态同步：通过事件传播实现服务状态同步 多消息中间件支持：支持 RabbitMQ 和 Kafka Spring Cloud Bus 的工作原理 （1）事件传播流程 事件生产者（如 Config Server）发送事件到消息中间件 消息中间件将事件广播给所有订阅者 事件消费者（如 Config Client）接收到事件并执行相应操作 （2）全局配置刷新流程 Config Server 接收到 /actuator/bus-refresh 请求 Config Server 通过消息中间件广播一个刷新事件 所有 Config Client 接收到刷新事件 Config Client 调用 RefreshScope.refreshAll()，刷新标记为 @RefreshScope 的 Bean Spring Cloud Bus 配置 （1）Kafka 配置 如果你使用 Kafka 作为消息中间件，可以这样配置： spring: kafka: bootstrap-servers: localhost:9092 consumer: group-id: my-group （2）启用 Spring Cloud Bus 在 pom.</description>
     </item>
   </channel>

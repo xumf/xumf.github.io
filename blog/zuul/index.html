@@ -56,7 +56,7 @@
 	<h1>Zuul</h1>
 	<h5>
 		
-		<time datetime="2018-05-07 23:04:30 &#43;0800 CST">2018年 5月 07日</time>
+		<time datetime="2025-05-07 23:04:30 &#43;0800 CST">2025年 5月 07日</time>
 		<span class="no-print">
 			-
 				
@@ -92,34 +92,34 @@
 <ul>
 <li>在 pom.xml 添加 Zuul 依赖：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-netflix-zuul<span style="color:#f92672">&lt;/artifactId&gt;</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-netflix-zuul<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
 </span></span></code></pre></div><h3 id="2启用-zuul">（2）启用 Zuul</h3>
 <ul>
 <li>在启动类中添加 <strong>@EnableZuulProxy</strong> 注解：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableZuulProxy</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ZuulApplication</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
-</span></span><span style="display:flex;"><span>        SpringAppliction.<span style="color:#a6e22e">run</span>(ZuulApplication.<span style="color:#a6e22e">class</span>, args);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="3路由配置">（3）路由配置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@SpringBootApplication</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@EnableZuulProxy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ZuulApplication</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">SpringAppliction</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">ZuulApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="3路由配置">（3）路由配置</h3>
 <ul>
 <li>在 application.yml 中配置路由规则：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>zuul:
-</span></span><span style="display:flex;"><span>    routes:
-</span></span><span style="display:flex;"><span>        user<span style="color:#f92672">-</span>service: <span style="color:#960050;background-color:#1e0010">#</span> 路径名称
-</span></span><span style="display:flex;"><span>            path: <span style="color:#f92672">/</span>user<span style="color:#f92672">/**</span> <span style="color:#960050;background-color:#1e0010">#</span> 路径配置
-</span></span><span style="display:flex;"><span>            serviceId: user<span style="color:#f92672">-</span>service <span style="color:#960050;background-color:#1e0010">#</span> 目标服务名称
-</span></span><span style="display:flex;"><span>        order<span style="color:#f92672">-</span>service:
-</span></span><span style="display:flex;"><span>            path: <span style="color:#f92672">/</span>order<span style="color:#f92672">/**</span>
-</span></span><span style="display:flex;"><span>            serviceId: order<span style="color:#f92672">-</span>service
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">zuul</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">routes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">user</span><span class="o">-</span><span class="n">service</span><span class="p">:</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">路径名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="o">/</span><span class="n">user</span><span class="o">/**</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">路径配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">serviceId</span><span class="p">:</span><span class="w"> </span><span class="n">user</span><span class="o">-</span><span class="n">service</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">目标服务名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">order</span><span class="o">-</span><span class="n">service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="o">/</span><span class="n">order</span><span class="o">/**</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">serviceId</span><span class="p">:</span><span class="w"> </span><span class="n">order</span><span class="o">-</span><span class="n">service</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>解释：
 <ul>
 <li>user-service 和 order-service 是路由的名称，可以自定义</li>
@@ -133,40 +133,40 @@
 </ul>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">zuul</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">routes</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">custom-user-service</span>: <span style="color:#75715e"># 路由策略</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/api/user/**</span> <span style="color:#75715e"># 匹配路径</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">url</span>: <span style="color:#ae81ff">http://localhost:8081</span> <span style="color:#75715e"># 目标服务地址</span>
-</span></span></code></pre></div><h2 id="负载均衡配置">负载均衡配置</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">zuul</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">routes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">custom-user-service</span><span class="p">:</span><span class="w"> </span><span class="c"># 路由策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/api/user/**</span><span class="w"> </span><span class="c"># 匹配路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">http://localhost:8081</span><span class="w"> </span><span class="c"># 目标服务地址</span><span class="w">
+</span></span></span></code></pre></div><h2 id="负载均衡配置">负载均衡配置</h2>
 <h3 id="1集成-ribbon">（1）集成 Ribbon</h3>
 <ul>
 <li>Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡</li>
 <li>在 <strong>application.yml</strong> 中配置 Ribbon：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">zuul</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">routes</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">custom-user-service</span>:
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/api/user/**</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">serviceId</span>: <span style="color:#ae81ff">custom-user-service</span> <span style="color:#75715e"># 使用服务名称</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">custom-user-service</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">listOfServers</span>: <span style="color:#ae81ff">http://localhost:8081,http://localhost:8082</span> <span style="color:#75715e"># 目标服务实例列表</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">NFLoadBalancerRuleClassName</span>: <span style="color:#ae81ff">com.netflix.loadbalancer.RandomRule</span> <span style="color:#75715e"># 随机策略</span>
-</span></span></code></pre></div><h2 id="实例完整的-zuul-配置">实例：完整的 Zuul 配置</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">zuul</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">routes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">custom-user-service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/api/user/**</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">serviceId</span><span class="p">:</span><span class="w"> </span><span class="l">custom-user-service</span><span class="w"> </span><span class="c"># 使用服务名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">custom-user-service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ribbon</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">listOfServers</span><span class="p">:</span><span class="w"> </span><span class="l">http://localhost:8081,http://localhost:8082</span><span class="w"> </span><span class="c"># 目标服务实例列表</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">NFLoadBalancerRuleClassName</span><span class="p">:</span><span class="w"> </span><span class="l">com.netflix.loadbalancer.RandomRule</span><span class="w"> </span><span class="c"># 随机策略</span><span class="w">
+</span></span></span></code></pre></div><h2 id="实例完整的-zuul-配置">实例：完整的 Zuul 配置</h2>
 <h3 id="1applicationyml">（1）application.yml</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">user-service</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">listOfServers</span>: <span style="color:#ae81ff">http://localhost:8081,http://localhost:8082</span> <span style="color:#75715e"># 目标服务实例列表</span>
-</span></span></code></pre></div><h3 id="2启动类">（2）启动类</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableZuulProxy</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ZuulApplication</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
-</span></span><span style="display:flex;"><span>        SpringAppliction.<span style="color:#a6e22e">run</span>(ZuulApplication.<span style="color:#a6e22e">class</span>, args);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="zuul-与-spring-cloud-gateway对比">Zuul 与 Spring Cloud Gateway对比</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">user-service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ribbon</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">listOfServers</span><span class="p">:</span><span class="w"> </span><span class="l">http://localhost:8081,http://localhost:8082</span><span class="w"> </span><span class="c"># 目标服务实例列表</span><span class="w">
+</span></span></span></code></pre></div><h3 id="2启动类">（2）启动类</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@SpringBootApplication</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@EnableZuulProxy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ZuulApplication</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">SpringAppliction</span><span class="p">.</span><span class="na">run</span><span class="p">(</span><span class="n">ZuulApplication</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="zuul-与-spring-cloud-gateway对比">Zuul 与 Spring Cloud Gateway对比</h2>
 <table>
 <thead>
 <tr>
@@ -237,12 +237,9 @@
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/zipkin/">
+	<a class="prev-post" href="https://xumf.net/blog/zipkin/">
 		<img class="icon-text" src="/img/prev.svg"/>Zipkin</a>
 
-
-	<a class="next-post" href="http://xumf.net/blog/springbootstartflow/">SpringBoot 启动流程<img class="icon-text" src="/img/next.svg"/>
-	</a>
 
 </nav>
 
@@ -253,9 +250,9 @@
     
   	<li><a href="/blog/zipkin/">Zipkin</a></li>
   	
-  	<li><a href="/blog/nacos/">Nacos</a></li>
-  	
   	<li><a href="/blog/springcloudsleuth/">Spring Cloud Sleuth</a></li>
+  	
+  	<li><a href="/blog/springcloudgateway/">Spring Cloud Gateway</a></li>
   	
   </ul>
 </section>
@@ -283,3 +280,22 @@
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

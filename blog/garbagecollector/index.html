@@ -57,7 +57,7 @@ Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC
 	<h1>垃圾回收器</h1>
 	<h5>
 		
-		<time datetime="2018-04-22 15:43:54 &#43;0800 CST">2018年 4月 22日</time>
+		<time datetime="2018-07-18 15:43:54 &#43;0800 CST">2018年 7月 18日</time>
 		<span class="no-print">
 			-
 				
@@ -218,32 +218,32 @@ Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC
 </ul>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>1. 初始化阶段（Initial Mark）
-</span></span><span style="display:flex;"><span>这是 ZGC 回收的第一个阶段，主要目标是标记所有存活的根对象。此时，ZGC 会标记所有活动线程和 JVM 堆栈中的对象，以及直接引用的对象。
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>启动时标记：在这个阶段，ZGC 会先标记应用程序中所有的“根对象”（如活动线程的栈、直接引用的对象等）。这个过程是 Stop-the-World（STW）操作，因为它需要暂停应用程序的执行，确保能够访问到所有根对象。
-</span></span><span style="display:flex;"><span>彩色指针标记：在此阶段，对象会被标记为活动状态。ZGC 会使用彩色指针技术，在对象的指针低位或高位嵌入额外的标记信息，表示对象的状态（例如，是否是“活动”对象）。
-</span></span><span style="display:flex;"><span>2. 并发标记（Concurrent Mark）
-</span></span><span style="display:flex;"><span>在这一步骤中，ZGC 会并发地标记堆中的所有对象，以确定哪些对象是活动的（存活的）。
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>并发标记：在并发标记阶段，ZGC 会遍历堆中的所有对象，并标记所有能通过根对象访问到的对象。此阶段 与应用程序并发运行，不会暂停应用程序的执行，因此不会造成长时间的停顿。
-</span></span><span style="display:flex;"><span>读屏障：ZGC 使用 读屏障 技术来确保指向活动对象的指针会被正确地修正，特别是当对象被移动时。读屏障帮助 ZGC 在并发标记阶段管理对象的状态。
-</span></span><span style="display:flex;"><span>Marking Phase：对象通过指针传播，标记所有从根对象可达的对象。如果对象可达，它就会被标记为“存活”。
-</span></span><span style="display:flex;"><span>3. 并发移除（Concurrent Relocation）
-</span></span><span style="display:flex;"><span>ZGC 通过并发的方式，在标记阶段之后开始清理垃圾并将存活对象移动到新的内存区域。
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>对象移动（Relocation）：ZGC 通过使用彩色指针将对象迁移到堆的连续区域，这样可以避免堆内存碎片。此阶段仍然是并发进行的，因此并不会阻塞应用程序的执行。
-</span></span><span style="display:flex;"><span>空间整理：ZGC 会将存活的对象移动到新的位置，目的是为了更好地利用堆空间并减少碎片。由于对象的内存位置发生变化，ZGC 使用读屏障来确保应用程序始终访问到正确的对象位置。
-</span></span><span style="display:flex;"><span>4. 并发清理（Concurrent Sweep）
-</span></span><span style="display:flex;"><span>在 ZGC 的并发清理阶段，垃圾回收器会清理被标记为垃圾的对象。
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>清理未标记的对象：在这个阶段，ZGC 会清理所有标记为不可达（垃圾）的对象。这一过程会并发进行，不会阻塞应用程序线程。
-</span></span><span style="display:flex;"><span>标记-清理分离：ZGC 的并发清理是通过 并发清理 和 并发回收 的方式来实现的，即标记阶段和清理阶段是分开进行的。ZGC 不需要在这两者之间进行停顿。
-</span></span><span style="display:flex;"><span>5. 结束阶段（Final Cleanup）
-</span></span><span style="display:flex;"><span>当 ZGC 完成并发清理后，会进行一些最后的清理工作，准备为下一轮垃圾回收做准备。
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>最后整理：在这个阶段，ZGC 会对剩余的内存进行整理，将所有的存活对象放到堆内存的最前端。这有助于下一轮垃圾回收时减少碎片。
-</span></span><span style="display:flex;"><span>恢复应用程序：在所有并发阶段完成后，应用程序可以恢复执行，垃圾回收已经完成。这个阶段通常是 Stop-the-World 的短暂停顿。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">1. 初始化阶段（Initial Mark）
+</span></span><span class="line"><span class="cl">这是 ZGC 回收的第一个阶段，主要目标是标记所有存活的根对象。此时，ZGC 会标记所有活动线程和 JVM 堆栈中的对象，以及直接引用的对象。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">启动时标记：在这个阶段，ZGC 会先标记应用程序中所有的“根对象”（如活动线程的栈、直接引用的对象等）。这个过程是 Stop-the-World（STW）操作，因为它需要暂停应用程序的执行，确保能够访问到所有根对象。
+</span></span><span class="line"><span class="cl">彩色指针标记：在此阶段，对象会被标记为活动状态。ZGC 会使用彩色指针技术，在对象的指针低位或高位嵌入额外的标记信息，表示对象的状态（例如，是否是“活动”对象）。
+</span></span><span class="line"><span class="cl">2. 并发标记（Concurrent Mark）
+</span></span><span class="line"><span class="cl">在这一步骤中，ZGC 会并发地标记堆中的所有对象，以确定哪些对象是活动的（存活的）。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">并发标记：在并发标记阶段，ZGC 会遍历堆中的所有对象，并标记所有能通过根对象访问到的对象。此阶段 与应用程序并发运行，不会暂停应用程序的执行，因此不会造成长时间的停顿。
+</span></span><span class="line"><span class="cl">读屏障：ZGC 使用 读屏障 技术来确保指向活动对象的指针会被正确地修正，特别是当对象被移动时。读屏障帮助 ZGC 在并发标记阶段管理对象的状态。
+</span></span><span class="line"><span class="cl">Marking Phase：对象通过指针传播，标记所有从根对象可达的对象。如果对象可达，它就会被标记为“存活”。
+</span></span><span class="line"><span class="cl">3. 并发移除（Concurrent Relocation）
+</span></span><span class="line"><span class="cl">ZGC 通过并发的方式，在标记阶段之后开始清理垃圾并将存活对象移动到新的内存区域。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">对象移动（Relocation）：ZGC 通过使用彩色指针将对象迁移到堆的连续区域，这样可以避免堆内存碎片。此阶段仍然是并发进行的，因此并不会阻塞应用程序的执行。
+</span></span><span class="line"><span class="cl">空间整理：ZGC 会将存活的对象移动到新的位置，目的是为了更好地利用堆空间并减少碎片。由于对象的内存位置发生变化，ZGC 使用读屏障来确保应用程序始终访问到正确的对象位置。
+</span></span><span class="line"><span class="cl">4. 并发清理（Concurrent Sweep）
+</span></span><span class="line"><span class="cl">在 ZGC 的并发清理阶段，垃圾回收器会清理被标记为垃圾的对象。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">清理未标记的对象：在这个阶段，ZGC 会清理所有标记为不可达（垃圾）的对象。这一过程会并发进行，不会阻塞应用程序线程。
+</span></span><span class="line"><span class="cl">标记-清理分离：ZGC 的并发清理是通过 并发清理 和 并发回收 的方式来实现的，即标记阶段和清理阶段是分开进行的。ZGC 不需要在这两者之间进行停顿。
+</span></span><span class="line"><span class="cl">5. 结束阶段（Final Cleanup）
+</span></span><span class="line"><span class="cl">当 ZGC 完成并发清理后，会进行一些最后的清理工作，准备为下一轮垃圾回收做准备。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">最后整理：在这个阶段，ZGC 会对剩余的内存进行整理，将所有的存活对象放到堆内存的最前端。这有助于下一轮垃圾回收时减少碎片。
+</span></span><span class="line"><span class="cl">恢复应用程序：在所有并发阶段完成后，应用程序可以恢复执行，垃圾回收已经完成。这个阶段通常是 Stop-the-World 的短暂停顿。
 </span></span></code></pre></div><ul>
 <li>适用场景：
 <ul>
@@ -388,15 +388,15 @@ Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC
 <li>更新 RSet：如果跨 Region，将引用来源（<code>obj</code> 所在的 Region 和卡页）记录到<code>newObj</code> 所在 Region 的 RSet 中</li>
 </ol>
 <p>伪代码示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">writeBarrier</span>(Field field, Object newObj) {
-</span></span><span style="display:flex;"><span>    Object oldObj <span style="color:#f92672">=</span> field.<span style="color:#a6e22e">get</span>();
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (oldObj <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> isCrossRegionRef(oldObj, newObj)) {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 记录引用来源到目标 Region 的 RSet</span>
-</span></span><span style="display:flex;"><span>        addToRSet(oldObj.<span style="color:#a6e22e">region</span>(), newObj.<span style="color:#a6e22e">region</span>(), getCardIndex(oldObj));
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    field.<span style="color:#a6e22e">set</span>(newObj);
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h5 id="3-垃圾回收处理跨代引用">3. 垃圾回收处理跨代引用</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kt">void</span><span class="w"> </span><span class="nf">writeBarrier</span><span class="p">(</span><span class="n">Field</span><span class="w"> </span><span class="n">field</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">newObj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="n">oldObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">field</span><span class="p">.</span><span class="na">get</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">oldObj</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">isCrossRegionRef</span><span class="p">(</span><span class="n">oldObj</span><span class="p">,</span><span class="w"> </span><span class="n">newObj</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 记录引用来源到目标 Region 的 RSet</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">addToRSet</span><span class="p">(</span><span class="n">oldObj</span><span class="p">.</span><span class="na">region</span><span class="p">(),</span><span class="w"> </span><span class="n">newObj</span><span class="p">.</span><span class="na">region</span><span class="p">(),</span><span class="w"> </span><span class="n">getCardIndex</span><span class="p">(</span><span class="n">oldObj</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">field</span><span class="p">.</span><span class="na">set</span><span class="p">(</span><span class="n">newObj</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h5 id="3-垃圾回收处理跨代引用">3. 垃圾回收处理跨代引用</h5>
 <p>以 Young GC 为例（清理新生代 Region）：</p>
 <ol>
 <li>确定存活对象：通过 GC Roots 扫描新生代对象</li>
@@ -456,26 +456,15 @@ Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/springcloudconfig/">
-		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Config</a>
+	<a class="prev-post" href="https://xumf.net/blog/feign/">
+		<img class="icon-text" src="/img/prev.svg"/>Feign</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/hbase/">HBase 深入浅出<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/hbase/">HBase 深入浅出<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
 
-
-<section id="related">
-  <h4></h4>
-  <ul>
-    
-  	<li><a href="/blog/jvmissuesolution/">JVM 问题排查</a></li>
-  	
-  	<li><a href="/blog/synchronized/">Synchronized</a></li>
-  	
-  </ul>
-</section>
 
 
 
@@ -500,3 +489,22 @@ Serial GC Parallel GC（Throughput GC） CMS GC（Concurrent Mark Sweep） G1 GC
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

@@ -66,7 +66,7 @@ eureka 自我保护机制服务端相关影响配置 eureka: server: enable-self
 	<h1>Eureka</h1>
 	<h5>
 		
-		<time datetime="2018-04-22 13:16:53 &#43;0800 CST">2018年 4月 22日</time>
+		<time datetime="2018-05-01 13:16:53 &#43;0800 CST">2018年 5月 01日</time>
 		<span class="no-print">
 			-
 				
@@ -114,19 +114,19 @@ eureka客户端启动的时候</p>
 </ul>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">eureka</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">server</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">enable-self-preservation</span>: <span style="color:#66d9ef">true</span>  <span style="color:#75715e"># 默认true，开启自我保护</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">renewal-percent-threshold</span>: <span style="color:#ae81ff">0.85</span>  <span style="color:#75715e"># 续约百分比阈值，默认0.85</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">renewal-threshold-update-interval-ms</span>: <span style="color:#ae81ff">900000</span>  <span style="color:#75715e"># 更新阈值的时间间隔，默认15分钟</span>
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">eureka</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">server</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">enable-self-preservation</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">  </span><span class="c"># 默认true，开启自我保护</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">renewal-percent-threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.85</span><span class="w">  </span><span class="c"># 续约百分比阈值，默认0.85</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">renewal-threshold-update-interval-ms</span><span class="p">:</span><span class="w"> </span><span class="m">900000</span><span class="w">  </span><span class="c"># 更新阈值的时间间隔，默认15分钟</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>eureka 自我保护机制客户端相关影响配置</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">eureka</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">instance</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">lease-renewal-interval-in-seconds</span>: <span style="color:#ae81ff">30</span>  <span style="color:#75715e"># 客户端续约间隔，默认30秒</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">lease-expiration-duration-in-seconds</span>: <span style="color:#ae81ff">90</span>  <span style="color:#75715e"># 服务过期时间，默认90秒</span>
-</span></span></code></pre></div><h4 id="客户端服务注册流程">客户端服务注册流程</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">eureka</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lease-renewal-interval-in-seconds</span><span class="p">:</span><span class="w"> </span><span class="m">30</span><span class="w">  </span><span class="c"># 客户端续约间隔，默认30秒</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lease-expiration-duration-in-seconds</span><span class="p">:</span><span class="w"> </span><span class="m">90</span><span class="w">  </span><span class="c"># 服务过期时间，默认90秒</span><span class="w">
+</span></span></span></code></pre></div><h4 id="客户端服务注册流程">客户端服务注册流程</h4>
 <p>每当有客服端服务启动时，客户端会根据配置eureka服务端的地址，向服务端发起注册动作，服务端收到注册请求，会更新注册表缓冲信息，增加新的客户端信息到注册表缓冲，然后将注册表信息更新到写缓存。</p>
 <h4 id="客户端读取数据流程">客户端读取数据流程</h4>
 <ol>
@@ -221,11 +221,11 @@ eureka客户端启动的时候</p>
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/jvmissuesolution/">
-		<img class="icon-text" src="/img/prev.svg"/>JVM 问题排查</a>
+	<a class="prev-post" href="https://xumf.net/blog/elasticsearch/">
+		<img class="icon-text" src="/img/prev.svg"/>ElasticSearch 知识</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/elasticsearch/">ElasticSearch 知识<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/feign/">Feign<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -235,7 +235,7 @@ eureka客户端启动的时候</p>
   <h4></h4>
   <ul>
     
-  	<li><a href="/blog/ribbon/">Ribbon</a></li>
+  	<li><a href="/blog/zookeeper/">ZooKeeper</a></li>
   	
   </ul>
 </section>
@@ -286,3 +286,22 @@ eureka客户端启动的时候</p>
   </script>
   
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

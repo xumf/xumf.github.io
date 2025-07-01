@@ -56,7 +56,7 @@
 	<h1>Spring Cloud Sleuth</h1>
 	<h5>
 		
-		<time datetime="2018-04-28 13:54:50 &#43;0800 CST">2018年 4月 28日</time>
+		<time datetime="2024-08-01 13:54:50 &#43;0800 CST">2024年 8月 01日</time>
 		<span class="no-print">
 			-
 				
@@ -76,10 +76,10 @@
 <li>Span：一个工作单元，包含开始和结束时间</li>
 <li>Annotation：关键事件标记（如 cs、sr、ss、cr）</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>cs (Client Sent)：标识客户端发起请求的时间点。
-</span></span><span style="display:flex;"><span>sr (Server Received)：标识服务端接收到请求并开始处理的时间点。
-</span></span><span style="display:flex;"><span>ss (Server Sent)：标识服务端处理完请求并准备返回响应的时间点。
-</span></span><span style="display:flex;"><span>cr (Client Received)：标识客户端接收到服务端响应的时间点。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">cs (Client Sent)：标识客户端发起请求的时间点。
+</span></span><span class="line"><span class="cl">sr (Server Received)：标识服务端接收到请求并开始处理的时间点。
+</span></span><span class="line"><span class="cl">ss (Server Sent)：标识服务端处理完请求并准备返回响应的时间点。
+</span></span><span class="line"><span class="cl">cr (Client Received)：标识客户端接收到服务端响应的时间点。
 </span></span></code></pre></div><h3 id="2-核心功能">2. 核心功能</h3>
 <ul>
 <li>自动生成和传播 Trace ID 和 Span ID</li>
@@ -88,73 +88,73 @@
 <li>提供丰富的上下文信息</li>
 </ul>
 <h3 id="3-数据模型">3. 数据模型</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>Trace
-</span></span><span style="display:flex;"><span>├── Span 1
-</span></span><span style="display:flex;"><span>│   ├── Annotation: cs
-</span></span><span style="display:flex;"><span>│   ├── Annotation: sr
-</span></span><span style="display:flex;"><span>│   ├── Annotation: ss
-</span></span><span style="display:flex;"><span>│   └── Annotation: cr
-</span></span><span style="display:flex;"><span>└── Span 2
-</span></span><span style="display:flex;"><span>    ├── Annotation: cs
-</span></span><span style="display:flex;"><span>    └── Annotation: cr
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">Trace
+</span></span><span class="line"><span class="cl">├── Span 1
+</span></span><span class="line"><span class="cl">│   ├── Annotation: cs
+</span></span><span class="line"><span class="cl">│   ├── Annotation: sr
+</span></span><span class="line"><span class="cl">│   ├── Annotation: ss
+</span></span><span class="line"><span class="cl">│   └── Annotation: cr
+</span></span><span class="line"><span class="cl">└── Span 2
+</span></span><span class="line"><span class="cl">    ├── Annotation: cs
+</span></span><span class="line"><span class="cl">    └── Annotation: cr
 </span></span></code></pre></div><h2 id="源码分析">源码分析</h2>
 <h3 id="1-tracer-核心类">1. Tracer 核心类</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Tracer</span> {
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">nextSpan</span>();
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">nextSpan</span>(Span parent);
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">newTrace</span>();
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">continueSpan</span>(Span span);
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span>(Span span);
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">currentSpan</span>();
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... other methods ...</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Tracer</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">nextSpan</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">nextSpan</span><span class="p">(</span><span class="n">Span</span><span class="w"> </span><span class="n">parent</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">newTrace</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">continueSpan</span><span class="p">(</span><span class="n">Span</span><span class="w"> </span><span class="n">span</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="n">Span</span><span class="w"> </span><span class="n">span</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">currentSpan</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... other methods ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>负责创建和管理 Span</li>
 <li>提供当前 Span 的访问</li>
 <li>支持 Span 的继续和关闭</li>
 </ul>
 <h3 id="2-tracecontext-传播">2. TraceContext 传播</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Propagator</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">inject</span>(TraceContext context, C carrier, Setter<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> setter);
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> Span.<span style="color:#a6e22e">Builder</span> <span style="color:#a6e22e">extract</span>(C carrier, Getter<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> getter);
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Propagator</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">inject</span><span class="p">(</span><span class="n">TraceContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">C</span><span class="w"> </span><span class="n">carrier</span><span class="p">,</span><span class="w"> </span><span class="n">Setter</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setter</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Span</span><span class="p">.</span><span class="na">Builder</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="n">C</span><span class="w"> </span><span class="n">carrier</span><span class="p">,</span><span class="w"> </span><span class="n">Getter</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getter</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>负责 TraceContext 的注入和提取</li>
 <li>支持多种传播方式（如 HTTP Headers）</li>
 </ul>
 <h3 id="3-span-创建">3. Span 创建</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Span</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isNoop</span>();
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">start</span>();
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">name</span>(String name);
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">tag</span>(String key, String value);
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">event</span>(String value);
-</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">error</span>(Throwable throwable);
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">end</span>();
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... other methods ...</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">Span</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isNoop</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">start</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">tag</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">throwable</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">end</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... other methods ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>表示一个工作单元</li>
 <li>支持添加标签和事件</li>
 <li>支持错误记录</li>
 </ul>
 <h3 id="4-自动配置">4. 自动配置</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ConditionalOnProperty</span>(value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;spring.sleuth.enabled&#34;</span>, matchIfMissing <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TraceAutoConfiguration</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Tracer <span style="color:#a6e22e">tracer</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DefaultTracer();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CurrentTraceContext <span style="color:#a6e22e">currentTraceContext</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ThreadLocalCurrentTraceContext.<span style="color:#a6e22e">create</span>();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ... other beans ...</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@ConditionalOnProperty</span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;spring.sleuth.enabled&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">matchIfMissing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">TraceAutoConfiguration</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Tracer</span><span class="w"> </span><span class="nf">tracer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultTracer</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">CurrentTraceContext</span><span class="w"> </span><span class="nf">currentTraceContext</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ThreadLocalCurrentTraceContext</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// ... other beans ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>自动配置 Tracer 和相关组件</li>
 <li>支持通过配置启用/禁用</li>
 </ul>
@@ -172,21 +172,21 @@
 <li>一个 Trace 包含多个 Span</li>
 </ul>
 <h3 id="3-如何自定义-span-信息">3. 如何自定义 Span 信息？</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Autowired</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> Tracer tracer;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">customSpan</span>() {
-</span></span><span style="display:flex;"><span>    Span span <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">nextSpan</span>().<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;custom-operation&#34;</span>).<span style="color:#a6e22e">start</span>();
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> (Tracer.<span style="color:#a6e22e">SpanInScope</span> ws <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">withSpan</span>(span.<span style="color:#a6e22e">start</span>())) {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// business logic</span>
-</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">tag</span>(<span style="color:#e6db74">&#34;custom-tag&#34;</span>, <span style="color:#e6db74">&#34;value&#34;</span>);
-</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">finally</span> {
-</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">end</span>();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
-</span></span></code></pre></div><h3 id="4-sleuth-如何与-zipkin-集成">4. Sleuth 如何与 Zipkin 集成？</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// ... existing code ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="n">Tracer</span><span class="w"> </span><span class="n">tracer</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customSpan</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">Span</span><span class="w"> </span><span class="n">span</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracer</span><span class="p">.</span><span class="na">nextSpan</span><span class="p">().</span><span class="na">name</span><span class="p">(</span><span class="s">&#34;custom-operation&#34;</span><span class="p">).</span><span class="na">start</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">Tracer</span><span class="p">.</span><span class="na">SpanInScope</span><span class="w"> </span><span class="n">ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracer</span><span class="p">.</span><span class="na">withSpan</span><span class="p">(</span><span class="n">span</span><span class="p">.</span><span class="na">start</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// business logic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">span</span><span class="p">.</span><span class="na">tag</span><span class="p">(</span><span class="s">&#34;custom-tag&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;value&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">span</span><span class="p">.</span><span class="na">end</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ... existing code ...</span><span class="w">
+</span></span></span></code></pre></div><h3 id="4-sleuth-如何与-zipkin-集成">4. Sleuth 如何与 Zipkin 集成？</h3>
 <ul>
 <li>通过 <strong>Spring-cloud-starter-zipkin</strong> 依赖</li>
 <li>配置 Zipkin 服务器地址</li>
@@ -205,11 +205,11 @@
 <li>异步发送追踪数据</li>
 </ul>
 <h3 id="7-如何配置采样率">7. 如何配置采样率？</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sleuth</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sampler</span>:
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">probability</span>: <span style="color:#ae81ff">1.0</span> <span style="color:#75715e"># 1.0表示100%采样</span>
-</span></span></code></pre></div><h3 id="8-sleuth-支持哪些通信协议">8. Sleuth 支持哪些通信协议？</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">sleuth</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sampler</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">probability</span><span class="p">:</span><span class="w"> </span><span class="m">1.0</span><span class="w"> </span><span class="c"># 1.0表示100%采样</span><span class="w">
+</span></span></span></code></pre></div><h3 id="8-sleuth-支持哪些通信协议">8. Sleuth 支持哪些通信协议？</h3>
 <ul>
 <li>HTTP（RestTemplate、Feign、WebClient）</li>
 <li>消息队列（RabbitMQ、Kafka）</li>
@@ -227,27 +227,27 @@
 <li>支持 Reactor 上下文传播</li>
 <li>示例：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
-</span></span><span style="display:flex;"><span>Mono.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;value&#34;</span>)
-</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">doOnNext</span>(value <span style="color:#f92672">-&gt;</span> {
-</span></span><span style="display:flex;"><span>        Span span <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">nextSpan</span>().<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;async-operation&#34;</span>).<span style="color:#a6e22e">start</span>();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> (Tracer.<span style="color:#a6e22e">SpanInScope</span> ws <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">withSpan</span>(span.<span style="color:#a6e22e">start</span>())) {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// async logic</span>
-</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">finally</span> {
-</span></span><span style="display:flex;"><span>            span.<span style="color:#a6e22e">end</span>();
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    })
-</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">contextWrite</span>(Context.<span style="color:#a6e22e">of</span>(Span.<span style="color:#a6e22e">class</span>, span));
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
-</span></span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// ... existing code ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Mono</span><span class="p">.</span><span class="na">just</span><span class="p">(</span><span class="s">&#34;value&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">doOnNext</span><span class="p">(</span><span class="n">value</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Span</span><span class="w"> </span><span class="n">span</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracer</span><span class="p">.</span><span class="na">nextSpan</span><span class="p">().</span><span class="na">name</span><span class="p">(</span><span class="s">&#34;async-operation&#34;</span><span class="p">).</span><span class="na">start</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">Tracer</span><span class="p">.</span><span class="na">SpanInScope</span><span class="w"> </span><span class="n">ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tracer</span><span class="p">.</span><span class="na">withSpan</span><span class="p">(</span><span class="n">span</span><span class="p">.</span><span class="na">start</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// async logic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">span</span><span class="p">.</span><span class="na">end</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">.</span><span class="na">contextWrite</span><span class="p">(</span><span class="n">Context</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">Span</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">span</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ... existing code ...</span><span class="w">
+</span></span></span></code></pre></div>
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/springcloudgateway/">
+	<a class="prev-post" href="https://xumf.net/blog/springcloudgateway/">
 		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Gateway</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/springthridlevelcache/">Spring 三级缓存<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/synchronized/">Synchronized<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -259,9 +259,9 @@
     
   	<li><a href="/blog/springcloudgateway/">Spring Cloud Gateway</a></li>
   	
-  	<li><a href="/blog/zookeeper/">ZooKeeper</a></li>
+  	<li><a href="/blog/springcloudconfig/">Spring Cloud Config</a></li>
   	
-  	<li><a href="/blog/hystrix/">Hystrix</a></li>
+  	<li><a href="/blog/springcloudbus/">Spring Cloud Bus</a></li>
   	
   </ul>
 </section>
@@ -289,3 +289,22 @@
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

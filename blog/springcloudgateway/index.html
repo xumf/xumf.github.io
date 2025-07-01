@@ -56,7 +56,7 @@
 	<h1>Spring Cloud Gateway</h1>
 	<h5>
 		
-		<time datetime="2018-04-26 23:13:45 &#43;0800 CST">2018年 4月 26日</time>
+		<time datetime="2024-07-18 23:13:45 &#43;0800 CST">2024年 7月 18日</time>
 		<span class="no-print">
 			-
 				
@@ -73,7 +73,7 @@
 <ol>
 <li>架构组成</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>Client -&gt; Gateway -&gt; Route Predicate -&gt; Gateway Filter -&gt; Target Service
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">Client -&gt; Gateway -&gt; Route Predicate -&gt; Gateway Filter -&gt; Target Service
 </span></span></code></pre></div><ol start="2">
 <li>核心概念</li>
 </ol>
@@ -85,12 +85,12 @@
 <ol start="3">
 <li>工作流程</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>1. 客户端发起请求
-</span></span><span style="display:flex;"><span>2. Gateway Handler Mapping 查找匹配的路由
-</span></span><span style="display:flex;"><span>3. 执行 Gateway Filter 链（pre filters）
-</span></span><span style="display:flex;"><span>4. 代理请求到目标服务
-</span></span><span style="display:flex;"><span>5. 执行 Gateway Filter 链（post filters）
-</span></span><span style="display:flex;"><span>6. 返回响应给客户端
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">1. 客户端发起请求
+</span></span><span class="line"><span class="cl">2. Gateway Handler Mapping 查找匹配的路由
+</span></span><span class="line"><span class="cl">3. 执行 Gateway Filter 链（pre filters）
+</span></span><span class="line"><span class="cl">4. 代理请求到目标服务
+</span></span><span class="line"><span class="cl">5. 执行 Gateway Filter 链（post filters）
+</span></span><span class="line"><span class="cl">6. 返回响应给客户端
 </span></span></code></pre></div><ol start="4">
 <li>关键组件</li>
 </ol>
@@ -121,24 +121,24 @@
 </li>
 <li>如何自定义过滤器</li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CustomFilter</span> <span style="color:#66d9ef">implements</span> GatewayFilter, Ordered {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Mono<span style="color:#f92672">&lt;</span>Void<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">filter</span>(ServerWebExchange exchange, GatewayFilterChain chain) {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 前置处理</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> chain.<span style="color:#a6e22e">filter</span>(exchange).<span style="color:#a6e22e">then</span>(Mono.<span style="color:#a6e22e">fromRunnable</span>(() <span style="color:#f92672">-&gt;</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 后置处理</span>
-</span></span><span style="display:flex;"><span>        }));
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getOrder</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span>1; <span style="color:#75715e">// 过滤器顺序</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// ... existing code ...</span>
-</span></span></code></pre></div><ol start="4">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// ... existing code ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CustomFilter</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">GatewayFilter</span><span class="p">,</span><span class="w"> </span><span class="n">Ordered</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Mono</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">ServerWebExchange</span><span class="w"> </span><span class="n">exchange</span><span class="p">,</span><span class="w"> </span><span class="n">GatewayFilterChain</span><span class="w"> </span><span class="n">chain</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 前置处理</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">chain</span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">exchange</span><span class="p">).</span><span class="na">then</span><span class="p">(</span><span class="n">Mono</span><span class="p">.</span><span class="na">fromRunnable</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="c1">// 后置处理</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">getOrder</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">1</span><span class="p">;</span><span class="w"> </span><span class="c1">// 过滤器顺序</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// ... existing code ...</span><span class="w">
+</span></span></span></code></pre></div><ol start="4">
 <li>Gateway 如何实现负载均衡？
 <ul>
 <li>集成 Spring Cloud LoadBalancer</li>
@@ -154,18 +154,18 @@
 </ul>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">routes</span>:
-</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">limit_route</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">http://example.org</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">filters</span>:
-</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">RequestRateLimiter</span>
-</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">redis-rate-limiter.replenishRate</span>: <span style="color:#ae81ff">10</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">redis-rate-limiter.burstCapacity</span>: <span style="color:#ae81ff">20</span>
-</span></span></code></pre></div><ol start="6">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gateway</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">routes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">limit_route</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l">http://example.org</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">RequestRateLimiter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">redis-rate-limiter.replenishRate</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">redis-rate-limiter.burstCapacity</span><span class="p">:</span><span class="w"> </span><span class="m">20</span><span class="w">
+</span></span></span></code></pre></div><ol start="6">
 <li>Gateway 如何实现熔断？
 <ul>
 <li>使用 Hystrix GatewayFilter</li>
@@ -174,18 +174,18 @@
 </ul>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">routes</span>:
-</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">hystrix_route</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">lb://backing-service:8088</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">filters</span>:
-</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Hystrix</span>
-</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">fallbackcmd</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">fallbackUri</span>: <span style="color:#ae81ff">forward:/fallback</span>
-</span></span></code></pre></div><ol start="7">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gateway</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">routes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">hystrix_route</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l">lb://backing-service:8088</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Hystrix</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">args</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">fallbackcmd</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">fallbackUri</span><span class="p">:</span><span class="w"> </span><span class="l">forward:/fallback</span><span class="w">
+</span></span></span></code></pre></div><ol start="7">
 <li>如何实现动态路由？
 <ul>
 <li>实现 RouteDefinitionRepository 接口</li>
@@ -215,25 +215,25 @@
 <li>配置全局 CORS</li>
 <li>示例：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">globalcors</span>:
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">cors-configurations</span>:
-</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#39;[/**]&#39;</span>:
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedOrigins</span>: <span style="color:#e6db74">&#34;*&#34;</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedMethods</span>:
-</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">GET</span>
-</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">POST</span>
-</span></span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gateway</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">globalcors</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cors-configurations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">&#39;[/**]&#39;</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">allowedOrigins</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;*&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">allowedMethods</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="l">GET</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="l">POST</span><span class="w">
+</span></span></span></code></pre></div>
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/zookeeper/">
-		<img class="icon-text" src="/img/prev.svg"/>ZooKeeper</a>
+	<a class="prev-post" href="https://xumf.net/blog/springcloudconfig/">
+		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Config</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/springcloudsleuth/">Spring Cloud Sleuth<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/springcloudsleuth/">Spring Cloud Sleuth<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -243,11 +243,11 @@
   <h4></h4>
   <ul>
     
-  	<li><a href="/blog/zookeeper/">ZooKeeper</a></li>
+  	<li><a href="/blog/springcloudconfig/">Spring Cloud Config</a></li>
   	
-  	<li><a href="/blog/hystrix/">Hystrix</a></li>
+  	<li><a href="/blog/springcloudbus/">Spring Cloud Bus</a></li>
   	
-  	<li><a href="/blog/feign/">Feign</a></li>
+  	<li><a href="/blog/ribbon/">Ribbon</a></li>
   	
   </ul>
 </section>
@@ -275,3 +275,22 @@
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

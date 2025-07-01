@@ -56,7 +56,7 @@
 	<h1>Feign</h1>
 	<h5>
 		
-		<time datetime="2018-04-22 15:43:54 &#43;0800 CST">2018年 4月 22日</time>
+		<time datetime="2018-06-15 15:43:54 &#43;0800 CST">2018年 6月 15日</time>
 		<span class="no-print">
 			-
 				
@@ -107,56 +107,56 @@
 <ul>
 <li>使用 @FeignClient 注解定义 Feign 客户端：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@FeignClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://localhost:8080&#34;</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyFeignClient</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GetMapping</span>(<span style="color:#e6db74">&#34;/endpoint&#34;</span>)
-</span></span><span style="display:flex;"><span>    String <span style="color:#a6e22e">getResponse</span>();
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="2负载均衡">（2）负载均衡</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@FeignClient</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;service-name&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;http://localhost:8080&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">MyFeignClient</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/endpoint&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">getResponse</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="2负载均衡">（2）负载均衡</h3>
 <h3 id="-feign-默认集成了-ribbon无需额外配置">* Feign 默认集成了 Ribbon，无需额外配置</h3>
 <h3 id="-可以通过配置文件自定义-ribbon-的负载均衡策略">* 可以通过配置文件自定义 Ribbon 的负载均衡策略：</h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">service-name</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ribbon</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">NFLoadBalancerRuleClassName</span>: <span style="color:#ae81ff">com.netflix.loadbalancer.RoundRobinRule</span>
-</span></span></code></pre></div><h3 id="3熔断和降级">（3）熔断和降级</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">service-name</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ribbon</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">NFLoadBalancerRuleClassName</span><span class="p">:</span><span class="w"> </span><span class="l">com.netflix.loadbalancer.RoundRobinRule</span><span class="w">
+</span></span></span></code></pre></div><h3 id="3熔断和降级">（3）熔断和降级</h3>
 <ul>
 <li>通过 <strong>@FeignClient</strong> 的** Fallback** 属性指定降级类：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@FeignClient</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;service-name&#34;</span>, fallback <span style="color:#f92672">=</span> MyFeignClientFallback.<span style="color:#a6e22e">class</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MyFeignClient</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GetMapping</span>(<span style="color:#e6db74">&#34;/endpoint&#34;</span>)
-</span></span><span style="display:flex;"><span>    String <span style="color:#a6e22e">getResponse</span>();
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyFeignClientFallback</span> <span style="color:#66d9ef">implements</span> MyFeignClient {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getResponse</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Fallback response&#34;</span>;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="4自定义配置">（4）自定义配置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@FeignClient</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;service-name&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">fallback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyFeignClientFallback</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">MyFeignClient</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&#34;/endpoint&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="nf">getResponse</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Component</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyFeignClientFallback</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">MyFeignClient</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getResponse</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&#34;Fallback response&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="4自定义配置">（4）自定义配置</h3>
 <ul>
 <li>通过 **@Configuration **类自定义 Feign 的编码器、解码器和拦截器：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FeignConfig</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Encoder <span style="color:#a6e22e">feignEncoder</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> JacksonEncoder();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Decoder <span style="color:#a6e22e">feignDecoder</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> JacksonDecoder();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> RequestInterceptor <span style="color:#a6e22e">feignRequestInterceptor</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> template <span style="color:#f92672">-&gt;</span> template.<span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#34;Authorization&#34;</span>, <span style="color:#e6db74">&#34;Bearer token&#34;</span>);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="feign-的使用场景">Feign 的使用场景</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Configuration</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">FeignConfig</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Encoder</span><span class="w"> </span><span class="nf">feignEncoder</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JacksonEncoder</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Decoder</span><span class="w"> </span><span class="nf">feignDecoder</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JacksonDecoder</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">RequestInterceptor</span><span class="w"> </span><span class="nf">feignRequestInterceptor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">template</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">template</span><span class="p">.</span><span class="na">header</span><span class="p">(</span><span class="s">&#34;Authorization&#34;</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;Bearer token&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="feign-的使用场景">Feign 的使用场景</h2>
 <h3 id="1微服务调用">（1）微服务调用</h3>
 <ul>
 <li>在微服务架构中，Feign 常用于服务之间的调用</li>
@@ -213,11 +213,11 @@
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/hbase/">
-		<img class="icon-text" src="/img/prev.svg"/>HBase 深入浅出</a>
+	<a class="prev-post" href="https://xumf.net/blog/eureka/">
+		<img class="icon-text" src="/img/prev.svg"/>Eureka</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/hystrix/">Hystrix<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/garbagecollector/">垃圾回收器<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -227,11 +227,9 @@
   <h4></h4>
   <ul>
     
-  	<li><a href="/blog/springcloudconfig/">Spring Cloud Config</a></li>
-  	
-  	<li><a href="/blog/springcloudbus/">Spring Cloud Bus</a></li>
-  	
   	<li><a href="/blog/eureka/">Eureka</a></li>
+  	
+  	<li><a href="/blog/zookeeper/">ZooKeeper</a></li>
   	
   </ul>
 </section>
@@ -282,3 +280,22 @@
   </script>
   
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

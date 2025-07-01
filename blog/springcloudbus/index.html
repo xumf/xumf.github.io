@@ -56,7 +56,7 @@
 	<h1>Spring Cloud Bus</h1>
 	<h5>
 		
-		<time datetime="2018-04-22 13:42:22 &#43;0800 CST">2018年 4月 22日</time>
+		<time datetime="2024-01-05 13:42:22 &#43;0800 CST">2024年 1月 05日</time>
 		<span class="no-print">
 			-
 				
@@ -106,30 +106,30 @@
 <ul>
 <li>如果你使用 Kafka 作为消息中间件，可以这样配置：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kafka</span>:
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">bootstrap-servers</span>: <span style="color:#ae81ff">localhost:9092</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">consumer</span>:
-</span></span><span style="display:flex;"><span>      <span style="color:#f92672">group-id</span>: <span style="color:#ae81ff">my-group</span>
-</span></span></code></pre></div><h3 id="2启用-spring-cloud-bus">（2）启用 Spring Cloud Bus</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">kafka</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">bootstrap-servers</span><span class="p">:</span><span class="w"> </span><span class="l">localhost:9092</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">consumer</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">group-id</span><span class="p">:</span><span class="w"> </span><span class="l">my-group</span><span class="w">
+</span></span></span></code></pre></div><h3 id="2启用-spring-cloud-bus">（2）启用 Spring Cloud Bus</h3>
 <ul>
 <li>在 pom.xml 中添加依赖</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-bus-amqp<span style="color:#f92672">&lt;/artifactId&gt;</span> <span style="color:#75715e">&lt;!-- RabbitMQ --&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- 或者 --&gt;</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-bus-kafka<span style="color:#f92672">&lt;/artifactId&gt;</span> <span style="color:#75715e">&lt;!-- Kafka --&gt;</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-bus-amqp<span class="nt">&lt;/artifactId&gt;</span> <span class="c">&lt;!-- RabbitMQ --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- 或者 --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-bus-kafka<span class="nt">&lt;/artifactId&gt;</span> <span class="c">&lt;!-- Kafka --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
 </span></span></code></pre></div><h3 id="3暴露-actuator-端点">（3）暴露 Actuator 端点</h3>
 <ul>
 <li>在 <strong>application.yml</strong> 中暴露 <strong>/actuator/bus-refresh</strong> 端点：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span>management:
-</span></span><span style="display:flex;"><span>  endpoints:
-</span></span><span style="display:flex;"><span>    web:
-</span></span><span style="display:flex;"><span>      exposure:
-</span></span><span style="display:flex;"><span>        include: bus-refresh
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">management:
+</span></span><span class="line"><span class="cl">  endpoints:
+</span></span><span class="line"><span class="cl">    web:
+</span></span><span class="line"><span class="cl">      exposure:
+</span></span><span class="line"><span class="cl">        include: bus-refresh
 </span></span></code></pre></div><h2 id="spring-cloud-bus-的使用场景">Spring Cloud Bus 的使用场景</h2>
 <h3 id="1全局配置刷新">（1）全局配置刷新</h3>
 <ul>
@@ -140,7 +140,7 @@
 <p>示例：</p>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -X POST http://localhost:8888/actuator/bus-refresh
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X POST http://localhost:8888/actuator/bus-refresh
 </span></span></code></pre></div><h3 id="2服务状态同步">（2）服务状态同步</h3>
 <ul>
 <li>通过事件传播实现服务状态的同步</li>
@@ -151,78 +151,78 @@
 <li>通过 Spring Cloud Bus 发送和接收自定义事件</li>
 <li>示例：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 发送自定义事件</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Autowired</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> ApplicationEventPublisher publisher;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendCustomEvent</span>() {
-</span></span><span style="display:flex;"><span>    publisher.<span style="color:#a6e22e">publishEvent</span>(<span style="color:#66d9ef">new</span> MyCustomEvent(<span style="color:#66d9ef">this</span>, <span style="color:#e6db74">&#34;custom-data&#34;</span>));
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 接收自定义事件</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EventListener</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">handleCustomEvent</span>(MyCustomEvent event) {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 处理事件</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="spring-cloud-bus-的源码解析">Spring Cloud Bus 的源码解析</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 发送自定义事件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@Autowired</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="n">ApplicationEventPublisher</span><span class="w"> </span><span class="n">publisher</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">sendCustomEvent</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">publisher</span><span class="p">.</span><span class="na">publishEvent</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyCustomEvent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;custom-data&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// 接收自定义事件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nd">@EventListener</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">handleCustomEvent</span><span class="p">(</span><span class="n">MyCustomEvent</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 处理事件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="spring-cloud-bus-的源码解析">Spring Cloud Bus 的源码解析</h2>
 <h3 id="1busrefreshendpoint-类">（1）BusRefreshEndpoint 类</h3>
 <ul>
 <li>BusRefreshEndpoint 是 Spring Cloud Bus 提供的端点，用于触发全局刷新</li>
 <li>源码：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Endpoint</span>(id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;bus-refresh&#34;</span>)
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BusRefreshEndpoint</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ApplicationEventPublisher publisher;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusRefreshEndpoint</span>(ApplicationEventPublisher publisher) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">publisher</span> <span style="color:#f92672">=</span> publisher;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@WriteOperation</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">refresh</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 发布刷新事件</span>
-</span></span><span style="display:flex;"><span>        publisher.<span style="color:#a6e22e">publishEvent</span>(<span style="color:#66d9ef">new</span> RefreshRemoteApplicationEvent(<span style="color:#66d9ef">this</span>, <span style="color:#66d9ef">null</span>, <span style="color:#66d9ef">null</span>));
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="2refreshremoteapplicationevent-类">（2）RefreshRemoteApplicationEvent 类</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Endpoint</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;bus-refresh&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">BusRefreshEndpoint</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ApplicationEventPublisher</span><span class="w"> </span><span class="n">publisher</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">BusRefreshEndpoint</span><span class="p">(</span><span class="n">ApplicationEventPublisher</span><span class="w"> </span><span class="n">publisher</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">publisher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">publisher</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@WriteOperation</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">refresh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 发布刷新事件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">publisher</span><span class="p">.</span><span class="na">publishEvent</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">RefreshRemoteApplicationEvent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="2refreshremoteapplicationevent-类">（2）RefreshRemoteApplicationEvent 类</h3>
 <ul>
 <li>RefreshRemoteApplicationEvent 是 Spring Cloud Bus 的事件类，用于表示刷新事件</li>
 <li>源码：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RefreshRemoteApplicationEvent</span> <span style="color:#66d9ef">extends</span> RemoteApplicationEvent {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">RefreshRemoteApplicationEvent</span>(Object source, String originService, String destinationService) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>(source, originService, destinationService);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="3refreshlistener-类">（3）RefreshListener 类</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RefreshRemoteApplicationEvent</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">RemoteApplicationEvent</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">RefreshRemoteApplicationEvent</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">originService</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">destinationService</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">originService</span><span class="p">,</span><span class="w"> </span><span class="n">destinationService</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="3refreshlistener-类">（3）RefreshListener 类</h3>
 <ul>
 <li>RefreshListener 是 Spring Cloud Bus 的监听器，负责处理刷新事件</li>
 <li>源码：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RefreshListener</span> <span style="color:#66d9ef">implements</span> ApplicationListener<span style="color:#f92672">&lt;</span>RefreshRemoteApplicationEvent<span style="color:#f92672">&gt;</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> RefreshScope refreshScope;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">RefreshListener</span>(RefreshScope refreshScope) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">refreshScope</span> <span style="color:#f92672">=</span> refreshScope;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onApplicationEvent</span>(RefreshRemoteApplicationEvent event) {
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 触发刷新</span>
-</span></span><span style="display:flex;"><span>        refreshScope.<span style="color:#a6e22e">refreshAll</span>();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">RefreshListener</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ApplicationListener</span><span class="o">&lt;</span><span class="n">RefreshRemoteApplicationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">RefreshScope</span><span class="w"> </span><span class="n">refreshScope</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">RefreshListener</span><span class="p">(</span><span class="n">RefreshScope</span><span class="w"> </span><span class="n">refreshScope</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">refreshScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">refreshScope</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">onApplicationEvent</span><span class="p">(</span><span class="n">RefreshRemoteApplicationEvent</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// 触发刷新</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">refreshScope</span><span class="p">.</span><span class="na">refreshAll</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div>
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/elasticsearch/">
-		<img class="icon-text" src="/img/prev.svg"/>ElasticSearch 知识</a>
+	<a class="prev-post" href="https://xumf.net/blog/springbootstartflow/">
+		<img class="icon-text" src="/img/prev.svg"/>SpringBoot 启动流程</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/springcloudconfig/">Spring Cloud Config<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/springcloudconfig/">Spring Cloud Config<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -232,9 +232,11 @@
   <h4></h4>
   <ul>
     
-  	<li><a href="/blog/eureka/">Eureka</a></li>
-  	
   	<li><a href="/blog/ribbon/">Ribbon</a></li>
+  	
+  	<li><a href="/blog/nacos/">Nacos</a></li>
+  	
+  	<li><a href="/blog/hystrix/">Hystrix</a></li>
   	
   </ul>
 </section>
@@ -262,3 +264,22 @@
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

@@ -2,214 +2,214 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 小蜜蜂</title>
-    <link>http://xumf.net/tags/</link>
+    <link>https://xumf.net/tags/</link>
     <description>Recent content in Tags on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
-    <lastBuildDate>Fri, 09 Jul 2021 23:36:22 +0800</lastBuildDate>
-    <atom:link href="http://xumf.net/tags/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Java</title>
-      <link>http://xumf.net/tags/java/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/java/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>JVM</title>
-      <link>http://xumf.net/tags/jvm/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/jvm/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Spring</title>
-      <link>http://xumf.net/tags/spring/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>SpringBoot</title>
-      <link>http://xumf.net/tags/springboot/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/springboot/</guid>
-      <description></description>
-    </item>
+    <lastBuildDate>Wed, 07 May 2025 23:04:30 +0800</lastBuildDate>
+    <atom:link href="https://xumf.net/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Spring Cloud</title>
-      <link>http://xumf.net/tags/spring-cloud/</link>
+      <link>https://xumf.net/tags/spring-cloud/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring-cloud/</guid>
+      <guid>https://xumf.net/tags/spring-cloud/</guid>
       <description></description>
     </item>
     <item>
       <title>Zuul</title>
-      <link>http://xumf.net/tags/zuul/</link>
+      <link>https://xumf.net/tags/zuul/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/zuul/</guid>
+      <guid>https://xumf.net/tags/zuul/</guid>
       <description></description>
     </item>
     <item>
       <title>Zipkin</title>
-      <link>http://xumf.net/tags/zipkin/</link>
+      <link>https://xumf.net/tags/zipkin/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/zipkin/</guid>
+      <guid>https://xumf.net/tags/zipkin/</guid>
       <description></description>
     </item>
     <item>
-      <title>MQ</title>
-      <link>http://xumf.net/tags/mq/</link>
+      <title>Spring</title>
+      <link>https://xumf.net/tags/spring/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/mq/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Nacos</title>
-      <link>http://xumf.net/tags/nacos/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/nacos/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>RabbitMQ</title>
-      <link>http://xumf.net/tags/rabbitmq/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/rabbitmq/</guid>
+      <guid>https://xumf.net/tags/spring/</guid>
       <description></description>
     </item>
     <item>
       <title>Spring Refresh</title>
-      <link>http://xumf.net/tags/spring-refresh/</link>
+      <link>https://xumf.net/tags/spring-refresh/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring-refresh/</guid>
+      <guid>https://xumf.net/tags/spring-refresh/</guid>
       <description></description>
     </item>
     <item>
-      <title>Spring Cloud Sleuth</title>
-      <link>http://xumf.net/tags/spring-cloud-sleuth/</link>
+      <title>Java</title>
+      <link>https://xumf.net/tags/java/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring-cloud-sleuth/</guid>
+      <guid>https://xumf.net/tags/java/</guid>
       <description></description>
     </item>
     <item>
-      <title>Spring Cloud Gateway</title>
-      <link>http://xumf.net/tags/spring-cloud-gateway/</link>
+      <title>JVM</title>
+      <link>https://xumf.net/tags/jvm/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring-cloud-gateway/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>ZooKeeper</title>
-      <link>http://xumf.net/tags/zookeeper/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/zookeeper/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Hystrix</title>
-      <link>http://xumf.net/tags/hystrix/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/hystrix/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Database</title>
-      <link>http://xumf.net/tags/database/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/database/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Feign</title>
-      <link>http://xumf.net/tags/feign/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/feign/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>GC</title>
-      <link>http://xumf.net/tags/gc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/gc/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>HBase</title>
-      <link>http://xumf.net/tags/hbase/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/hbase/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Spring Cloud Config</title>
-      <link>http://xumf.net/tags/spring-cloud-config/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring-cloud-config/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Spring Cloud Bus</title>
-      <link>http://xumf.net/tags/spring-cloud-bus/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/spring-cloud-bus/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Docker</title>
-      <link>http://xumf.net/tags/docker/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/docker/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>ElasticSearch</title>
-      <link>http://xumf.net/tags/elasticsearch/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/elasticsearch/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Eureka</title>
-      <link>http://xumf.net/tags/eureka/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/eureka/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Kubernetes</title>
-      <link>http://xumf.net/tags/kubernetes/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/kubernetes/</guid>
+      <guid>https://xumf.net/tags/jvm/</guid>
       <description></description>
     </item>
     <item>
       <title>Lock</title>
-      <link>http://xumf.net/tags/lock/</link>
+      <link>https://xumf.net/tags/lock/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/lock/</guid>
+      <guid>https://xumf.net/tags/lock/</guid>
       <description></description>
     </item>
     <item>
-      <title>Netty</title>
-      <link>http://xumf.net/tags/netty/</link>
+      <title>Spring Cloud Sleuth</title>
+      <link>https://xumf.net/tags/spring-cloud-sleuth/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/netty/</guid>
+      <guid>https://xumf.net/tags/spring-cloud-sleuth/</guid>
       <description></description>
     </item>
     <item>
-      <title>Server</title>
-      <link>http://xumf.net/tags/server/</link>
+      <title>Spring Cloud Gateway</title>
+      <link>https://xumf.net/tags/spring-cloud-gateway/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/server/</guid>
+      <guid>https://xumf.net/tags/spring-cloud-gateway/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Cloud Config</title>
+      <link>https://xumf.net/tags/spring-cloud-config/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/spring-cloud-config/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Cloud Bus</title>
+      <link>https://xumf.net/tags/spring-cloud-bus/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/spring-cloud-bus/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>SpringBoot</title>
+      <link>https://xumf.net/tags/springboot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/springboot/</guid>
       <description></description>
     </item>
     <item>
       <title>Ribbon</title>
-      <link>http://xumf.net/tags/ribbon/</link>
+      <link>https://xumf.net/tags/ribbon/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://xumf.net/tags/ribbon/</guid>
+      <guid>https://xumf.net/tags/ribbon/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>MQ</title>
+      <link>https://xumf.net/tags/mq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/mq/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>RabbitMQ</title>
+      <link>https://xumf.net/tags/rabbitmq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/rabbitmq/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Netty</title>
+      <link>https://xumf.net/tags/netty/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/netty/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Server</title>
+      <link>https://xumf.net/tags/server/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/server/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Nacos</title>
+      <link>https://xumf.net/tags/nacos/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/nacos/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Docker</title>
+      <link>https://xumf.net/tags/docker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/docker/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kubernetes</title>
+      <link>https://xumf.net/tags/kubernetes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Hystrix</title>
+      <link>https://xumf.net/tags/hystrix/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/hystrix/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Database</title>
+      <link>https://xumf.net/tags/database/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/database/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>HBase</title>
+      <link>https://xumf.net/tags/hbase/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/hbase/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>GC</title>
+      <link>https://xumf.net/tags/gc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/gc/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Feign</title>
+      <link>https://xumf.net/tags/feign/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/feign/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Eureka</title>
+      <link>https://xumf.net/tags/eureka/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/eureka/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>ElasticSearch</title>
+      <link>https://xumf.net/tags/elasticsearch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/elasticsearch/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>ZooKeeper</title>
+      <link>https://xumf.net/tags/zookeeper/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xumf.net/tags/zookeeper/</guid>
       <description></description>
     </item>
   </channel>
