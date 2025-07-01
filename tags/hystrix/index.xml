@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hystrix on 小蜜蜂</title>
-    <link>https://xumf.net/tags/hystrix/</link>
+    <link>http://localhost:1313/tags/hystrix/</link>
     <description>Recent content in Hystrix on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 22 May 2019 15:49:23 +0800</lastBuildDate>
-    <atom:link href="https://xumf.net/tags/hystrix/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/hystrix/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Hystrix</title>
-      <link>https://xumf.net/blog/hystrix/</link>
+      <link>http://localhost:1313/blog/hystrix/</link>
       <pubDate>Wed, 22 May 2019 15:49:23 +0800</pubDate>
-      <guid>https://xumf.net/blog/hystrix/</guid>
+      <guid>http://localhost:1313/blog/hystrix/</guid>
       <description>功能 服务熔断 服务降级 资源隔离 请求缓存 请求合并 核心思想 防止服务雪崩 当一个服务发生故障时，避免故障扩散到整个系统 快速失败 通过熔断机制快速失败。避免资源耗尽。 优雅降级 在服务不可用的时候，提供备用方案（Fallback） 熔断器（Circuit Breaker） 原理 当服务的容错率超过阈值时，熔断器会被打开，后续请求会直接失败，不再调用目标服务 熔断器打开一段时间后，会进入半打开状态，尝试恢复服务 关键参数 circuitBreaker.requestVolumeThreshold：触发熔断器需要最小请求数 circuitBreaker.errorThresholdPercentage：错误率阈值（默认为50%） circuitBreaker.sleepWindowInMilliseconds：熔断器打开后的休眠时间（默认为5秒） 资源隔离 线程池隔离 每个服务调用使用独立的线程池，避免资源竞争 通过 HystrixThreadPoolKey 配置线程池 信号量隔离 使用信号量限制并发数，适用于轻量级调用（执行时间短的任务） 服务降级 原理 当服务调用失败或者熔断器打开时，执行降级逻辑 降级逻辑可以是返回默认值、调用备用服务等 实现 通过 HystrixCommand(fallbackMethod = &amp;ldquo;fallbackMethod&amp;rdquo;) 指定降级方法 请求缓存 原理 对相同请求参数，Hystrix 可以缓存结果，减少重复调用 实现 使用 @CacheResult 和 @CacheKey 注解 请求合并 原理 将多个请求合并为一个批量请求，减少网络开销 实现 使用 @HystrixCollapser 注解 工作流程 请求进入： 请求被 Hystrix 拦截 检查熔断器状态 如果熔断器打开，直接执行降级逻辑 资源隔离 根据配置选择线程池隔离或信号量隔离 执行目标服务 调用目标服务，记录成功或者失败 更新熔断器状态 根据调用结果更新熔断器状态 执行降级逻辑 如果调用失败或者熔断器打开，执行降级逻辑 返回结果 返回调用结果或者降级结果 sequenceDiagram participant Client as 客户端 participant Hystrix as Hystrix participant TargetService as 目标服务 participant Fallback as 降级逻辑 Client-&gt;&gt;Hystrix: 1.</description>
     </item>
   </channel>

@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Database on 小蜜蜂</title>
-    <link>https://xumf.net/tags/database/</link>
+    <link>http://localhost:1313/tags/database/</link>
     <description>Recent content in Database on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 15 Aug 2018 15:43:54 +0800</lastBuildDate>
-    <atom:link href="https://xumf.net/tags/database/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/database/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HBase 深入浅出</title>
-      <link>https://xumf.net/blog/hbase/</link>
+      <link>http://localhost:1313/blog/hbase/</link>
       <pubDate>Wed, 15 Aug 2018 15:43:54 +0800</pubDate>
-      <guid>https://xumf.net/blog/hbase/</guid>
+      <guid>http://localhost:1313/blog/hbase/</guid>
       <description>1. HBase 核心组件源码深度解析 1.1 HMaster 源码路径：org.apache.hadoop.hbase.master.HMaster&#xA;核心职责： 元数据管理： 管理表创建、删除、修改等 DDL 操作 维护 hbase:meta 表，记录所有 Region 的分布信息 负载均衡： 监控 RegionServer 的状态，分配 Region 到 RegionServer 处理 RegionServer 的故障恢复 协调分裂与合并 当 Region 大小超过阈值时，触发 Region 分裂 合并小 Region，减少元数据开销 源码关键点：&#xA;启动流程： 初始化 ZooKeeper 链接，注册 HMaster 节点 加载 hbase:meta 表，获取所有 Region 的分布信息 启动后台线程，监控 RegionServer 状态 Region 分配 通过 AssignmentManager 将 Region 分配到 RegionServer 使用 ZooKeeper 协调 Region 的分配和迁移 面试题：&#xA;HMaster 宕机后，HBase 还能正常工作吗？ 可以，HBase 的读写操作有 RegionServer 直接处理，HMaster 宕机不会影响已有表的读写，但会影响表的元数据操作（如创建表） HMaster 如何实现高可用？ 通过 ZooKeeper 选举机制，确保只有一个活跃的 HMaster 1.</description>
     </item>
     <item>
       <title>ElasticSearch 知识</title>
-      <link>https://xumf.net/blog/elasticsearch/</link>
+      <link>http://localhost:1313/blog/elasticsearch/</link>
       <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
-      <guid>https://xumf.net/blog/elasticsearch/</guid>
+      <guid>http://localhost:1313/blog/elasticsearch/</guid>
       <description>1. Elasticsearch 概念与架构 集群(Cluster)：Elasticsearch 中的多个节点(Node)组成集群。一个集群中有一个主节点(Master Node)，负责集群管理，其它节点可能是数据节点(Data Node)、协调节点(Coordinating Node)、以及 Ingest 节点等。 节点(Node)：每个 Elasticsearch 实例都被称为节点，节点存储数据并处理请求。节点可以有不同角色，如master 、data 、ingest 等。 索引(Index)：Elasticsearch 中数据的存储单位，每个索引包含多个分片(Shards)，可以进行高效的存储与查询。 分片(Shard)：每个索引会被分割成多个分片，分片是数据存储的基本单位，主分片和副本分片提供了数据的分布与冗余 2. 核心原理 1.1 倒排索引(Inverted Index) 原理：通过词项(Term)映射到文档表，实现快速全文检索 构建过程：文档分词→生成词项→记录词项所在文档及位置 优势：高效查询，支持复杂搜索(如布尔逻辑、短语匹配) 与正排索引对比：正排索引通过文档 ID 查找内容，倒排索引通过词项找文档 1.2 分布式架构 分片(Shard)： 主分片(Primary)*：*处理写操作，数量创建索引时固定 副本分片(Replica)：提供读高可用，数量可调整 节点角色： Master 节点：管理集群状态(如索引创建、节点上下线) Data 节点：存储分片，处理数据 CURD Coordinating 节点：路由请求，聚合结果(默认所有节点均可担任) Ingest 节点： 数据预处理 功能：通过定义 Pipeline(处理管道)，对原始数据进行加工，例如： 解析结构：如将日志中的非结构化文本解析为结构化字段(使用Grok 处理器)。 字段转换：如转换时间格式、大小写转、类型转换(字符串转数字)。 数据增强：如添加地理位置信息、基于 IP 生成 GeoIP 字段。 字段过滤：删除无用字段、重命名字段。 条件处理：根据字段内容动态决定是否执行某些操作。 减轻数据节点负载 职责分离：将计算密集型的预处理任务从 Data 节点剥离，避免影响索引和查询功能。 资源优化：专用 Ingest 节点可配置更高 CPU 资源，专注于数据处理。 简化架构 替代部分 Logstash 功能：在不需要复杂 ETL 的场景中，可直接通过 Elasticsearch 完成数据处理，减少外部组件依赖。 1.</description>
     </item>
   </channel>

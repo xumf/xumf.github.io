@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spring Cloud Sleuth on 小蜜蜂</title>
-    <link>https://xumf.net/tags/spring-cloud-sleuth/</link>
+    <link>http://localhost:1313/tags/spring-cloud-sleuth/</link>
     <description>Recent content in Spring Cloud Sleuth on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Thu, 01 Aug 2024 13:54:50 +0800</lastBuildDate>
-    <atom:link href="https://xumf.net/tags/spring-cloud-sleuth/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/spring-cloud-sleuth/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Spring Cloud Sleuth</title>
-      <link>https://xumf.net/blog/springcloudsleuth/</link>
+      <link>http://localhost:1313/blog/springcloudsleuth/</link>
       <pubDate>Thu, 01 Aug 2024 13:54:50 +0800</pubDate>
-      <guid>https://xumf.net/blog/springcloudsleuth/</guid>
+      <guid>http://localhost:1313/blog/springcloudsleuth/</guid>
       <description>Spring Cloud Sleuth 核心原理 1. 分布式追踪概念 Trace：一次完整的请求链路 Span：一个工作单元，包含开始和结束时间 Annotation：关键事件标记（如 cs、sr、ss、cr） cs (Client Sent)：标识客户端发起请求的时间点。 sr (Server Received)：标识服务端接收到请求并开始处理的时间点。 ss (Server Sent)：标识服务端处理完请求并准备返回响应的时间点。 cr (Client Received)：标识客户端接收到服务端响应的时间点。 2. 核心功能 自动生成和传播 Trace ID 和 Span ID 集成 Zipkin 等追踪系统 支持多种通信协议（HTTP、MQ、RPC等） 提供丰富的上下文信息 3. 数据模型 Trace ├── Span 1 │ ├── Annotation: cs │ ├── Annotation: sr │ ├── Annotation: ss │ └── Annotation: cr └── Span 2 ├── Annotation: cs └── Annotation: cr 源码分析 1. Tracer 核心类 public interface Tracer { Span nextSpan(); Span nextSpan(Span parent); Span newTrace(); void continueSpan(Span span); void close(Span span); Span currentSpan(); // .</description>
     </item>
   </channel>

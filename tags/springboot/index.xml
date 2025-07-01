@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SpringBoot on 小蜜蜂</title>
-    <link>https://xumf.net/tags/springboot/</link>
+    <link>http://localhost:1313/tags/springboot/</link>
     <description>Recent content in SpringBoot on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Tue, 09 May 2023 23:36:22 +0800</lastBuildDate>
-    <atom:link href="https://xumf.net/tags/springboot/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/springboot/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SpringBoot 启动流程</title>
-      <link>https://xumf.net/blog/springbootstartflow/</link>
+      <link>http://localhost:1313/blog/springbootstartflow/</link>
       <pubDate>Tue, 09 May 2023 23:36:22 +0800</pubDate>
-      <guid>https://xumf.net/blog/springbootstartflow/</guid>
+      <guid>http://localhost:1313/blog/springbootstartflow/</guid>
       <description>核心的 BeanPostProcessor AutowiredAnnotationBeanPostProcessor 作用：处理@Autowired 、@Value 、@Inject 等注解，实现依赖注入。 触发时机： postProcessBeforeInitialization：在 Bean 初始化之前，解析并注入依赖 postProcessAfterInitialization：在 Bean 初始化之后，通常不执行额外逻辑 源码类：org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor CommonAnnotationBeanPostProcessor 作用：处理 JSR-250 标准注解，如 @Resource 、@PostConstruct 、@PreDestory @Resource ：按名称或类型注入 Bean @PostConstruct ：在 Bean 初始化后执行 @PreDestory ：在 Bean 销毁前执行 触发时机： postProcessBeforeInitialization：在 Bean 初始化之前，处理 @PostConstruct 注解的方法 postProcessAfterInitialization：在 Bean 初始化之后，处理 @PreDestroy 注解的方法 源码类：org.springframework.context.annotation.CommonAnnotationBeanPostProcessor RequiredAnnotationBeanPostProcessor 作用：检查 @Required 注解标注的属性是否已注入，未注入则抛出异常 触发时机： postProcessoBeforeInitialization：在 Bean 初始化前，检查 @Required 属性是否已注入 源码类：org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor ApplicationContextAwareProcessor 作用：处理 ApplicationContextAware 接口，向 Bean 注入 ApplicationContext 触发时机： postProcessorBeforeInitialization：在 Bean 初始化之前，调用 setApplicationContext() 方法 源码类：org.springframework.context.support.ApplicationContextAwareProcessor InitDestroyAnnotationBeanPostProcessor 作用：处理 @PostConstruct 和 @PreDestory 注解，分别在 Bean 初始化和销毁时执行 触发时机： postProcessBeforeInitialization ：在 Bean 初始化之前，执行 @PostConstruct 注解的方法 postProcessAfterInitialization：在 Bean 初始化之后，注册 @PreDestory 注解的方法，以便在 Bean 销毁时执行 InfrastructureAdvisorAutoProxyCreator 作用：为 Bean 创建代理，支持 AOP （面向切面编程） 触发时机： postProcessAfterInitialization：在 Bean 初始化之后，根据切面规则生成代理对象 源码类：org.</description>
     </item>
   </channel>

@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ZooKeeper on 小蜜蜂</title>
-    <link>https://xumf.net/tags/zookeeper/</link>
+    <link>http://localhost:1313/tags/zookeeper/</link>
     <description>Recent content in ZooKeeper on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Thu, 22 Mar 2018 22:21:04 +0800</lastBuildDate>
-    <atom:link href="https://xumf.net/tags/zookeeper/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/zookeeper/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ZooKeeper</title>
-      <link>https://xumf.net/blog/zookeeper/</link>
+      <link>http://localhost:1313/blog/zookeeper/</link>
       <pubDate>Thu, 22 Mar 2018 22:21:04 +0800</pubDate>
-      <guid>https://xumf.net/blog/zookeeper/</guid>
+      <guid>http://localhost:1313/blog/zookeeper/</guid>
       <description>ZooKeeper 核心原理 数据模型： ZNode：树形结构中的节点，存储数据（&amp;lt;=1MB） 节点类型 持久节点：手动删除 临时节点：会话结束自动删除 顺序节点：名称追加单调递增序号 版本号：每个 ZNode 有版本号， 用于 CAS操作 架构与角色： Leader：处理写请求，发起提案 Follower：参与选举，处理读请求 Observer：拓展读性能，不参与选举 ZAB 协议（ZooKeeper Atomic Broadcast） 恢复模式：选举 Leader （基于 zxid 和 myid，半数以上投票） 广播模式：Leader 提出事物，半数以上 Follower 确认后提交 一致性保护： 顺序一致性（客户端操作按顺序执行） 原子性（事物要么全成功要么全失败） 最终一致性（读请求可能返回旧值，但最终同步） Watch 机制： 客户端监听 ZNode 变化（如节点删除，数据更新） 一次性触发，需要重新注册 异步通知，可能存在延迟或丢失 典型应用场景 分布式锁：通过临时顺序节点实现，避免惊群效应 配置管理：集中存储配置，客户端监听变更 服务注册与发现：临时节点表示服务实例在线状态 选主（Leader Election）：最小序号节点成为 Master 分布式队列：顺序节点实现生产消费模型 重要知识点 ZooKeeper 如何保证数据一致性？ 答：通过 ZAB 协议，写操作需要半数以上节点确认，保证顺序一致性和原子性。读请求可能来自任意节点（可能读到旧数据），但可通过 sync 操作强制读取最新值。 临时节点的作用时什么？ 答：临时节点在会话结束后自动删除，常用于服务注册（服务下线自动清除）和分布式锁（客户端崩溃自动释放锁）。 如何处理脑裂问题？ 答：ZAB 协议要求写操作必须由 Leader 发起，且需要半数以上节点确认。网络分区时，仅拥有多数节点的分区能选举 Leader，另一个分区无法写入，避免数据不一致。 Watcher 机制有哪些主要事项？ 答：一次性触发、通知可能延迟、需要处理事件丢失（如 Watch 注册期间发生变更）。需在回调中重新注册 Watcher。 Leader 选举过程是怎样的？ 答：节点启动时进入选举状态，投票优先给 zxid 最大的节点，zxid 相同则选 myid 更大的。获得半数以上投票的节点成为 Leader。 如何实现分布式锁？ 答：客户端创建临时顺序节点，检查是否为最小序号节点。若是则获得锁；否则监听前一个节点的删除事件，使用 exists() +Watcher 避免轮询。 性能与优化 写性能：依赖半数以上节点确认，建议集群节点数为奇数（如3、5）。 读性能：可直接从本地节点读取，高吞吐。 快照与日志：定期生成快照（snapshot）和事务日志（txn log），加速恢复。 配置与运维 会话超时：tickTime 为基本时间单位，sessionTimeout 建议2-20倍tickTime 。 数据持久化：事务日志和快照存储于dataDir 和dataLogDir 。 ACL 控制：支持IP、Digest等多种认证方式，精细化权限管理。 </description>
     </item>
   </channel>

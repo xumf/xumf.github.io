@@ -2,178 +2,178 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://xumf.net/tags/spring-cloud/</loc>
+    <loc>http://localhost:1313/tags/spring-cloud/</loc>
     <lastmod>2025-05-07T23:04:30+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/</loc>
+    <loc>http://localhost:1313/tags/</loc>
     <lastmod>2025-05-07T23:04:30+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/zuul/</loc>
+    <loc>http://localhost:1313/tags/zuul/</loc>
     <lastmod>2025-05-07T23:04:30+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/zuul/</loc>
+    <loc>http://localhost:1313/blog/zuul/</loc>
     <lastmod>2025-05-07T23:04:30+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/</loc>
+    <loc>http://localhost:1313/</loc>
     <lastmod>2025-05-07T23:04:30+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/zipkin/</loc>
+    <loc>http://localhost:1313/tags/zipkin/</loc>
     <lastmod>2025-03-03T22:19:24+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/zipkin/</loc>
+    <loc>http://localhost:1313/blog/zipkin/</loc>
     <lastmod>2025-03-03T22:19:24+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/spring/</loc>
+    <loc>http://localhost:1313/tags/spring/</loc>
     <lastmod>2025-01-30T22:39:17+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/spring-refresh/</loc>
+    <loc>http://localhost:1313/tags/spring-refresh/</loc>
     <lastmod>2025-01-30T22:39:17+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/springthridlevelcache/</loc>
+    <loc>http://localhost:1313/blog/springthridlevelcache/</loc>
     <lastmod>2025-01-30T22:39:17+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/java/</loc>
+    <loc>http://localhost:1313/tags/java/</loc>
     <lastmod>2025-01-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/jvm/</loc>
+    <loc>http://localhost:1313/tags/jvm/</loc>
     <lastmod>2025-01-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/lock/</loc>
+    <loc>http://localhost:1313/tags/lock/</loc>
     <lastmod>2025-01-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/synchronized/</loc>
+    <loc>http://localhost:1313/blog/synchronized/</loc>
     <lastmod>2025-01-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/spring-cloud-sleuth/</loc>
+    <loc>http://localhost:1313/tags/spring-cloud-sleuth/</loc>
     <lastmod>2024-08-01T13:54:50+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/springcloudsleuth/</loc>
+    <loc>http://localhost:1313/blog/springcloudsleuth/</loc>
     <lastmod>2024-08-01T13:54:50+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/spring-cloud-gateway/</loc>
+    <loc>http://localhost:1313/tags/spring-cloud-gateway/</loc>
     <lastmod>2024-07-18T23:13:45+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/springcloudgateway/</loc>
+    <loc>http://localhost:1313/blog/springcloudgateway/</loc>
     <lastmod>2024-07-18T23:13:45+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/spring-cloud-config/</loc>
+    <loc>http://localhost:1313/tags/spring-cloud-config/</loc>
     <lastmod>2024-06-11T15:40:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/springcloudconfig/</loc>
+    <loc>http://localhost:1313/blog/springcloudconfig/</loc>
     <lastmod>2024-06-11T15:40:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/spring-cloud-bus/</loc>
+    <loc>http://localhost:1313/tags/spring-cloud-bus/</loc>
     <lastmod>2024-01-05T13:42:22+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/springcloudbus/</loc>
+    <loc>http://localhost:1313/blog/springcloudbus/</loc>
     <lastmod>2024-01-05T13:42:22+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/springboot/</loc>
+    <loc>http://localhost:1313/tags/springboot/</loc>
     <lastmod>2023-05-09T23:36:22+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/springbootstartflow/</loc>
+    <loc>http://localhost:1313/blog/springbootstartflow/</loc>
     <lastmod>2023-05-09T23:36:22+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/ribbon/</loc>
+    <loc>http://localhost:1313/tags/ribbon/</loc>
     <lastmod>2023-04-19T21:09:25+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/ribbon/</loc>
+    <loc>http://localhost:1313/blog/ribbon/</loc>
     <lastmod>2023-04-19T21:09:25+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/mq/</loc>
+    <loc>http://localhost:1313/tags/mq/</loc>
     <lastmod>2023-03-03T20:54:29+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/rabbitmq/</loc>
+    <loc>http://localhost:1313/tags/rabbitmq/</loc>
     <lastmod>2023-03-03T20:54:29+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/rabbitmq/</loc>
+    <loc>http://localhost:1313/blog/rabbitmq/</loc>
     <lastmod>2023-03-03T20:54:29+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/netty/</loc>
+    <loc>http://localhost:1313/tags/netty/</loc>
     <lastmod>2022-06-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/netty/</loc>
+    <loc>http://localhost:1313/blog/netty/</loc>
     <lastmod>2022-06-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/server/</loc>
+    <loc>http://localhost:1313/tags/server/</loc>
     <lastmod>2022-06-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/nacos/</loc>
+    <loc>http://localhost:1313/tags/nacos/</loc>
     <lastmod>2022-05-03T20:54:29+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/nacos/</loc>
+    <loc>http://localhost:1313/blog/nacos/</loc>
     <lastmod>2022-05-03T20:54:29+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/javamemorymodel/</loc>
+    <loc>http://localhost:1313/blog/javamemorymodel/</loc>
     <lastmod>2021-07-09T23:36:22+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/jvmissuesolution/</loc>
+    <loc>http://localhost:1313/blog/jvmissuesolution/</loc>
     <lastmod>2020-07-12T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/docker/</loc>
+    <loc>http://localhost:1313/tags/docker/</loc>
     <lastmod>2020-03-24T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/kubernetes/</loc>
+    <loc>http://localhost:1313/tags/kubernetes/</loc>
     <lastmod>2020-03-24T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/kubernetes/</loc>
+    <loc>http://localhost:1313/blog/kubernetes/</loc>
     <lastmod>2020-03-24T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/hystrix/</loc>
+    <loc>http://localhost:1313/tags/hystrix/</loc>
     <lastmod>2019-05-22T15:49:23+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/hystrix/</loc>
+    <loc>http://localhost:1313/blog/hystrix/</loc>
     <lastmod>2019-05-22T15:49:23+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/database/</loc>
+    <loc>http://localhost:1313/tags/database/</loc>
     <lastmod>2018-08-15T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/hbase/</loc>
+    <loc>http://localhost:1313/tags/hbase/</loc>
     <lastmod>2018-08-15T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/hbase/</loc>
+    <loc>http://localhost:1313/blog/hbase/</loc>
     <lastmod>2018-08-15T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/gc/</loc>
+    <loc>http://localhost:1313/tags/gc/</loc>
     <lastmod>2018-07-18T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/garbagecollector/</loc>
+    <loc>http://localhost:1313/blog/garbagecollector/</loc>
     <lastmod>2018-07-18T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/feign/</loc>
+    <loc>http://localhost:1313/tags/feign/</loc>
     <lastmod>2018-06-15T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/feign/</loc>
+    <loc>http://localhost:1313/blog/feign/</loc>
     <lastmod>2018-06-15T15:43:54+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/eureka/</loc>
+    <loc>http://localhost:1313/tags/eureka/</loc>
     <lastmod>2018-05-01T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/eureka/</loc>
+    <loc>http://localhost:1313/blog/eureka/</loc>
     <lastmod>2018-05-01T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/elasticsearch/</loc>
+    <loc>http://localhost:1313/tags/elasticsearch/</loc>
     <lastmod>2018-04-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/elasticsearch/</loc>
+    <loc>http://localhost:1313/blog/elasticsearch/</loc>
     <lastmod>2018-04-22T13:16:53+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/about/license/</loc>
+    <loc>http://localhost:1313/about/license/</loc>
     <lastmod>2018-04-20T20:50:41+07:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/about/</loc>
+    <loc>http://localhost:1313/about/</loc>
     <lastmod>2018-04-20T20:50:41+07:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/tags/zookeeper/</loc>
+    <loc>http://localhost:1313/tags/zookeeper/</loc>
     <lastmod>2018-03-22T22:21:04+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/zookeeper/</loc>
+    <loc>http://localhost:1313/blog/zookeeper/</loc>
     <lastmod>2018-03-22T22:21:04+08:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/work/</loc>
+    <loc>http://localhost:1313/work/</loc>
     <lastmod>2017-07-02T08:15:25+07:00</lastmod>
   </url><url>
-    <loc>https://xumf.net/blog/</loc>
+    <loc>http://localhost:1313/blog/</loc>
     <lastmod>2017-07-02T08:14:51+07:00</lastmod>
   </url>
 </urlset>

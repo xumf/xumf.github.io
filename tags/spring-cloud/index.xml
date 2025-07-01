@@ -2,95 +2,95 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spring Cloud on 小蜜蜂</title>
-    <link>https://xumf.net/tags/spring-cloud/</link>
+    <link>http://localhost:1313/tags/spring-cloud/</link>
     <description>Recent content in Spring Cloud on 小蜜蜂</description>
     <generator>Hugo 0.125.1</generator>
     <language>zh</language>
     <copyright>&amp;copy; 2018  xumf.net&lt;/a&gt;</copyright>
     <lastBuildDate>Wed, 07 May 2025 23:04:30 +0800</lastBuildDate>
-    <atom:link href="https://xumf.net/tags/spring-cloud/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/spring-cloud/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Zuul</title>
-      <link>https://xumf.net/blog/zuul/</link>
+      <link>http://localhost:1313/blog/zuul/</link>
       <pubDate>Wed, 07 May 2025 23:04:30 +0800</pubDate>
-      <guid>https://xumf.net/blog/zuul/</guid>
+      <guid>http://localhost:1313/blog/zuul/</guid>
       <description>Zuul 的核心概念 （1）Zuul 是什么？ Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡 主要功能： 路由：将客户端请求转发到后端服务 过滤：在请求和响应的生命周期中执行自定义逻辑 负载均衡：与 Ribbon 集成，实现客户端负载均衡 （2）Zuul 的工作流程 路由：根据配置请求转发到对应的微服务 过滤：在请求到达目标服务之前或之后执行过滤逻辑 负载均衡：通过 Ribbon 集成，实现客户端负载均衡 Zuul 的配置 （1）依赖配置 在 pom.xml 添加 Zuul 依赖： &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-cloud-starter-netflix-zuul&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; （2）启用 Zuul 在启动类中添加 @EnableZuulProxy 注解： @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } （3）路由配置 在 application.yml 中配置路由规则： zuul: routes: user-service: # 路径名称 path: /user/** # 路径配置 serviceId: user-service # 目标服务名称 order-service: path: /order/** serviceId: order-service 解释： user-service 和 order-service 是路由的名称，可以自定义 path 是匹配的 URL 路径 serviceId 是 Eureka 中注册的服务名称 自定义路由 如果不想使用服务名称作为路由前缀，可以自定义路由： zuul: routes: custom-user-service: # 路由策略 path: /api/user/** # 匹配路径 url: http://localhost:8081 # 目标服务地址 负载均衡配置 （1）集成 Ribbon Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡 在 application.</description>
     </item>
     <item>
       <title>Zipkin</title>
-      <link>https://xumf.net/blog/zipkin/</link>
+      <link>http://localhost:1313/blog/zipkin/</link>
       <pubDate>Mon, 03 Mar 2025 22:19:24 +0800</pubDate>
-      <guid>https://xumf.net/blog/zipkin/</guid>
+      <guid>http://localhost:1313/blog/zipkin/</guid>
       <description>Zipkin 核心原理 1. 架构组成 +-----------+ +-----------+ +-----------+ | Collector | &amp;lt;-- | Reporter | &amp;lt;-- | Instrument| +-----------+ +-----------+ +-----------+ | | v v +-----------+ +-----------+ | Storage | | UI | +-----------+ +-----------+ 2. 核心概念 Trace：一次完整的请求链路 span：一个工作单元 Annotation：关键事件标记 BinaryAnnotation：附加的键值信息 1. cs (Client Sent): 客户端发送请求的时间。 2. sr (Server Received): 服务器接收到请求的时间。 3. ss (Server Sent): 服务器发送响应的时间。 4. cr (Client Received): 客户端接收到响应的时间。 5. ca (Client Address): 客户端的地址信息。 6. sa (Server Address): 服务器的地址信息。 7.</description>
     </item>
     <item>
       <title>Spring Cloud Sleuth</title>
-      <link>https://xumf.net/blog/springcloudsleuth/</link>
+      <link>http://localhost:1313/blog/springcloudsleuth/</link>
       <pubDate>Thu, 01 Aug 2024 13:54:50 +0800</pubDate>
-      <guid>https://xumf.net/blog/springcloudsleuth/</guid>
+      <guid>http://localhost:1313/blog/springcloudsleuth/</guid>
       <description>Spring Cloud Sleuth 核心原理 1. 分布式追踪概念 Trace：一次完整的请求链路 Span：一个工作单元，包含开始和结束时间 Annotation：关键事件标记（如 cs、sr、ss、cr） cs (Client Sent)：标识客户端发起请求的时间点。 sr (Server Received)：标识服务端接收到请求并开始处理的时间点。 ss (Server Sent)：标识服务端处理完请求并准备返回响应的时间点。 cr (Client Received)：标识客户端接收到服务端响应的时间点。 2. 核心功能 自动生成和传播 Trace ID 和 Span ID 集成 Zipkin 等追踪系统 支持多种通信协议（HTTP、MQ、RPC等） 提供丰富的上下文信息 3. 数据模型 Trace ├── Span 1 │ ├── Annotation: cs │ ├── Annotation: sr │ ├── Annotation: ss │ └── Annotation: cr └── Span 2 ├── Annotation: cs └── Annotation: cr 源码分析 1. Tracer 核心类 public interface Tracer { Span nextSpan(); Span nextSpan(Span parent); Span newTrace(); void continueSpan(Span span); void close(Span span); Span currentSpan(); // .</description>
     </item>
     <item>
       <title>Spring Cloud Gateway</title>
-      <link>https://xumf.net/blog/springcloudgateway/</link>
+      <link>http://localhost:1313/blog/springcloudgateway/</link>
       <pubDate>Thu, 18 Jul 2024 23:13:45 +0800</pubDate>
-      <guid>https://xumf.net/blog/springcloudgateway/</guid>
+      <guid>http://localhost:1313/blog/springcloudgateway/</guid>
       <description>Spring Cloud Gateway 核心原理 架构组成 Client -&amp;gt; Gateway -&amp;gt; Route Predicate -&amp;gt; Gateway Filter -&amp;gt; Target Service 核心概念 Route：路由，包含、目标 URI、Predicate 结合和 Filter 集合 Predicate：断言，用于匹配 Http 请求 Filter：过滤器，用于修改请求和响应 工作流程 1. 客户端发起请求 2. Gateway Handler Mapping 查找匹配的路由 3. 执行 Gateway Filter 链（pre filters） 4. 代理请求到目标服务 5. 执行 Gateway Filter 链（post filters） 6. 返回响应给客户端 关键组件 RouteLocator：路由定位器 GatewayFilter：网关过滤器 RoutePredicateHandlerMapping：路由断言处理器映射 WebHandler：Web 请求处理器 重要知识点 Spring Cloud Gateway 和 Zuul 的区别是什么？ 架构模型：Gateway 是异步非阻塞，Zuul 1.x 是同步阻塞 性能：Gateway 性能更高 过滤器：Gateway 的过滤器更轻量 协议支持：Gateway 原生支持 HTTP/2 Gateway 的核心组件有哪些？ Route Predicate Filter RouteLocator GatewayFilterFactory 如何自定义过滤器 // .</description>
     </item>
     <item>
       <title>Spring Cloud Config</title>
-      <link>https://xumf.net/blog/springcloudconfig/</link>
+      <link>http://localhost:1313/blog/springcloudconfig/</link>
       <pubDate>Tue, 11 Jun 2024 15:40:53 +0800</pubDate>
-      <guid>https://xumf.net/blog/springcloudconfig/</guid>
+      <guid>http://localhost:1313/blog/springcloudconfig/</guid>
       <description>核心概念 （1）什么是 Spring Cloud Config？ Spring Cloud Config 是一个分布式配置管理工具，用于集中管理微服务应用的配置文件 支持从 Git、SVN、本地文件系统等存储后端加载配置 （2）Spring Cloud Config 的组成 Config Server：配置中心服务器，负责从存储后端加载配置并提供客户端 Config Client：配置客户端，从 Config Server 获取配置并应用到应用中。 （3）Spring Cloud Config 的特点 集中化管 将微服务应用的配置文件集中存储在配置中心（如 Git 仓库），便于统一管理和维护 避免配置文件分散在各个微服务中，降低管理成本 动态刷新 支持配置的动态刷新，无需重启应用 通过 Spring Cloud Bus 或者手动出发 /actuator/refresh 端点实现配置的动态更新 多环境支持 支持不同环境（如 dev、test、prod）的配置文件 通过 spring.profiles.active 指定当前环境，自动加载对应配置 安全性 支持配置文件的加密和解密，保护敏感信息（如数据库密码、API 密钥等）。 使用对称加密（如 AES）或非对称加密（如 RSA）对配置文件中的敏感字段进行加密 版本控制 Git 集成：Spring Cloud Config 默认支持 Git 作为存储后端，天然具备版本控制能力 可以查看配置文件提交历史，方便回滚到之前的版本 支持分支和标签，便于管理不同版本的配置 SVN 集成：如果需要，也可以使用 SVN 作为存储后端，同样支持版本控制 权限控制 Git 仓库权限：通过 Git 仓库的权限控制机制（如 GitHub/GitLab 的访问令牌、SSH 密钥等），限制对配置文件的访问 只对授权的用户或者服务才能拉取配置文件 Config Server 权限：可以通过 Spring Security 对 Config Server 的访问进行权限控制 例如：限制只有特定的微服务或者用户才能访问 Config Server 的配置接口 高可用性 Config Server 支持集群部署，避免单点故障 通过 Eureka 注册中心实现 Config Server 的自动发现和负载均衡 多种存储后端支持 支持 Git、SVN、本地文件系统、JDBC、Vault 等多种存储后端 根据实际需求选择合适的存储后端 工作原理 （1）Config Server Config Server 从存储后端（如 Git）加载配置文件 通过 Http 接口将配置提供给 Config Client （2）Config Client Config Client 在启动时从 Config Server 获取配置 支持配置的动态刷新（通过 Spring Cloud Bus 或手动触发） （3）配置文件的加载顺序 Config Client 会按照一下顺序加载配置： bootstrap.</description>
     </item>
     <item>
       <title>Spring Cloud Bus</title>
-      <link>https://xumf.net/blog/springcloudbus/</link>
+      <link>http://localhost:1313/blog/springcloudbus/</link>
       <pubDate>Fri, 05 Jan 2024 13:42:22 +0800</pubDate>
-      <guid>https://xumf.net/blog/springcloudbus/</guid>
+      <guid>http://localhost:1313/blog/springcloudbus/</guid>
       <description>Spring Cloud Bus 的核心概念 （1）什么是 Spring Cloud Bus？ Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新） 它基于消息中间件（如 RabbitMQ、Kafka）实现，支持全局配置刷新、服务状态同步等功能 （2）Spring Cloud Bus 的组成 消息中间件：RabbitMQ 或 Kafka，负责传递事件 事件生产者：Config Server 或其他微服务，发送事件 事件消费者：Config Client 或其他微服务，接收事件并执行相应操作 （3）Spring Cloud Bus 的特点 全局配置刷新：通过 **/actuator/bus-refresh **端点触发全局配置刷新 服务状态同步：通过事件传播实现服务状态同步 多消息中间件支持：支持 RabbitMQ 和 Kafka Spring Cloud Bus 的工作原理 （1）事件传播流程 事件生产者（如 Config Server）发送事件到消息中间件 消息中间件将事件广播给所有订阅者 事件消费者（如 Config Client）接收到事件并执行相应操作 （2）全局配置刷新流程 Config Server 接收到 /actuator/bus-refresh 请求 Config Server 通过消息中间件广播一个刷新事件 所有 Config Client 接收到刷新事件 Config Client 调用 RefreshScope.refreshAll()，刷新标记为 @RefreshScope 的 Bean Spring Cloud Bus 配置 （1）Kafka 配置 如果你使用 Kafka 作为消息中间件，可以这样配置： spring: kafka: bootstrap-servers: localhost:9092 consumer: group-id: my-group （2）启用 Spring Cloud Bus 在 pom.</description>
     </item>
     <item>
       <title>Ribbon</title>
-      <link>https://xumf.net/blog/ribbon/</link>
+      <link>http://localhost:1313/blog/ribbon/</link>
       <pubDate>Wed, 19 Apr 2023 21:09:25 +0800</pubDate>
-      <guid>https://xumf.net/blog/ribbon/</guid>
+      <guid>http://localhost:1313/blog/ribbon/</guid>
       <description>核心概念 主要功能：负载均衡、故障转移、重试机制&#xA;特点：&#xA;客户端负载均衡：负载均衡逻辑在客户端实现，而不是在服务端。 集成Spring Cloud：与 Spring Cloud 深度集成，常用于 Feign 和 RestTemplate 可扩展性：支持自定义负载均衡策略和规则 工作原理 服务发现 Ribbon 从服务注册中心（如 Eureka）获取服务实例列表 服务实例列表动态更新，确保 Ribbon 能够感知服务实例变化 负载均衡 Ribbon 根据配置的负载均衡策略，从服务实例列表中选择一个实例 常见的负载均衡策略 轮询（Round Robin）：依次选择每个实例 随机（Random）：随机选择一个实例 加权响应时间（Weighted Response Time）：根据实例的响应时间分配权重 区域感知（Zone Aware）：优先选择同一区域的实例 故障转移 如果选择的实例不可用，Ribbon 会自动重试其他实例 重试次数和超时时间可以通过配置调整 请求分发 Ribbon 将请求分发到选定的服务实例，并处理响应 配置 负载均衡策略 通过配置文件负载均衡策略： service-name: ribbon: NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule 通过代码配置负载均衡策略： @RibbonClient(name = &amp;#34;service-name&amp;#34;, configuration = MyRibbonConfig.class) public class MyRibbonConfig { @Bean public IRule ribbonRule() { return new RoundRobinRule(); // 轮询策略 // return new RandomRule(); // 随机策略 // return new WeightedResponseTimeRule(); // 加权响应时间策略 // return new ZoneAvoidanceRule(); // 区域感知策略 } } 重试机制 通过配置文件配置重试次数和超时时间 service-name: ribbon: MaxAutoRetries: 3 MaxAutoRetriesNextServer: 1 ConnectTimeout: 1000 ReadTimeout: 3000 通过代码方式配置重试次数和超时时间 @RibbonClient(name = &amp;#34;service-name&amp;#34;, configuration = MyRibbonConfig.</description>
     </item>
     <item>
       <title>Nacos</title>
-      <link>https://xumf.net/blog/nacos/</link>
+      <link>http://localhost:1313/blog/nacos/</link>
       <pubDate>Tue, 03 May 2022 20:54:29 +0800</pubDate>
-      <guid>https://xumf.net/blog/nacos/</guid>
+      <guid>http://localhost:1313/blog/nacos/</guid>
       <description>一、Nacos 核心概念 是什么？ Nacos（Dynamic Naming and Configuration Server）是阿里开源的服务发现+配置管理+服务治理平台，核心功能：&#xA;服务发现与健康监测：服务注册、心跳机制、DNS 查询 动态配置管理：配置发布、监听、版本管理 动态 DNS：基于权重的路由、地域就近访问 服务元数据管理：支持应用/版本/环境等元数据 关键特性 双模式：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现） 配置实时推送：基于长轮询（减少无效请求） 生态兼容：无缝集成 Spring Cloud、Dubbo、Kubernetes 二、核心架构与原理 服务注册与发现流程 注册：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPc） 心跳：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除 发现：消费者通过订阅机制获取服务列表，本地缓存+增量更新 配置管理机制 发布配置：通过控制台/API发布配置，存储与 Derby 或 MySQL 监听配置：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回 历史版本：支持配置回滚和版本对比 一致性协议 CP 模式：使用 Raft 协议（配置管理场景） AP 模式：自研 Distro 协议（服务发现场景，最终一致性） 三、重要知识点 Nacos vs Eureka vs Zookeeper？ Eureka：AP 设计，适合服务发现，但功能单一 Zookeeper：CP 设计，强一致性，但写性能低 Nacos：AP/CP 可切换，集成服务发现+配置管理，生态更全面 长轮询如何实现配置实时推送？ 客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回 对比传统轮询：减少无效请求，提升实时性 Nacos 集群如何保证数据一致性？ Distro 模式（AP 模式）：每个节点负责部分数据，通过异步复制保证最终一致性 Raft 协议（CP 模式）：选举 Leader，多数节点写成功才返回 Nacos 2.</description>
     </item>
     <item>
       <title>Hystrix</title>
-      <link>https://xumf.net/blog/hystrix/</link>
+      <link>http://localhost:1313/blog/hystrix/</link>
       <pubDate>Wed, 22 May 2019 15:49:23 +0800</pubDate>
-      <guid>https://xumf.net/blog/hystrix/</guid>
+      <guid>http://localhost:1313/blog/hystrix/</guid>
       <description>功能 服务熔断 服务降级 资源隔离 请求缓存 请求合并 核心思想 防止服务雪崩 当一个服务发生故障时，避免故障扩散到整个系统 快速失败 通过熔断机制快速失败。避免资源耗尽。 优雅降级 在服务不可用的时候，提供备用方案（Fallback） 熔断器（Circuit Breaker） 原理 当服务的容错率超过阈值时，熔断器会被打开，后续请求会直接失败，不再调用目标服务 熔断器打开一段时间后，会进入半打开状态，尝试恢复服务 关键参数 circuitBreaker.requestVolumeThreshold：触发熔断器需要最小请求数 circuitBreaker.errorThresholdPercentage：错误率阈值（默认为50%） circuitBreaker.sleepWindowInMilliseconds：熔断器打开后的休眠时间（默认为5秒） 资源隔离 线程池隔离 每个服务调用使用独立的线程池，避免资源竞争 通过 HystrixThreadPoolKey 配置线程池 信号量隔离 使用信号量限制并发数，适用于轻量级调用（执行时间短的任务） 服务降级 原理 当服务调用失败或者熔断器打开时，执行降级逻辑 降级逻辑可以是返回默认值、调用备用服务等 实现 通过 HystrixCommand(fallbackMethod = &amp;ldquo;fallbackMethod&amp;rdquo;) 指定降级方法 请求缓存 原理 对相同请求参数，Hystrix 可以缓存结果，减少重复调用 实现 使用 @CacheResult 和 @CacheKey 注解 请求合并 原理 将多个请求合并为一个批量请求，减少网络开销 实现 使用 @HystrixCollapser 注解 工作流程 请求进入： 请求被 Hystrix 拦截 检查熔断器状态 如果熔断器打开，直接执行降级逻辑 资源隔离 根据配置选择线程池隔离或信号量隔离 执行目标服务 调用目标服务，记录成功或者失败 更新熔断器状态 根据调用结果更新熔断器状态 执行降级逻辑 如果调用失败或者熔断器打开，执行降级逻辑 返回结果 返回调用结果或者降级结果 sequenceDiagram participant Client as 客户端 participant Hystrix as Hystrix participant TargetService as 目标服务 participant Fallback as 降级逻辑 Client-&gt;&gt;Hystrix: 1.</description>
     </item>
     <item>
       <title>Feign</title>
-      <link>https://xumf.net/blog/feign/</link>
+      <link>http://localhost:1313/blog/feign/</link>
       <pubDate>Fri, 15 Jun 2018 15:43:54 +0800</pubDate>
-      <guid>https://xumf.net/blog/feign/</guid>
+      <guid>http://localhost:1313/blog/feign/</guid>
       <description>什么是Feign Feign 是 Netflix 开源的声明式 HTTP 客户端，用于简化 RESTful 服务的调用 通过定义接口和注解，Feign 可以自动生成HTTP请求的实现 特点 声明式 API ：通过接口注解定义 HTTP 请求，无需手动编写 HTTP 客户端代码 集成 Ribbon ：默认集成 Ribbon ，支持客户端负载均衡 集成 Hystrix ：支持熔断和降级机制 可扩展性：支持自定义编码器、解码器和拦截器 工作原理 （1）接口定义 使用 @FeignClient 注解定义 Feign 客户端接口 通过方法注解（如 @GetMapping、@PostMapping）定义 HTTP 请求 （2）动态代理 Feign 通过动态代理技术生成接口的实现类 在运行时，Feign 会将方法调用转换为 Http 请求 （3）请求处理 Feign 根据接口定义生成 HTTP 请求，并通过 Ribbon 进行负载均衡 请求结果通过解码器为 Java 对象 （4）集成 Ribbon 和 Hystrix Feign 默认集成了 Ribbon，支持客户端负载均衡 通过配置可以启用 Hystrix，实现熔断和降级 Feign 的配置 （1）基本配置 使用 @FeignClient 注解定义 Feign 客户端： @FeignClient(name = &amp;#34;service-name&amp;#34;, url = &amp;#34;http://localhost:8080&amp;#34;) public interface MyFeignClient { @GetMapping(&amp;#34;/endpoint&amp;#34;) String getResponse(); } （2）负载均衡 * Feign 默认集成了 Ribbon，无需额外配置 * 可以通过配置文件自定义 Ribbon 的负载均衡策略： service-name: ribbon: NFLoadBalancerRuleClassName: com.</description>
     </item>
     <item>
       <title>Eureka</title>
-      <link>https://xumf.net/blog/eureka/</link>
+      <link>http://localhost:1313/blog/eureka/</link>
       <pubDate>Tue, 01 May 2018 13:16:53 +0800</pubDate>
-      <guid>https://xumf.net/blog/eureka/</guid>
+      <guid>http://localhost:1313/blog/eureka/</guid>
       <description>Eureka 配置中心核心功能：&#xA;集中化管理 版本管理 动态更新 权限控制 环境隔离 基本功能：&#xA;服务发现 eureka客户端可以向eureka服务端获取服务实例列表&#xA;服务注册 eureka客户端启动的时候&#xA;三级缓存&#xA;读缓存 ReadOnlyCache 写缓存 WriteCache 注册表缓存 自我保护机制 在网络通讯产生问题时，避免大量正常客服端实例被清除&#xA;eureka 自我保护机制服务端相关影响配置 eureka: server: enable-self-preservation: true # 默认true，开启自我保护 renewal-percent-threshold: 0.85 # 续约百分比阈值，默认0.85 renewal-threshold-update-interval-ms: 900000 # 更新阈值的时间间隔，默认15分钟 eureka 自我保护机制客户端相关影响配置 eureka: instance: lease-renewal-interval-in-seconds: 30 # 客户端续约间隔，默认30秒 lease-expiration-duration-in-seconds: 90 # 服务过期时间，默认90秒 客户端服务注册流程 每当有客服端服务启动时，客户端会根据配置eureka服务端的地址，向服务端发起注册动作，服务端收到注册请求，会更新注册表缓冲信息，增加新的客户端信息到注册表缓冲，然后将注册表信息更新到写缓存。&#xA;客户端读取数据流程 客户端查看本地缓存是否存在 存在：直接返回本地缓存中的数据 不存在：请求服务端获取数据 获取读缓存，存在直接返回；不存在直接进入下一步 获取写缓存，存在直接返回，并且将数据更新到读缓存；不存在直接进入下一步 获取注册表缓存，存在直接返回，并且将数据更新到读缓存与写缓存 缓存更新场景 注册表更新场景：&#xA;服务实例注册 服务实例注销 服务实例续约（心跳） 服务实例状态变更 写缓存更新场景：&#xA;每当注册表发生变化时，写缓存会被同时更新到最新的注册表信息 读缓存更新场景：&#xA;每隔30s会同步写缓存数据 Eureka 中服务实例的状态主要包括以下几种： UP：服务实例正常运行，可接收请求。 当eureka服务实例发起服务注册时 当eureka服务实例发起心跳，进行续期成功后，保持UP状态 当eureka服务实例启动成功后，将状态从STARTING更改为UP DOWN：服务实例不可用。 当eureka服务实例主动注销 当eureka实例在规定的时间（默认90s）内没有发送心跳消息 STARTING：服务实例正在启动。 当服务器启动时 OUT_OF_SERVICE：服务实例被手动下线，不可用。 通过Eureka的管理接口或者UI，可以手动将状态从UP更改为OUT_OF_SERVICE UNKNOWN：服务实例状态未知。 当网络分区时（网络问题导致服务之间无法通讯），Eureka服务端无法确认服务实例的状态时，就会将状态改为 UNKNOWN Eureka各端缓存应用交互 sequenceDiagram participant Client as 客户端 participant LocalCache as 本地缓存 participant EurekaServer as Eureka 服务器 participant ServiceInstance as 服务实例 Client-&gt;&gt;LocalCache: 1.</description>
     </item>
     <item>
       <title>ZooKeeper</title>
-      <link>https://xumf.net/blog/zookeeper/</link>
+      <link>http://localhost:1313/blog/zookeeper/</link>
       <pubDate>Thu, 22 Mar 2018 22:21:04 +0800</pubDate>
-      <guid>https://xumf.net/blog/zookeeper/</guid>
+      <guid>http://localhost:1313/blog/zookeeper/</guid>
       <description>ZooKeeper 核心原理 数据模型： ZNode：树形结构中的节点，存储数据（&amp;lt;=1MB） 节点类型 持久节点：手动删除 临时节点：会话结束自动删除 顺序节点：名称追加单调递增序号 版本号：每个 ZNode 有版本号， 用于 CAS操作 架构与角色： Leader：处理写请求，发起提案 Follower：参与选举，处理读请求 Observer：拓展读性能，不参与选举 ZAB 协议（ZooKeeper Atomic Broadcast） 恢复模式：选举 Leader （基于 zxid 和 myid，半数以上投票） 广播模式：Leader 提出事物，半数以上 Follower 确认后提交 一致性保护： 顺序一致性（客户端操作按顺序执行） 原子性（事物要么全成功要么全失败） 最终一致性（读请求可能返回旧值，但最终同步） Watch 机制： 客户端监听 ZNode 变化（如节点删除，数据更新） 一次性触发，需要重新注册 异步通知，可能存在延迟或丢失 典型应用场景 分布式锁：通过临时顺序节点实现，避免惊群效应 配置管理：集中存储配置，客户端监听变更 服务注册与发现：临时节点表示服务实例在线状态 选主（Leader Election）：最小序号节点成为 Master 分布式队列：顺序节点实现生产消费模型 重要知识点 ZooKeeper 如何保证数据一致性？ 答：通过 ZAB 协议，写操作需要半数以上节点确认，保证顺序一致性和原子性。读请求可能来自任意节点（可能读到旧数据），但可通过 sync 操作强制读取最新值。 临时节点的作用时什么？ 答：临时节点在会话结束后自动删除，常用于服务注册（服务下线自动清除）和分布式锁（客户端崩溃自动释放锁）。 如何处理脑裂问题？ 答：ZAB 协议要求写操作必须由 Leader 发起，且需要半数以上节点确认。网络分区时，仅拥有多数节点的分区能选举 Leader，另一个分区无法写入，避免数据不一致。 Watcher 机制有哪些主要事项？ 答：一次性触发、通知可能延迟、需要处理事件丢失（如 Watch 注册期间发生变更）。需在回调中重新注册 Watcher。 Leader 选举过程是怎样的？ 答：节点启动时进入选举状态，投票优先给 zxid 最大的节点，zxid 相同则选 myid 更大的。获得半数以上投票的节点成为 Leader。 如何实现分布式锁？ 答：客户端创建临时顺序节点，检查是否为最小序号节点。若是则获得锁；否则监听前一个节点的删除事件，使用 exists() +Watcher 避免轮询。 性能与优化 写性能：依赖半数以上节点确认，建议集群节点数为奇数（如3、5）。 读性能：可直接从本地节点读取，高吞吐。 快照与日志：定期生成快照（snapshot）和事务日志（txn log），加速恢复。 配置与运维 会话超时：tickTime 为基本时间单位，sessionTimeout 建议2-20倍tickTime 。 数据持久化：事务日志和快照存储于dataDir 和dataLogDir 。 ACL 控制：支持IP、Digest等多种认证方式，精细化权限管理。 </description>
     </item>
   </channel>
