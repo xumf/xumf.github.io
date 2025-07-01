@@ -64,7 +64,7 @@ Direct Exchange：精确匹配routing_key 和binding_key ，类似哈希表查�
 	<h1>RabbitMQ 深入浅出</h1>
 	<h5>
 		
-		<time datetime="2018-05-03 20:54:29 &#43;0800 CST">2018年 5月 03日</time>
+		<time datetime="2023-03-03 20:54:29 &#43;0800 CST">2023年 3月 03日</time>
 		<span class="no-print">
 			-
 				
@@ -210,14 +210,14 @@ Direct Exchange：精确匹配routing_key 和binding_key ，类似哈希表查�
 <li><strong>回调队列</strong>：消费者在<code>reply_to</code> 头部指定响应队列。</li>
 <li><strong>关联 ID</strong>：生产者通过<code>correlation_id</code> 匹配请求与响应。</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Plain" data-lang="Plain"><span style="display:flex;"><span>  +---------+          +------------+          +---------+
-</span></span><span style="display:flex;"><span>  | Client  | --(1)--&gt; | RabbitMQ   | --(2)--&gt; | Server  |
-</span></span><span style="display:flex;"><span>  |         | &lt;--(4)-- | (RPC Queue)| &lt;--(3)-- |         |
-</span></span><span style="display:flex;"><span>  +---------+          +------------+          +---------+
-</span></span><span style="display:flex;"><span>  步骤：
-</span></span><span style="display:flex;"><span>  1. 客户端发送请求到 RPC 队列，携带 `reply_to` 和 `correlation_id`。
-</span></span><span style="display:flex;"><span>  2. 服务端消费请求，处理完成后将结果发送到 `reply_to` 队列。
-</span></span><span style="display:flex;"><span>  3. 客户端监听 `reply_to` 队列，通过 `correlation_id` 匹配响应。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Plain" data-lang="Plain"><span class="line"><span class="cl">  +---------+          +------------+          +---------+
+</span></span><span class="line"><span class="cl">  | Client  | --(1)--&gt; | RabbitMQ   | --(2)--&gt; | Server  |
+</span></span><span class="line"><span class="cl">  |         | &lt;--(4)-- | (RPC Queue)| &lt;--(3)-- |         |
+</span></span><span class="line"><span class="cl">  +---------+          +------------+          +---------+
+</span></span><span class="line"><span class="cl">  步骤：
+</span></span><span class="line"><span class="cl">  1. 客户端发送请求到 RPC 队列，携带 `reply_to` 和 `correlation_id`。
+</span></span><span class="line"><span class="cl">  2. 服务端消费请求，处理完成后将结果发送到 `reply_to` 队列。
+</span></span><span class="line"><span class="cl">  3. 客户端监听 `reply_to` 队列，通过 `correlation_id` 匹配响应。
 </span></span></code></pre></div><hr>
 <h2 id="9-流量削峰原理">9. 流量削峰原理</h2>
 <ul>
@@ -273,11 +273,11 @@ Direct Exchange：精确匹配routing_key 和binding_key ，类似哈希表查�
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/springthridlevelcache/">
-		<img class="icon-text" src="/img/prev.svg"/>Spring 三级缓存</a>
+	<a class="prev-post" href="https://xumf.net/blog/netty/">
+		<img class="icon-text" src="/img/prev.svg"/>Netty知识</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/nacos/">Nacos<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/ribbon/">Ribbon<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -306,3 +306,22 @@ Direct Exchange：精确匹配routing_key 和binding_key ，类似哈希表查�
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

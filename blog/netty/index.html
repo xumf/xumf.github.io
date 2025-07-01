@@ -58,7 +58,7 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 	<h1>Netty知识</h1>
 	<h5>
 		
-		<time datetime="2018-04-22 13:16:53 &#43;0800 CST">2018年 4月 22日</time>
+		<time datetime="2022-06-22 13:16:53 &#43;0800 CST">2022年 6月 22日</time>
 		<span class="no-print">
 			-
 				
@@ -81,26 +81,26 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 <li><strong>WorkerGroup(从 Reactor)</strong>：处理已建立连接的 I/O 事件（入读写）及业务逻辑，每个<code>EventLoop</code> 绑定一个线程，通过轮询<code>Selector</code> 监听多个<code>Channel</code> 事件，避免线程切换开销。</li>
 </ul>
 <p>主从 Reactor 配置示例</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>EventLoopGroup bossGroup <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> NioEventLoopGroup(1); <span style="color:#75715e">// 主Reactor，一般只需1个线程处理连接</span>
-</span></span><span style="display:flex;"><span>EventLoopGroup workerGroup <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> NioEventLoopGroup(); <span style="color:#75715e">// 从Reactor，默认线程数=CPU核心*2</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>ServerBootstrap b <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ServerBootstrap();
-</span></span><span style="display:flex;"><span>b.<span style="color:#a6e22e">group</span>(bossGroup, workerGroup)
-</span></span><span style="display:flex;"><span> .<span style="color:#a6e22e">channel</span>(NioServerSocketChannel.<span style="color:#a6e22e">class</span>)
-</span></span><span style="display:flex;"><span> .<span style="color:#a6e22e">childHandler</span>(<span style="color:#66d9ef">new</span> ChannelInitializer<span style="color:#f92672">&lt;</span>SocketChannel<span style="color:#f92672">&gt;</span>() {
-</span></span><span style="display:flex;"><span>     <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">initChannel</span>(SocketChannel ch) {
-</span></span><span style="display:flex;"><span>         ch.<span style="color:#a6e22e">pipeline</span>().<span style="color:#a6e22e">addLast</span>(<span style="color:#66d9ef">new</span> MyBusinessHandler());
-</span></span><span style="display:flex;"><span>     }
-</span></span><span style="display:flex;"><span> });
-</span></span></code></pre></div><p>调优点：
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">EventLoopGroup</span><span class="w"> </span><span class="n">bossGroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">(</span><span class="n">1</span><span class="p">);</span><span class="w"> </span><span class="c1">// 主Reactor，一般只需1个线程处理连接</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">EventLoopGroup</span><span class="w"> </span><span class="n">workerGroup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NioEventLoopGroup</span><span class="p">();</span><span class="w"> </span><span class="c1">// 从Reactor，默认线程数=CPU核心*2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ServerBootstrap</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ServerBootstrap</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">b</span><span class="p">.</span><span class="na">group</span><span class="p">(</span><span class="n">bossGroup</span><span class="p">,</span><span class="w"> </span><span class="n">workerGroup</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">NioServerSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">.</span><span class="na">childHandler</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ChannelInitializer</span><span class="o">&lt;</span><span class="n">SocketChannel</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="kd">protected</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">initChannel</span><span class="p">(</span><span class="n">SocketChannel</span><span class="w"> </span><span class="n">ch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="n">ch</span><span class="p">.</span><span class="na">pipeline</span><span class="p">().</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyBusinessHandler</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">});</span><span class="w">
+</span></span></span></code></pre></div><p>调优点：
 * <code>bossGroup</code> 线程数通常为1（除非需要多端口监听）
 * <code>workerGroup</code> 线程数根据业务类型调整：
 * CPU 密集型：线程数 ≈ CPU 核心数
 * I/O 密集型：线程数 ≈ CPU 核心数 * 2
 * 使用 Epoll 模式（Linux 环境）：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>EventLoopGroup group <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> EpollEventLoopGroup();
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">EventLoopGroup</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EpollEventLoopGroup</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li><strong>无锁化串行设计</strong></li>
 </ol>
 <p>Netty 通过 <code>ChannelPipeline</code> 将事件处理任务分配给固定的<code>EventLoop</code> 线程执行，保证同一连接的所有操作在同一个线程内完成，避免多线程竞争，减少锁的使用。</p>
@@ -123,33 +123,33 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 </ol>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>File file <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File(<span style="color:#e6db74">&#34;largefile.zip&#34;</span>);
-</span></span><span style="display:flex;"><span>FileInputStream fis <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream(file);
-</span></span><span style="display:flex;"><span>FileRegion region <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DefaultFileRegion(fis.<span style="color:#a6e22e">getChannel</span>(), 0, file.<span style="color:#a6e22e">length</span>());
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>ctx.<span style="color:#a6e22e">channel</span>().<span style="color:#a6e22e">writeAndFlush</span>(region).<span style="color:#a6e22e">addListener</span>(future <span style="color:#f92672">-&gt;</span> {
-</span></span><span style="display:flex;"><span>    fis.<span style="color:#a6e22e">close</span>();
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>future.<span style="color:#a6e22e">isSuccess</span>()) {
-</span></span><span style="display:flex;"><span>        future.<span style="color:#a6e22e">cause</span>().<span style="color:#a6e22e">printStackTrace</span>();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>});
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">File</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s">&#34;largefile.zip&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">FileInputStream</span><span class="w"> </span><span class="n">fis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">FileInputStream</span><span class="p">(</span><span class="n">file</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">FileRegion</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultFileRegion</span><span class="p">(</span><span class="n">fis</span><span class="p">.</span><span class="na">getChannel</span><span class="p">(),</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="na">length</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ctx</span><span class="p">.</span><span class="na">channel</span><span class="p">().</span><span class="na">writeAndFlush</span><span class="p">(</span><span class="n">region</span><span class="p">).</span><span class="na">addListener</span><span class="p">(</span><span class="n">future</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">fis</span><span class="p">.</span><span class="na">close</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">future</span><span class="p">.</span><span class="na">isSuccess</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">future</span><span class="p">.</span><span class="na">cause</span><span class="p">().</span><span class="na">printStackTrace</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">});</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li><strong>CompositeByteBuf 合并缓冲区</strong></li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>ByteBuf header <span style="color:#f92672">=</span> Unpooled.<span style="color:#a6e22e">copiedBuffer</span>(<span style="color:#e6db74">&#34;Header&#34;</span>, CharsetUtil.<span style="color:#a6e22e">UTF_8</span>);
-</span></span><span style="display:flex;"><span>ByteBuf body <span style="color:#f92672">=</span> Unpooled.<span style="color:#a6e22e">copiedBuffer</span>(<span style="color:#e6db74">&#34;Body&#34;</span>, CharsetUtil.<span style="color:#a6e22e">UTF_8</span>);
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>CompositeByteBuf compositeBuf <span style="color:#f92672">=</span> Unpooled.<span style="color:#a6e22e">compositeBuffer</span>();
-</span></span><span style="display:flex;"><span>compositeBuf.<span style="color:#a6e22e">addComponents</span>(<span style="color:#66d9ef">true</span>, header, body); <span style="color:#75715e">// 逻辑合并，无内存拷贝</span>
-</span></span></code></pre></div><p><strong>调优点</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ByteBuf</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Unpooled</span><span class="p">.</span><span class="na">copiedBuffer</span><span class="p">(</span><span class="s">&#34;Header&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">CharsetUtil</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Unpooled</span><span class="p">.</span><span class="na">copiedBuffer</span><span class="p">(</span><span class="s">&#34;Body&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">CharsetUtil</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">CompositeByteBuf</span><span class="w"> </span><span class="n">compositeBuf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Unpooled</span><span class="p">.</span><span class="na">compositeBuffer</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">compositeBuf</span><span class="p">.</span><span class="na">addComponents</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="p">);</span><span class="w"> </span><span class="c1">// 逻辑合并，无内存拷贝</span><span class="w">
+</span></span></span></code></pre></div><p><strong>调优点</strong>：</p>
 <ul>
 <li>堆外内存（Direct Buffer）分配：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>ByteBuf directBuf <span style="color:#f92672">=</span> ByteBufAllocator.<span style="color:#a6e22e">DEFAULT</span>.<span style="color:#a6e22e">directBuffer</span>(1024);
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ByteBuf</span><span class="w"> </span><span class="n">directBuf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">.</span><span class="na">directBuffer</span><span class="p">(</span><span class="n">1024</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li>监控 Direct Buffer 使用量（避免 OOM）：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>-Dio.netty.maxDirectMemory<span style="color:#f92672">=</span>256M  <span style="color:#75715e"># JVM参数限制最大堆外内存</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">-Dio.netty.maxDirectMemory<span class="o">=</span>256M  <span class="c1"># JVM参数限制最大堆外内存</span>
 </span></span></code></pre></div><hr>
 <h2 id="三内存管理与性能优化">三、内存管理与性能优化</h2>
 <ol>
@@ -163,20 +163,20 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 <ul>
 <li><strong>内存泄漏检测配置</strong></li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 设置泄漏检测级别（生产环境建议SIMPLE）</span>
-</span></span><span style="display:flex;"><span>ResourceLeakDetector.<span style="color:#a6e22e">setLevel</span>(ResourceLeakDetector.<span style="color:#a6e22e">Level</span>.<span style="color:#a6e22e">PARANOID</span>);
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 引用计数示例</span>
-</span></span><span style="display:flex;"><span>ByteBuf buf <span style="color:#f92672">=</span> ByteBufAllocator.<span style="color:#a6e22e">DEFAULT</span>.<span style="color:#a6e22e">buffer</span>();
-</span></span><span style="display:flex;"><span>buf.<span style="color:#a6e22e">retain</span>(); <span style="color:#75715e">// 增加引用计数</span>
-</span></span><span style="display:flex;"><span>buf.<span style="color:#a6e22e">release</span>(); <span style="color:#75715e">// 减少引用计数，当计数=0时释放内存</span>
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 设置泄漏检测级别（生产环境建议SIMPLE）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ResourceLeakDetector</span><span class="p">.</span><span class="na">setLevel</span><span class="p">(</span><span class="n">ResourceLeakDetector</span><span class="p">.</span><span class="na">Level</span><span class="p">.</span><span class="na">PARANOID</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// 引用计数示例</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">.</span><span class="na">buffer</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">buf</span><span class="p">.</span><span class="na">retain</span><span class="p">();</span><span class="w"> </span><span class="c1">// 增加引用计数</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">buf</span><span class="p">.</span><span class="na">release</span><span class="p">();</span><span class="w"> </span><span class="c1">// 减少引用计数，当计数=0时释放内存</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li><strong>内存池配置</strong></li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 服务端启用内存池</span>
-</span></span><span style="display:flex;"><span>ServerBootstrap bootstrap <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ServerBootstrap();
-</span></span><span style="display:flex;"><span>bootstrap.<span style="color:#a6e22e">childOption</span>(ChannelOption.<span style="color:#a6e22e">ALLOCATOR</span>, PooledByteBufAllocator.<span style="color:#a6e22e">DEFAULT</span>);
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 服务端启用内存池</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ServerBootstrap</span><span class="w"> </span><span class="n">bootstrap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ServerBootstrap</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bootstrap</span><span class="p">.</span><span class="na">childOption</span><span class="p">(</span><span class="n">ChannelOption</span><span class="p">.</span><span class="na">ALLOCATOR</span><span class="p">,</span><span class="w"> </span><span class="n">PooledByteBufAllocator</span><span class="p">.</span><span class="na">DEFAULT</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li><strong>调优参数</strong>
 <ul>
 <li><code>-Dio.netty.allocator.type=pooled</code> 强制启用内存池</li>
@@ -198,35 +198,35 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 <li><strong>自定义编解码器</strong></li>
 </ol>
 <p>结合<code>MessageToByteEncoder</code> 和<code>ByteToMessageDecoder</code> 实现私有协议，例如 Dubbo 的协议头设计。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 协议格式：4字节长度 + 数据</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CustomDecoder</span> <span style="color:#66d9ef">extends</span> LengthFieldBasedFrameDecoder {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">CustomDecoder</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>(1024 <span style="color:#f92672">*</span> 1024, 0, 4, 0, 4); <span style="color:#75715e">// 最大长度1MB，长度字段偏移0</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Object <span style="color:#a6e22e">decode</span>(ChannelHandlerContext ctx, ByteBuf in) <span style="color:#66d9ef">throws</span> Exception {
-</span></span><span style="display:flex;"><span>        ByteBuf frame <span style="color:#f92672">=</span> (ByteBuf) <span style="color:#66d9ef">super</span>.<span style="color:#a6e22e">decode</span>(ctx, in);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (frame <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span>) <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> dataLength <span style="color:#f92672">=</span> frame.<span style="color:#a6e22e">readInt</span>();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> data <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>dataLength<span style="color:#f92672">]</span>;
-</span></span><span style="display:flex;"><span>        frame.<span style="color:#a6e22e">readBytes</span>(data);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> String(data, StandardCharsets.<span style="color:#a6e22e">UTF_8</span>);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 添加解码器到Pipeline</span>
-</span></span><span style="display:flex;"><span>pipeline.<span style="color:#a6e22e">addLast</span>(<span style="color:#66d9ef">new</span> CustomDecoder());
-</span></span><span style="display:flex;"><span>pipeline.<span style="color:#a6e22e">addLast</span>(<span style="color:#66d9ef">new</span> MyBusinessHandler());
-</span></span></code></pre></div><hr>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 协议格式：4字节长度 + 数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CustomDecoder</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">LengthFieldBasedFrameDecoder</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">CustomDecoder</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="n">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">1024</span><span class="p">,</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">4</span><span class="p">,</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">4</span><span class="p">);</span><span class="w"> </span><span class="c1">// 最大长度1MB，长度字段偏移0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">in</span><span class="p">)</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">Exception</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ByteBuf</span><span class="p">)</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">decode</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">in</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">frame</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">dataLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="p">.</span><span class="na">readInt</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="kt">byte</span><span class="o">[</span><span class="n">dataLength</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">frame</span><span class="p">.</span><span class="na">readBytes</span><span class="p">(</span><span class="n">data</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">// 添加解码器到Pipeline</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">pipeline</span><span class="p">.</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CustomDecoder</span><span class="p">());</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">pipeline</span><span class="p">.</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyBusinessHandler</span><span class="p">());</span><span class="w">
+</span></span></span></code></pre></div><hr>
 <h2 id="五心跳机制与长连接管理">五、心跳机制与长连接管理</h2>
 <ol>
 <li><strong>IdleStateHandler</strong></li>
 </ol>
 <p>监控读写空闲时间，触发<code>IdleStateEvent</code> 事件，结合业务实现心跳包发送或断连处理。例如：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>pipeline.<span style="color:#a6e22e">addLast</span>(<span style="color:#66d9ef">new</span> IdleStateHandler(30, 0, 0, TimeUnit.<span style="color:#a6e22e">SECONDS</span>));
-</span></span><span style="display:flex;"><span>pipeline.<span style="color:#a6e22e">addLast</span>(<span style="color:#66d9ef">new</span> HeartbeatHandler()); <span style="color:#75715e">// 自定义处理空闲事件</span>
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">pipeline</span><span class="p">.</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">IdleStateHandler</span><span class="p">(</span><span class="n">30</span><span class="p">,</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">0</span><span class="p">,</span><span class="w"> </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">SECONDS</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">pipeline</span><span class="p">.</span><span class="na">addLast</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">HeartbeatHandler</span><span class="p">());</span><span class="w"> </span><span class="c1">// 自定义处理空闲事件</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li><strong>TCP Keep-Alive 与应用层心跳</strong></li>
 </ol>
 <p>TCP 层 Keep-Alive 间隔较长（默认2小时），应用层心跳（如每30秒一次）更灵活，可快速检测网络异常。</p>
@@ -249,32 +249,32 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 <ol>
 <li><strong>Linux 系统参数调优</strong></li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 最大文件描述符数</span>
-</span></span><span style="display:flex;"><span>ulimit -n <span style="color:#ae81ff">1000000</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># TCP缓冲区设置</span>
-</span></span><span style="display:flex;"><span>sysctl -w net.core.rmem_max<span style="color:#f92672">=</span><span style="color:#ae81ff">16777216</span>
-</span></span><span style="display:flex;"><span>sysctl -w net.core.wmem_max<span style="color:#f92672">=</span><span style="color:#ae81ff">16777216</span>
-</span></span><span style="display:flex;"><span>sysctl -w net.ipv4.tcp_rmem<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;4096 87380 16777216&#34;</span>
-</span></span><span style="display:flex;"><span>sysctl -w net.ipv4.tcp_wmem<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;4096 65536 16777216&#34;</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 最大文件描述符数</span>
+</span></span><span class="line"><span class="cl"><span class="nb">ulimit</span> -n <span class="m">1000000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># TCP缓冲区设置</span>
+</span></span><span class="line"><span class="cl">sysctl -w net.core.rmem_max<span class="o">=</span><span class="m">16777216</span>
+</span></span><span class="line"><span class="cl">sysctl -w net.core.wmem_max<span class="o">=</span><span class="m">16777216</span>
+</span></span><span class="line"><span class="cl">sysctl -w net.ipv4.tcp_rmem<span class="o">=</span><span class="s2">&#34;4096 87380 16777216&#34;</span>
+</span></span><span class="line"><span class="cl">sysctl -w net.ipv4.tcp_wmem<span class="o">=</span><span class="s2">&#34;4096 65536 16777216&#34;</span>
 </span></span></code></pre></div><ol start="2">
 <li><strong>Netty 关键参数</strong></li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 服务端配置</span>
-</span></span><span style="display:flex;"><span>bootstrap.<span style="color:#a6e22e">option</span>(ChannelOption.<span style="color:#a6e22e">SO_BACKLOG</span>, 1024) <span style="color:#75715e">// 等待连接队列大小</span>
-</span></span><span style="display:flex;"><span>         .<span style="color:#a6e22e">option</span>(ChannelOption.<span style="color:#a6e22e">SO_REUSEADDR</span>, <span style="color:#66d9ef">true</span>) <span style="color:#75715e">// 端口复用</span>
-</span></span><span style="display:flex;"><span>         .<span style="color:#a6e22e">childOption</span>(ChannelOption.<span style="color:#a6e22e">TCP_NODELAY</span>, <span style="color:#66d9ef">true</span>) <span style="color:#75715e">// 禁用Nagle算法</span>
-</span></span><span style="display:flex;"><span>         .<span style="color:#a6e22e">childOption</span>(ChannelOption.<span style="color:#a6e22e">SO_KEEPALIVE</span>, <span style="color:#66d9ef">true</span>); <span style="color:#75715e">// 启用TCP Keep-Alive</span>
-</span></span></code></pre></div><ol start="3">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 服务端配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bootstrap</span><span class="p">.</span><span class="na">option</span><span class="p">(</span><span class="n">ChannelOption</span><span class="p">.</span><span class="na">SO_BACKLOG</span><span class="p">,</span><span class="w"> </span><span class="n">1024</span><span class="p">)</span><span class="w"> </span><span class="c1">// 等待连接队列大小</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="p">.</span><span class="na">option</span><span class="p">(</span><span class="n">ChannelOption</span><span class="p">.</span><span class="na">SO_REUSEADDR</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="c1">// 端口复用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="p">.</span><span class="na">childOption</span><span class="p">(</span><span class="n">ChannelOption</span><span class="p">.</span><span class="na">TCP_NODELAY</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="c1">// 禁用Nagle算法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="p">.</span><span class="na">childOption</span><span class="p">(</span><span class="n">ChannelOption</span><span class="p">.</span><span class="na">SO_KEEPALIVE</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span><span class="w"> </span><span class="c1">// 启用TCP Keep-Alive</span><span class="w">
+</span></span></span></code></pre></div><ol start="3">
 <li><strong>JVM 参数调优</strong></li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 堆外内存限制</span>
-</span></span><span style="display:flex;"><span>-XX:MaxDirectMemorySize<span style="color:#f92672">=</span>512m
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># GC优化（G1为例）</span>
-</span></span><span style="display:flex;"><span>-XX:+UseG1GC 
-</span></span><span style="display:flex;"><span>-XX:MaxGCPauseMillis<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span> 
-</span></span><span style="display:flex;"><span>-XX:InitiatingHeapOccupancyPercent<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 堆外内存限制</span>
+</span></span><span class="line"><span class="cl">-XX:MaxDirectMemorySize<span class="o">=</span>512m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># GC优化（G1为例）</span>
+</span></span><span class="line"><span class="cl">-XX:+UseG1GC 
+</span></span><span class="line"><span class="cl">-XX:MaxGCPauseMillis<span class="o">=</span><span class="m">200</span> 
+</span></span><span class="line"><span class="cl">-XX:InitiatingHeapOccupancyPercent<span class="o">=</span><span class="m">30</span>
 </span></span></code></pre></div><hr>
 <h2 id="八高并发场景实战">八、高并发场景实战</h2>
 <ol>
@@ -284,28 +284,28 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 </ul>
 </li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>EpollEventLoopGroup group <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> EpollEventLoopGroup();
-</span></span><span style="display:flex;"><span>bootstrap.<span style="color:#a6e22e">channel</span>(EpollServerSocketChannel.<span style="color:#a6e22e">class</span>); <span style="color:#75715e">// 使用Epoll边缘触发</span>
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">EpollEventLoopGroup</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">EpollEventLoopGroup</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">bootstrap</span><span class="p">.</span><span class="na">channel</span><span class="p">(</span><span class="n">EpollServerSocketChannel</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"> </span><span class="c1">// 使用Epoll边缘触发</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li><strong>减少上下文切换</strong>：</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>workerGroup.<span style="color:#a6e22e">setIoRatio</span>(70); <span style="color:#75715e">// I/O任务占比70%，业务任务30%</span>
-</span></span></code></pre></div><ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">workerGroup</span><span class="p">.</span><span class="na">setIoRatio</span><span class="p">(</span><span class="n">70</span><span class="p">);</span><span class="w"> </span><span class="c1">// I/O任务占比70%，业务任务30%</span><span class="w">
+</span></span></span></code></pre></div><ul>
 <li><strong>连接数监控</strong></li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>ChannelGroup allChannels <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DefaultChannelGroup(GlobalEventExecutor.<span style="color:#a6e22e">INSTANCE</span>);
-</span></span><span style="display:flex;"><span>allChannels.<span style="color:#a6e22e">add</span>(channel); <span style="color:#75715e">// 维护所有活跃Channel</span>
-</span></span></code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">ChannelGroup</span><span class="w"> </span><span class="n">allChannels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultChannelGroup</span><span class="p">(</span><span class="n">GlobalEventExecutor</span><span class="p">.</span><span class="na">INSTANCE</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">allChannels</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">channel</span><span class="p">);</span><span class="w"> </span><span class="c1">// 维护所有活跃Channel</span><span class="w">
+</span></span></span></code></pre></div><ol start="2">
 <li><strong>异步处理耗时操作</strong></li>
 </ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 业务Handler中提交异步任务</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">channelRead</span>(ChannelHandlerContext ctx, Object msg) {
-</span></span><span style="display:flex;"><span>    executorService.<span style="color:#a6e22e">execute</span>(() <span style="color:#f92672">-&gt;</span> {
-</span></span><span style="display:flex;"><span>        Object result <span style="color:#f92672">=</span> heavyCompute(msg); <span style="color:#75715e">// 耗时操作</span>
-</span></span><span style="display:flex;"><span>        ctx.<span style="color:#a6e22e">writeAndFlush</span>(result);
-</span></span><span style="display:flex;"><span>    });
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="九重要知识点">九、重要知识点</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 业务Handler中提交异步任务</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">channelRead</span><span class="p">(</span><span class="n">ChannelHandlerContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">executorService</span><span class="p">.</span><span class="na">execute</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">heavyCompute</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span><span class="w"> </span><span class="c1">// 耗时操作</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ctx</span><span class="p">.</span><span class="na">writeAndFlush</span><span class="p">(</span><span class="n">result</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="九重要知识点">九、重要知识点</h2>
 <ol>
 <li><strong>如何避免 Epoll 空轮询 Bug？</strong></li>
 </ol>
@@ -345,11 +345,11 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/synchronized/">
-		<img class="icon-text" src="/img/prev.svg"/>Synchronized</a>
+	<a class="prev-post" href="https://xumf.net/blog/nacos/">
+		<img class="icon-text" src="/img/prev.svg"/>Nacos</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/kubernetes/">Kubernetes 深入浅出<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/rabbitmq/">RabbitMQ 深入浅出<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
@@ -378,3 +378,22 @@ EventLoopGroup bossGroup = new NioEventLoopGroup(1); // 主Reactor，一般只�
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+

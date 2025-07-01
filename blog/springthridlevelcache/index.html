@@ -58,7 +58,7 @@ private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap
 	<h1>Spring 三级缓存</h1>
 	<h5>
 		
-		<time datetime="2018-04-30 22:39:17 &#43;0800 CST">2018年 4月 30日</time>
+		<time datetime="2025-01-30 22:39:17 &#43;0800 CST">2025年 1月 30日</time>
 		<span class="no-print">
 			-
 				
@@ -77,10 +77,10 @@ private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap
 <blockquote>
 <p>Spring的DefaultSingletonBeanRegistry类三级缓存对象</p>
 </blockquote>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> singletonObjects <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;</span>(256);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> earlySingletonObjects <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;</span>(16);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, ObjectFactory<span style="color:#f92672">&lt;?&gt;&gt;</span> singletonFactories <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;</span>(16);
-</span></span></code></pre></div><ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">singletonObjects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConcurrentHashMap</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">256</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">earlySingletonObjects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ConcurrentHashMap</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">16</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">ObjectFactory</span><span class="o">&lt;?&gt;&gt;</span><span class="w"> </span><span class="n">singletonFactories</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">16</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><ol>
 <li><strong>一级缓存（<strong><strong>singletonObjects</strong></strong>）</strong>：存放完全初始化的单例 Bean 实例。当请求一个 Bean 时，Spring 首先从一级缓存中查找，如果存在，则直接返回实例。</li>
 <li><strong>二级缓存（<strong><strong>earlySingletonObjects</strong></strong>）</strong>：存放尚未完全初始化的单例 Bean 实例，通常是指构造函数已执行完毕，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中，以便在依赖注入过程中，其它 Bean 可以获取该 Bean 的早期引用，从而解决循环依赖。</li>
 <li><strong>三级缓存（<strong><strong>singletonFactories</strong></strong>）</strong>：存放用于创建单例 Bean 的工厂对象（ObjectFactory）。当 Bean 正在创建过程中，且需要提前暴露其引用时，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取正在创建中的 Bean 的引用。</li>
@@ -100,15 +100,24 @@ private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap
 </article>
 <nav class="no-print post-nav">
 
-	<a class="prev-post" href="http://xumf.net/blog/springcloudsleuth/">
-		<img class="icon-text" src="/img/prev.svg"/>Spring Cloud Sleuth</a>
+	<a class="prev-post" href="https://xumf.net/blog/synchronized/">
+		<img class="icon-text" src="/img/prev.svg"/>Synchronized</a>
 
 
-	<a class="next-post" href="http://xumf.net/blog/rabbitmq/">RabbitMQ 深入浅出<img class="icon-text" src="/img/next.svg"/>
+	<a class="next-post" href="https://xumf.net/blog/zipkin/">Zipkin<img class="icon-text" src="/img/next.svg"/>
 	</a>
 
 </nav>
 
+
+<section id="related">
+  <h4></h4>
+  <ul>
+    
+  	<li><a href="/blog/springbootstartflow/">SpringBoot 启动流程</a></li>
+  	
+  </ul>
+</section>
 
 
 
@@ -133,3 +142,22 @@ private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap
 
 
 </footer>
+
+
+  <div id="giscus-container" style="margin-top: 3rem;"></div>
+<script src="https://giscus.app/client.js"
+        data-repo="xumf/xumf.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkxMzEzNzc1Njg="
+        data-category="General"
+        data-category-id="DIC_kwDOB9SpoM4CsTlI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
