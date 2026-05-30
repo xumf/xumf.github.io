@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="分布式链路追踪">
+<title>Spring Cloud Sleuth</title>
+
+
+<link rel="canonical" href="https://xumf.net/blog/springcloudsleuth/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="Spring Cloud Sleuth">
+<meta property='og:description' content="分布式链路追踪">
+<meta property='og:url' content='https://xumf.net/blog/springcloudsleuth/'>
+<meta property='og:site_name' content='小蜜蜂'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:tag' content='Spring Cloud Sleuth' /><meta property='article:tag' content='Spring Cloud' /><meta property='article:published_time' content='2024-08-01T13:54:50&#43;08:00'/><meta property='article:modified_time' content='2024-08-01T13:54:50&#43;08:00'/>
+<meta name="twitter:title" content="Spring Cloud Sleuth">
+<meta name="twitter:description" content="分布式链路追踪">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/images/logo.png" 
+                        width=""
+                        height=""
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">小蜜蜂</a></h1>
+            <h2 class="site-description">Code Farming Engineer</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xumf/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>了解我</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/springcloudsleuth/">Spring Cloud Sleuth</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            分布式链路追踪
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2024-08-01T13:54:50&#43;08:00'>2024年 8月 01日</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 4 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    
+    <blockquote>
+        <p><strong>注意</strong>：Spring Cloud Sleuth 已在 Spring Boot 3.x / Spring Cloud 2022.0.x 中被 <strong>Micrometer Tracing</strong> 取代。新项目直接使用 Micrometer Tracing，旧项目建议迁移。本文基于 Sleuth 2.x 版本。</p>
+
+    </blockquote>
+<h2 id="分布式追踪核心概念">分布式追踪核心概念
+</h2><h3 id="为什么需要链路追踪">为什么需要链路追踪？
+</h3><p>微服务架构中，一个请求可能需要经过多个服务。当请求变慢或报错时，没有链路追踪很难定位问题出在哪个服务、哪个环节。链路追踪通过 Trace ID 将一次请求跨服务的调用串联起来。</p>
+<h3 id="核心术语">核心术语
+</h3><ul>
+<li><strong>Trace</strong>：一次完整的请求链路，用唯一的 Trace ID 标识</li>
+<li><strong>Span</strong>：一个工作单元（如一次 RPC 调用、一次数据库查询），包含开始和结束时间</li>
+<li><strong>Annotation</strong>：关键事件标记，记录请求在不同阶段的时间戳</li>
+</ul>
+<pre tabindex="0"><code>Trace (traceId=abc)
+├── Span 1 (id=1, parentId=null) —— 入口服务
+│   ├── cs (Client Sent): 时间戳 T1
+│   ├── sr (Server Received): 时间戳 T2 —— 下游服务收到
+│   ├── ss (Server Sent): 时间戳 T3 —— 下游服务返回
+│   └── cr (Client Received): 时间戳 T4
+└── Span 2 (id=2, parentId=1) —— 下游服务调数据库
+    ├── cs: 时间戳 T5
+    └── cr: 时间戳 T6
+</code></pre><p>通过这 4 个时间点可以计算出：</p>
+<ul>
+<li><strong>网络延迟</strong>：sr - cs（请求发送耗时）+ cr - ss（响应传输耗时）</li>
+<li><strong>服务处理时间</strong>：ss - sr（下游服务实际处理耗时）</li>
+<li><strong>总耗时</strong>：cr - cs</li>
+</ul>
+<h2 id="sleuth-核心功能">Sleuth 核心功能
+</h2><ol>
+<li>自动生成并传播 Trace ID 和 Span ID（通过 HTTP Header 或消息头）</li>
+<li>集成 Zipkin 等追踪后端</li>
+<li>支持多种通信协议（HTTP、消息队列、gRPC）</li>
+<li>日志自动关联——日志中自动添加 <code>[appname, traceId, spanId, exportable]</code></li>
+</ol>
+<pre tabindex="0"><code>2024-08-01 10:00:00.123 [http-nio-8080-exec-1] [myapp, 2485ec27856c56f4, 2485ec27856c56f4, true] INFO  - 请求开始
+</code></pre><p>通过这个格式，可以按 traceId 筛选出某个请求在所有服务中的完整日志。</p>
+<h2 id="源码分析">源码分析
+</h2><h3 id="tracer-接口">Tracer 接口
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Tracer</span> {
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">nextSpan</span>();
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">nextSpan</span>(Span parent);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">newTrace</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">continueSpan</span>(Span span);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">close</span>(Span span);
+</span></span><span style="display:flex;"><span>    Span <span style="color:#a6e22e">currentSpan</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Tracer 负责 Span 的创建和管理。<code>newTrace()</code> 创建全新的 Trace（入口请求），<code>nextSpan()</code> 基于当前 Trace 创建子 Span。</p>
+<h3 id="tracecontext-传播">TraceContext 传播
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Propagator</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">inject</span>(TraceContext context, C carrier, Setter<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> setter);
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> Span.<span style="color:#a6e22e">Builder</span> <span style="color:#a6e22e">extract</span>(C carrier, Getter<span style="color:#f92672">&lt;</span>C<span style="color:#f92672">&gt;</span> getter);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>inject</code> 将 TraceContext 写入 HTTP Header（如 <code>X-B3-TraceId</code>），<code>extract</code> 从请求头中提取并恢复上下文。这是跨服务传播的核心接口。</p>
+<h3 id="自动配置">自动配置
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ConditionalOnProperty</span>(value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;spring.sleuth.enabled&#34;</span>, matchIfMissing <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TraceAutoConfiguration</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Tracer <span style="color:#a6e22e">tracer</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DefaultTracer();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CurrentTraceContext <span style="color:#a6e22e">currentTraceContext</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ThreadLocalCurrentTraceContext.<span style="color:#a6e22e">create</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="重要知识点">重要知识点
+</h2><h3 id="1-sleuth-如何实现跨服务上下文传播">1. Sleuth 如何实现跨服务上下文传播？
+</h3><p>Sleuth 通过 Brave（Zipkin 的 Java 客户端库）实现上下文传播。HTTP 请求经过 RestTemplate / Feign / WebClient 时，Sleuth 自动注入以下 Header：</p>
+<ul>
+<li><code>X-B3-TraceId</code>：全局唯一的 Trace ID</li>
+<li><code>X-B3-SpanId</code>：当前 Span ID</li>
+<li><code>X-B3-ParentSpanId</code>：父 Span ID</li>
+<li><code>X-B3-Sampled</code>：是否采样</li>
+<li><code>X-B3-Flags</code>：调试标记</li>
+</ul>
+<p>下游服务收到请求后，从 Header 中提取 <code>X-B3-TraceId</code>，创建子 Span 并将自己作为当前 Trace 的一部分。</p>
+<h3 id="2-trace-和-span-的关系">2. Trace 和 Span 的关系？
+</h3><ul>
+<li>一个 Trace 由多个 Span 组成，形成<strong>树状结构</strong></li>
+<li>根 Span（第一个 Span）没有 parentId</li>
+<li>子 Span 通过 parentId 引用父 Span</li>
+<li>所有 Span 共享同一个 traceId</li>
+</ul>
+<h3 id="3-如何自定义-span">3. 如何自定义 Span？
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> Tracer tracer;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">customSpan</span>() {
+</span></span><span style="display:flex;"><span>    Span span <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">nextSpan</span>().<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;custom-operation&#34;</span>).<span style="color:#a6e22e">start</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> (Tracer.<span style="color:#a6e22e">SpanInScope</span> ws <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">withSpanInScope</span>(span)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 业务逻辑</span>
+</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">tag</span>(<span style="color:#e6db74">&#34;custom-key&#34;</span>, <span style="color:#e6db74">&#34;custom-value&#34;</span>);
+</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">annotate</span>(<span style="color:#e6db74">&#34;custom-event&#34;</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">finally</span> {
+</span></span><span style="display:flex;"><span>        span.<span style="color:#a6e22e">finish</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>注意：<code>start()</code> 只调用一次，<code>finish()</code> 会在 finally 中确保执行。使用 <code>withSpanInScope</code> 将当前 Span 绑定到线程上下文。</p>
+<h3 id="4-sleuth-与-zipkin-集成">4. Sleuth 与 Zipkin 集成？
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">zipkin</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">base-url</span>: <span style="color:#ae81ff">http://localhost:9411</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sender</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">type: web     # 发送方式</span>: <span style="color:#ae81ff">web/kafka/rabbitmq</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">sleuth</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">sampler</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">probability: 1.0  # 采样率</span>: <span style="color:#ae81ff">0</span><span style="color:#ae81ff">~1，生产环境建议 0.1 以下</span>
+</span></span></code></pre></div><p>采样率说明：</p>
+<ul>
+<li><code>1.0</code>：100% 采样，开发和调试时使用</li>
+<li><code>0.1</code>：10% 采样，生产环境常用——追踪数据量大时存储和网络压力不可忽视</li>
+<li><code>0.01</code>：1% 采样，高流量系统的保守选择</li>
+</ul>
+<h3 id="5-sleuth-对各种通信方式的支持">5. Sleuth 对各种通信方式的支持？
+</h3><div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>通信方式</th>
+					<th>支持情况</th>
+					<th>说明</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>RestTemplate</td>
+					<td>自动</td>
+					<td>通过 ClientHttpRequestInterceptor</td>
+			</tr>
+			<tr>
+					<td>Feign</td>
+					<td>自动</td>
+					<td>通过 Feign 的 RequestInterceptor</td>
+			</tr>
+			<tr>
+					<td>WebClient</td>
+					<td>自动</td>
+					<td>通过 ExchangeFilterFunction</td>
+			</tr>
+			<tr>
+					<td>RabbitMQ</td>
+					<td>自动</td>
+					<td>通过消息头传播</td>
+			</tr>
+			<tr>
+					<td>Kafka</td>
+					<td>自动</td>
+					<td>通过消息头传播</td>
+			</tr>
+			<tr>
+					<td>gRPC</td>
+					<td>依赖扩展</td>
+					<td>需额外配置</td>
+			</tr>
+			<tr>
+					<td>线程池</td>
+					<td>需要手动</td>
+					<td>使用 <code>Tracer.withSpanInScope</code> 或 <code>LazyTraceExecutor</code></td>
+			</tr>
+	</tbody>
+</table></div>
+<h3 id="6-sleuth-的性能影响">6. Sleuth 的性能影响？
+</h3><ul>
+<li>Sleuth 本身非常轻量，主要开销在：
+<ul>
+<li>Trace ID 的生成和传播（极低）</li>
+<li>数据发送到 Zipkin（异步，不阻塞请求线程）</li>
+<li>采样率高时，Zipkin 存储可能成为瓶颈</li>
+</ul>
+</li>
+<li>生产环境建议：<code>probability: 0.01~0.1</code> + 使用 Kafka 作为 Reporter（避免 HTTP 发送阻塞）</li>
+</ul>
+<h3 id="7-sleuth-如何支持异步操作">7. Sleuth 如何支持异步操作？
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 方法一：手动绑定上下文</span>
+</span></span><span style="display:flex;"><span>Mono.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;value&#34;</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">doOnNext</span>(value <span style="color:#f92672">-&gt;</span> {
+</span></span><span style="display:flex;"><span>        Span span <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">nextSpan</span>().<span style="color:#a6e22e">name</span>(<span style="color:#e6db74">&#34;async-operation&#34;</span>).<span style="color:#a6e22e">start</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> (Tracer.<span style="color:#a6e22e">SpanInScope</span> ws <span style="color:#f92672">=</span> tracer.<span style="color:#a6e22e">withSpanInScope</span>(span)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 异步逻辑</span>
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">finally</span> {
+</span></span><span style="display:flex;"><span>            span.<span style="color:#a6e22e">finish</span>();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 方法二：使用 Sleuth 提供的 LazyTraceExecutor</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Executor <span style="color:#a6e22e">asyncExecutor</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> LazyTraceExecutor(tracer, Executors.<span style="color:#a6e22e">newFixedThreadPool</span>(10));
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="排查思路">排查思路
+</h2><ol>
+<li>
+<p><strong>Trace ID 未在日志中出现</strong></p>
+<ul>
+<li>确认 <code>spring.sleuth.enabled</code> 未被设置为 false</li>
+<li>确认日志格式正确（Sleuth 通过 <code>MDC</code> 注入 traceId）</li>
+<li>检查是否使用了自定义 RestTemplate 或 Feign，可能覆盖了默认拦截器</li>
+</ul>
+</li>
+<li>
+<p><strong>调用链不完整</strong></p>
+<ul>
+<li>确认所有参与链路的服务都配置了 Sleuth</li>
+<li>确认服务间的调用方式（HTTP/消息队列）被 Sleuth 支持</li>
+<li>检查异步操作中是否丢失了上下文——使用 <code>Tracer.withSpanInScope</code> 或 <code>LazyTraceExecutor</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Zipkin 看不到数据</strong></p>
+<ul>
+<li>检查 <code>spring.zipkin.base-url</code> 是否正确</li>
+<li>检查网络连通性（从应用程序到 Zipkin Server）</li>
+<li>检查采样率设置：<code>probability: 0</code> 会导致不发送任何数据</li>
+</ul>
+</li>
+<li>
+<p><strong>迁移到 Micrometer Tracing 的注意点</strong></p>
+<ul>
+<li>配置从 <code>spring.sleuth.*</code> 变为 <code>management.tracing.*</code></li>
+<li>Trace ID 格式从 64-bit（Sleuth 默认）变为 128-bit（Micrometer 默认）</li>
+<li>依赖从 <code>spring-cloud-starter-sleuth</code> 变为 <code>io.micrometer:micrometer-tracing-bridge-brave</code></li>
+</ul>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring-cloud-sleuth/">Spring Cloud Sleuth</a>
+        
+            <a href="/tags/spring-cloud/">Spring Cloud</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">相关文章</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/springcloudgateway/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Gateway</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudconfig/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Config</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudbus/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Bus</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/ribbon/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ribbon</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/nacos/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Nacos</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https:\/\/xumf.net\/blog\/springcloudsleuth\/';
+        this.page.identifier = 'fb09deffc3f8c9f80ad246e49dfe1196';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xumf.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 小蜜蜂
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

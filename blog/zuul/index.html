@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Zuul 的核心概念 （1）Zuul 是什么？ Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡 主要功能： 路由：将客户端请求转发到后端服务 过滤：在请求和响应的生命周期中执行自定义逻辑 负载均衡：与 Ribbon 集成，实现客户端负载均衡 （2）Zuul 的工作流程 路由：根据配置请求转发到对应的微服务 过滤：在请求到达目标服务之前或之后执行过滤逻辑 负载均衡：通过 Ribbon 集成，实现客户端负载均衡 Zuul 的配置 （1）依赖配置 在 pom.xml 添加 Zuul 依赖： &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-netflix-zuul&lt;/artifactId&gt; &lt;/dependency&gt; （2）启用 Zuul 在启动类中添加 @EnableZuulProxy 注解： @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } （3）路由配置 在 application.yml 中配置路由规则： zuul: routes: user-service: # 路径名称 path: /user/** # 路径配置 serviceId: user-service # 目标服务名称 order-service: path: /order/** serviceId: order-service 解释： user-service 和 order-service 是路由的名称，可以自定义 path 是匹配的 URL 路径 serviceId 是 Eureka 中注册的服务名称 自定义路由 如果不想使用服务名称作为路由前缀，可以自定义路由： zuul: routes: custom-user-service: # 路由策略 path: /api/user/** # 匹配路径 url: http://localhost:8081 # 目标服务地址 负载均衡配置 （1）集成 Ribbon Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡 在 application.yml 中配置 Ribbon： zuul: routes: custom-user-service: path: /api/user/** serviceId: custom-user-service # 使用服务名称 custom-user-service: ribbon: listOfServers: http://localhost:8081,http://localhost:8082 # 目标服务实例列表 NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule # 随机策略 实例：完整的 Zuul 配置 （1）application.yml user-service: ribbon: listOfServers: http://localhost:8081,http://localhost:8082 # 目标服务实例列表 （2）启动类 @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } Zuul 与 Spring Cloud Gateway对比 对比项 Spring Cloud Gateway Spring Cloud Zuul 1.x 架构模型 异步非阻塞 (基于 WebFlux 和 Reactor) 同步阻塞 (基于 Servlet) 过滤器链 轻量高效 相对较重 路由匹配 高效的路由匹配算法 相对较慢 内存消耗 较低 (基于 Netty) 较高 (基于 Servlet 容器) 编程模型 响应式编程 传统同步模型 负载均衡 集成 Spring Cloud LoadBalancer 使用 Ribbon 线程切换 较少 较多 连接管理 使用 Netty 连接池 相对简单 协议支持 原生支持 HTTP/2 主要支持 HTTP/1.1 上下文切换 较少 较多 性能 更高 相对较低 ">
+<title>Zuul</title>
+
+
+<link rel="canonical" href="https://xumf.net/blog/zuul/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="Zuul">
+<meta property='og:description' content="Zuul 的核心概念 （1）Zuul 是什么？ Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡 主要功能： 路由：将客户端请求转发到后端服务 过滤：在请求和响应的生命周期中执行自定义逻辑 负载均衡：与 Ribbon 集成，实现客户端负载均衡 （2）Zuul 的工作流程 路由：根据配置请求转发到对应的微服务 过滤：在请求到达目标服务之前或之后执行过滤逻辑 负载均衡：通过 Ribbon 集成，实现客户端负载均衡 Zuul 的配置 （1）依赖配置 在 pom.xml 添加 Zuul 依赖： &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-netflix-zuul&lt;/artifactId&gt; &lt;/dependency&gt; （2）启用 Zuul 在启动类中添加 @EnableZuulProxy 注解： @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } （3）路由配置 在 application.yml 中配置路由规则： zuul: routes: user-service: # 路径名称 path: /user/** # 路径配置 serviceId: user-service # 目标服务名称 order-service: path: /order/** serviceId: order-service 解释： user-service 和 order-service 是路由的名称，可以自定义 path 是匹配的 URL 路径 serviceId 是 Eureka 中注册的服务名称 自定义路由 如果不想使用服务名称作为路由前缀，可以自定义路由： zuul: routes: custom-user-service: # 路由策略 path: /api/user/** # 匹配路径 url: http://localhost:8081 # 目标服务地址 负载均衡配置 （1）集成 Ribbon Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡 在 application.yml 中配置 Ribbon： zuul: routes: custom-user-service: path: /api/user/** serviceId: custom-user-service # 使用服务名称 custom-user-service: ribbon: listOfServers: http://localhost:8081,http://localhost:8082 # 目标服务实例列表 NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule # 随机策略 实例：完整的 Zuul 配置 （1）application.yml user-service: ribbon: listOfServers: http://localhost:8081,http://localhost:8082 # 目标服务实例列表 （2）启动类 @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } Zuul 与 Spring Cloud Gateway对比 对比项 Spring Cloud Gateway Spring Cloud Zuul 1.x 架构模型 异步非阻塞 (基于 WebFlux 和 Reactor) 同步阻塞 (基于 Servlet) 过滤器链 轻量高效 相对较重 路由匹配 高效的路由匹配算法 相对较慢 内存消耗 较低 (基于 Netty) 较高 (基于 Servlet 容器) 编程模型 响应式编程 传统同步模型 负载均衡 集成 Spring Cloud LoadBalancer 使用 Ribbon 线程切换 较少 较多 连接管理 使用 Netty 连接池 相对简单 协议支持 原生支持 HTTP/2 主要支持 HTTP/1.1 上下文切换 较少 较多 性能 更高 相对较低 ">
+<meta property='og:url' content='https://xumf.net/blog/zuul/'>
+<meta property='og:site_name' content='小蜜蜂'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:tag' content='Spring Cloud' /><meta property='article:tag' content='Zuul' /><meta property='article:published_time' content='2025-05-07T23:04:30&#43;08:00'/><meta property='article:modified_time' content='2025-05-07T23:04:30&#43;08:00'/>
+<meta name="twitter:title" content="Zuul">
+<meta name="twitter:description" content="Zuul 的核心概念 （1）Zuul 是什么？ Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡 主要功能： 路由：将客户端请求转发到后端服务 过滤：在请求和响应的生命周期中执行自定义逻辑 负载均衡：与 Ribbon 集成，实现客户端负载均衡 （2）Zuul 的工作流程 路由：根据配置请求转发到对应的微服务 过滤：在请求到达目标服务之前或之后执行过滤逻辑 负载均衡：通过 Ribbon 集成，实现客户端负载均衡 Zuul 的配置 （1）依赖配置 在 pom.xml 添加 Zuul 依赖： &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-netflix-zuul&lt;/artifactId&gt; &lt;/dependency&gt; （2）启用 Zuul 在启动类中添加 @EnableZuulProxy 注解： @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } （3）路由配置 在 application.yml 中配置路由规则： zuul: routes: user-service: # 路径名称 path: /user/** # 路径配置 serviceId: user-service # 目标服务名称 order-service: path: /order/** serviceId: order-service 解释： user-service 和 order-service 是路由的名称，可以自定义 path 是匹配的 URL 路径 serviceId 是 Eureka 中注册的服务名称 自定义路由 如果不想使用服务名称作为路由前缀，可以自定义路由： zuul: routes: custom-user-service: # 路由策略 path: /api/user/** # 匹配路径 url: http://localhost:8081 # 目标服务地址 负载均衡配置 （1）集成 Ribbon Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡 在 application.yml 中配置 Ribbon： zuul: routes: custom-user-service: path: /api/user/** serviceId: custom-user-service # 使用服务名称 custom-user-service: ribbon: listOfServers: http://localhost:8081,http://localhost:8082 # 目标服务实例列表 NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule # 随机策略 实例：完整的 Zuul 配置 （1）application.yml user-service: ribbon: listOfServers: http://localhost:8081,http://localhost:8082 # 目标服务实例列表 （2）启动类 @SpringBootApplication @EnableZuulProxy public class ZuulApplication { public static void main(String[] args) { SpringAppliction.run(ZuulApplication.class, args); } } Zuul 与 Spring Cloud Gateway对比 对比项 Spring Cloud Gateway Spring Cloud Zuul 1.x 架构模型 异步非阻塞 (基于 WebFlux 和 Reactor) 同步阻塞 (基于 Servlet) 过滤器链 轻量高效 相对较重 路由匹配 高效的路由匹配算法 相对较慢 内存消耗 较低 (基于 Netty) 较高 (基于 Servlet 容器) 编程模型 响应式编程 传统同步模型 负载均衡 集成 Spring Cloud LoadBalancer 使用 Ribbon 线程切换 较少 较多 连接管理 使用 Netty 连接池 相对简单 协议支持 原生支持 HTTP/2 主要支持 HTTP/1.1 上下文切换 较少 较多 性能 更高 相对较低 ">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/images/logo.png" 
+                        width=""
+                        height=""
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">小蜜蜂</a></h1>
+            <h2 class="site-description">Code Farming Engineer</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xumf/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>了解我</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zuul/">Zuul</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2025-05-07T23:04:30&#43;08:00'>2025年 5月 07日</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 2 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    <h2 id="zuul-的核心概念">Zuul 的核心概念
+</h2><h3 id="1zuul-是什么">（1）Zuul 是什么？
+</h3><ul>
+<li>Zuul 是 Netflix 开源的 API 网关，用于微服务架构中的路由、过滤和负载均衡</li>
+<li>主要功能：
+<ul>
+<li>路由：将客户端请求转发到后端服务</li>
+<li>过滤：在请求和响应的生命周期中执行自定义逻辑</li>
+<li>负载均衡：与 Ribbon 集成，实现客户端负载均衡</li>
+</ul>
+</li>
+</ul>
+<h3 id="2zuul-的工作流程">（2）Zuul 的工作流程
+</h3><ol>
+<li>路由：根据配置请求转发到对应的微服务</li>
+<li>过滤：在请求到达目标服务之前或之后执行过滤逻辑</li>
+<li>负载均衡：通过 Ribbon 集成，实现客户端负载均衡</li>
+</ol>
+<h2 id="zuul-的配置">Zuul 的配置
+</h2><h3 id="1依赖配置">（1）依赖配置
+</h3><ul>
+<li>在 pom.xml 添加 Zuul 依赖：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-netflix-zuul<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h3 id="2启用-zuul">（2）启用 Zuul
+</h3><ul>
+<li>在启动类中添加 <strong>@EnableZuulProxy</strong> 注解：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableZuulProxy</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ZuulApplication</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
+</span></span><span style="display:flex;"><span>        SpringAppliction.<span style="color:#a6e22e">run</span>(ZuulApplication.<span style="color:#a6e22e">class</span>, args);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="3路由配置">（3）路由配置
+</h3><ul>
+<li>在 application.yml 中配置路由规则：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>zuul:
+</span></span><span style="display:flex;"><span>    routes:
+</span></span><span style="display:flex;"><span>        user<span style="color:#f92672">-</span>service: <span style="color:#960050;background-color:#1e0010">#</span> 路径名称
+</span></span><span style="display:flex;"><span>            path: <span style="color:#f92672">/</span>user<span style="color:#f92672">/**</span> <span style="color:#960050;background-color:#1e0010">#</span> 路径配置
+</span></span><span style="display:flex;"><span>            serviceId: user<span style="color:#f92672">-</span>service <span style="color:#960050;background-color:#1e0010">#</span> 目标服务名称
+</span></span><span style="display:flex;"><span>        order<span style="color:#f92672">-</span>service:
+</span></span><span style="display:flex;"><span>            path: <span style="color:#f92672">/</span>order<span style="color:#f92672">/**</span>
+</span></span><span style="display:flex;"><span>            serviceId: order<span style="color:#f92672">-</span>service
+</span></span></code></pre></div><ul>
+<li>解释：
+<ul>
+<li>user-service 和 order-service 是路由的名称，可以自定义</li>
+<li>path 是匹配的 URL 路径</li>
+<li>serviceId 是 Eureka 中注册的服务名称</li>
+</ul>
+</li>
+<li>自定义路由
+<ul>
+<li>如果不想使用服务名称作为路由前缀，可以自定义路由：</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">zuul</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">custom-user-service</span>: <span style="color:#75715e"># 路由策略</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/api/user/**</span> <span style="color:#75715e"># 匹配路径</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">url</span>: <span style="color:#ae81ff">http://localhost:8081</span> <span style="color:#75715e"># 目标服务地址</span>
+</span></span></code></pre></div><h2 id="负载均衡配置">负载均衡配置
+</h2><h3 id="1集成-ribbon">（1）集成 Ribbon
+</h3><ul>
+<li>Zuul 默认集成了 Ribbon，可以通过服务名称实现负载均衡</li>
+<li>在 <strong>application.yml</strong> 中配置 Ribbon：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">zuul</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">custom-user-service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/api/user/**</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">serviceId</span>: <span style="color:#ae81ff">custom-user-service</span> <span style="color:#75715e"># 使用服务名称</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">custom-user-service</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">listOfServers</span>: <span style="color:#ae81ff">http://localhost:8081,http://localhost:8082</span> <span style="color:#75715e"># 目标服务实例列表</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">NFLoadBalancerRuleClassName</span>: <span style="color:#ae81ff">com.netflix.loadbalancer.RandomRule</span> <span style="color:#75715e"># 随机策略</span>
+</span></span></code></pre></div><h2 id="实例完整的-zuul-配置">实例：完整的 Zuul 配置
+</h2><h3 id="1applicationyml">（1）application.yml
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">user-service</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ribbon</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">listOfServers</span>: <span style="color:#ae81ff">http://localhost:8081,http://localhost:8082</span> <span style="color:#75715e"># 目标服务实例列表</span>
+</span></span></code></pre></div><h3 id="2启动类">（2）启动类
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableZuulProxy</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ZuulApplication</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) {
+</span></span><span style="display:flex;"><span>        SpringAppliction.<span style="color:#a6e22e">run</span>(ZuulApplication.<span style="color:#a6e22e">class</span>, args);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="zuul-与-spring-cloud-gateway对比">Zuul 与 Spring Cloud Gateway对比
+</h2><div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>对比项</th>
+					<th>Spring Cloud Gateway</th>
+					<th>Spring Cloud Zuul 1.x</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>架构模型</td>
+					<td>异步非阻塞 (基于 WebFlux 和 Reactor)</td>
+					<td>同步阻塞 (基于 Servlet)</td>
+			</tr>
+			<tr>
+					<td>过滤器链</td>
+					<td>轻量高效</td>
+					<td>相对较重</td>
+			</tr>
+			<tr>
+					<td>路由匹配</td>
+					<td>高效的路由匹配算法</td>
+					<td>相对较慢</td>
+			</tr>
+			<tr>
+					<td>内存消耗</td>
+					<td>较低 (基于 Netty)</td>
+					<td>较高 (基于 Servlet 容器)</td>
+			</tr>
+			<tr>
+					<td>编程模型</td>
+					<td>响应式编程</td>
+					<td>传统同步模型</td>
+			</tr>
+			<tr>
+					<td>负载均衡</td>
+					<td>集成 Spring Cloud LoadBalancer</td>
+					<td>使用 Ribbon</td>
+			</tr>
+			<tr>
+					<td>线程切换</td>
+					<td>较少</td>
+					<td>较多</td>
+			</tr>
+			<tr>
+					<td>连接管理</td>
+					<td>使用 Netty 连接池</td>
+					<td>相对简单</td>
+			</tr>
+			<tr>
+					<td>协议支持</td>
+					<td>原生支持 HTTP/2</td>
+					<td>主要支持 HTTP/1.1</td>
+			</tr>
+			<tr>
+					<td>上下文切换</td>
+					<td>较少</td>
+					<td>较多</td>
+			</tr>
+			<tr>
+					<td>性能</td>
+					<td>更高</td>
+					<td>相对较低</td>
+			</tr>
+	</tbody>
+</table></div>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring-cloud/">Spring Cloud</a>
+        
+            <a href="/tags/zuul/">Zuul</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">相关文章</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/zipkin/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Zipkin</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudsleuth/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Sleuth</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudgateway/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Gateway</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudconfig/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Config</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudbus/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Bus</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https:\/\/xumf.net\/blog\/zuul\/';
+        this.page.identifier = '418566ebe15011546fdcd934ad0b529b';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xumf.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 小蜜蜂
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

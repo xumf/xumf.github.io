@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="三级缓存 在 Spring 框架中，三级缓存机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。\n">
+<title>Spring 三级缓存</title>
+
+
+<link rel="canonical" href="https://xumf.net/blog/springthridlevelcache/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="Spring 三级缓存">
+<meta property='og:description' content="三级缓存 在 Spring 框架中，三级缓存机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。\n">
+<meta property='og:url' content='https://xumf.net/blog/springthridlevelcache/'>
+<meta property='og:site_name' content='小蜜蜂'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:tag' content='Spring Refresh' /><meta property='article:tag' content='Spring' /><meta property='article:published_time' content='2025-01-30T22:39:17&#43;08:00'/><meta property='article:modified_time' content='2025-01-30T22:39:17&#43;08:00'/>
+<meta name="twitter:title" content="Spring 三级缓存">
+<meta name="twitter:description" content="三级缓存 在 Spring 框架中，三级缓存机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/images/logo.png" 
+                        width=""
+                        height=""
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">小蜜蜂</a></h1>
+            <h2 class="site-description">Code Farming Engineer</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xumf/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>了解我</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/springthridlevelcache/">Spring 三级缓存</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2025-01-30T22:39:17&#43;08:00'>2025年 1月 30日</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 3 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    <h2 id="三级缓存">三级缓存
+</h2><p>在 Spring 框架中，<strong>三级缓存</strong>机制用于解决单例 Bean 的循环依赖问题。当两个或多个单例 Bean 相互依赖时，Spring 通过三级缓存来确保它们能够相互引用，避免了循环依赖倒置的错误。</p>
+<h3 id="三级缓存的组成">三级缓存的组成：
+</h3>
+    <blockquote>
+        <p>Spring的DefaultSingletonBeanRegistry类三级缓存对象</p>
+
+    </blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> singletonObjects <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;</span>(256);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> earlySingletonObjects <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;</span>(16);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String, ObjectFactory<span style="color:#f92672">&lt;?&gt;&gt;</span> singletonFactories <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;</span>(16);
+</span></span></code></pre></div><ol>
+<li><strong>一级缓存（<strong><strong>singletonObjects</strong></strong>）</strong>：存放完全初始化的单例 Bean 实例。当请求一个 Bean 时，Spring 首先从一级缓存中查找，如果存在，则直接返回实例。</li>
+<li><strong>二级缓存（<strong><strong>earlySingletonObjects</strong></strong>）</strong>：存放尚未完全初始化的单例 Bean 实例，通常是指构造函数已执行完毕，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，但属性尚未填充的 Bean。当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中，以便在依赖注入过程中，其它 Bean 可以获取该 Bean 的早期引用，从而解决循环依赖。</li>
+<li><strong>三级缓存（<strong><strong>singletonFactories</strong></strong>）</strong>：存放用于创建单例 Bean 的工厂对象（ObjectFactory）。当 Bean 正在创建过程中，且需要提前暴露其引用时，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取正在创建中的 Bean 的引用。</li>
+</ol>
+<h3 id="三级缓存解决下循环依赖的流程">三级缓存解决下循环依赖的流程
+</h3><ol>
+<li><strong>实例化 Bean</strong>：当 Spring 需要创建一个 Bean 时，首先会检查一级缓存中是否已有该 Bean 的实例。如果没有，则开始实例化该 Bean。</li>
+<li><strong>放入三级缓存</strong>：在实例化过程中，Spring 会将用于创建该 Bean 的工厂对象放入三级缓存中。这样，其它 Bean 在依赖注入时，可以通过三级缓存获取该工厂对象，从而获取到正在创建中的 Bean 的引用。</li>
+<li><strong>放入二级缓存</strong>：当 Bean 的构造函数执行完毕后，Spring 会将其放入二级缓存中。此时，其它 Bean 可以从二级缓存中获取到该 Bean 的早期引用。</li>
+<li><strong>放入一级缓存</strong>：当 Bean 的属性填充和初始化方法执行完毕后，Spring 会将其放入一级缓存，表示该 Bean 已完全初始化。此时，其它 Bean 可以从一级缓存中获取到该 Bean 的实例。</li>
+</ol>
+<h3 id="为什么需要三级缓存">为什么需要三级缓存？
+</h3><p>虽然二级缓存可以解决大部分循环依赖问题，但在涉及 AOP（面向切面编程）时，三级缓存显得尤为重要。在 AOP 代理的情况下，Bean 的创建过程需要通过代理工厂来生成代理对象。三级缓存缓存中的工厂对象正是用于创建这些代理对象的。如果没有三级缓存，Spring 将无法在 Bean 创建过程中提前暴露代理对象，从而导致循环依赖无法解决。</p>
+<p>通过引用三级缓存，Spring 能够在 Bean 创建过程中提前暴露代理对象，确保循环依赖能够正确解决。这使得 Spring 在处理复杂的依赖关系时，能够保持高效和灵活。</p>
+<p>总之，Spring 的三级缓存机制通过合理的缓存策略，确保了单例 Bean 在存在循环依赖和 AOP 代理的情况下，能够正确地相互引用，避免了循环依赖导致的错误。</p>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring-refresh/">Spring Refresh</a>
+        
+            <a href="/tags/spring/">Spring</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">相关文章</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/springbootstartflow/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">SpringBoot 启动流程</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https:\/\/xumf.net\/blog\/springthridlevelcache\/';
+        this.page.identifier = '3b96d7f8197605e3a033cdabed23204a';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xumf.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 小蜜蜂
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

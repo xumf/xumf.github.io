@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Spring Cloud Bus 的核心概念 （1）什么是 Spring Cloud Bus？ Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新） 它基于消息中间件（RabbitMQ、Kafka）实现，解决 Config Server 逐台通知的痛点——没有 Bus 时，配置变更后需要逐一重启或手动调用每个客户端端点的 refresh 与 Spring Cloud Config 配合使用是主流场景，但 Bus 本身不依赖 Config——任何需要广播的事件都可以通过 Bus 传播 （2）Spring Cloud Bus 的组成 消息中间件：RabbitMQ 或 Kafka，负责传递事件 事件生产者：Config Server 或其他微服务，发送事件 事件消费者：Config Client 或其他微服务，接收事件并执行相应操作 （3）Spring Cloud Bus 的特点 全局配置刷新：通过 /actuator/bus-refresh 端点触发全局配置刷新 服务状态同步：通过事件传播实现服务状态同步 多消息中间件支持：支持 RabbitMQ 和 Kafka 定点通知：支持指定某个或某几个服务实例刷新（/actuator/bus-refresh/{destination}），避免全量广播 Spring Cloud Bus 的工作原理 （1）事件传播流程 事件生产者（如 Config Server）发送事件到消息中间件 消息中间件将事件广播给所有订阅该队列的消费者 事件消费者接收到事件并执行相应操作 关键：每个 Bus 客户端启动时会在消息中间件中创建自己的唯一队列（基于 spring.cloud.bus.id），Bus 通过这个队列实现定点通知——/bus-refresh/user-service:** 只会发送给 service ID 为 user-service 的实例。\n">
+<title>Spring Cloud Bus</title>
+
+
+<link rel="canonical" href="https://xumf.net/blog/springcloudbus/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="Spring Cloud Bus">
+<meta property='og:description' content="Spring Cloud Bus 的核心概念 （1）什么是 Spring Cloud Bus？ Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新） 它基于消息中间件（RabbitMQ、Kafka）实现，解决 Config Server 逐台通知的痛点——没有 Bus 时，配置变更后需要逐一重启或手动调用每个客户端端点的 refresh 与 Spring Cloud Config 配合使用是主流场景，但 Bus 本身不依赖 Config——任何需要广播的事件都可以通过 Bus 传播 （2）Spring Cloud Bus 的组成 消息中间件：RabbitMQ 或 Kafka，负责传递事件 事件生产者：Config Server 或其他微服务，发送事件 事件消费者：Config Client 或其他微服务，接收事件并执行相应操作 （3）Spring Cloud Bus 的特点 全局配置刷新：通过 /actuator/bus-refresh 端点触发全局配置刷新 服务状态同步：通过事件传播实现服务状态同步 多消息中间件支持：支持 RabbitMQ 和 Kafka 定点通知：支持指定某个或某几个服务实例刷新（/actuator/bus-refresh/{destination}），避免全量广播 Spring Cloud Bus 的工作原理 （1）事件传播流程 事件生产者（如 Config Server）发送事件到消息中间件 消息中间件将事件广播给所有订阅该队列的消费者 事件消费者接收到事件并执行相应操作 关键：每个 Bus 客户端启动时会在消息中间件中创建自己的唯一队列（基于 spring.cloud.bus.id），Bus 通过这个队列实现定点通知——/bus-refresh/user-service:** 只会发送给 service ID 为 user-service 的实例。\n">
+<meta property='og:url' content='https://xumf.net/blog/springcloudbus/'>
+<meta property='og:site_name' content='小蜜蜂'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:tag' content='Spring Cloud Bus' /><meta property='article:tag' content='Spring Cloud' /><meta property='article:published_time' content='2024-01-05T13:42:22&#43;08:00'/><meta property='article:modified_time' content='2024-01-05T13:42:22&#43;08:00'/>
+<meta name="twitter:title" content="Spring Cloud Bus">
+<meta name="twitter:description" content="Spring Cloud Bus 的核心概念 （1）什么是 Spring Cloud Bus？ Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新） 它基于消息中间件（RabbitMQ、Kafka）实现，解决 Config Server 逐台通知的痛点——没有 Bus 时，配置变更后需要逐一重启或手动调用每个客户端端点的 refresh 与 Spring Cloud Config 配合使用是主流场景，但 Bus 本身不依赖 Config——任何需要广播的事件都可以通过 Bus 传播 （2）Spring Cloud Bus 的组成 消息中间件：RabbitMQ 或 Kafka，负责传递事件 事件生产者：Config Server 或其他微服务，发送事件 事件消费者：Config Client 或其他微服务，接收事件并执行相应操作 （3）Spring Cloud Bus 的特点 全局配置刷新：通过 /actuator/bus-refresh 端点触发全局配置刷新 服务状态同步：通过事件传播实现服务状态同步 多消息中间件支持：支持 RabbitMQ 和 Kafka 定点通知：支持指定某个或某几个服务实例刷新（/actuator/bus-refresh/{destination}），避免全量广播 Spring Cloud Bus 的工作原理 （1）事件传播流程 事件生产者（如 Config Server）发送事件到消息中间件 消息中间件将事件广播给所有订阅该队列的消费者 事件消费者接收到事件并执行相应操作 关键：每个 Bus 客户端启动时会在消息中间件中创建自己的唯一队列（基于 spring.cloud.bus.id），Bus 通过这个队列实现定点通知——/bus-refresh/user-service:** 只会发送给 service ID 为 user-service 的实例。\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/images/logo.png" 
+                        width=""
+                        height=""
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">小蜜蜂</a></h1>
+            <h2 class="site-description">Code Farming Engineer</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xumf/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>了解我</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/springcloudbus/">Spring Cloud Bus</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2024-01-05T13:42:22&#43;08:00'>2024年 1月 05日</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 4 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    <h2 id="spring-cloud-bus-的核心概念">Spring Cloud Bus 的核心概念
+</h2><h3 id="1什么是-spring-cloud-bus">（1）什么是 Spring Cloud Bus？
+</h3><ul>
+<li>Spring Cloud Bus 是一个分布式事件总线，用于在微服务之间传播状态变化（如配置更新）</li>
+<li>它基于消息中间件（RabbitMQ、Kafka）实现，解决 Config Server 逐台通知的痛点——没有 Bus 时，配置变更后需要逐一重启或手动调用每个客户端端点的 <code>refresh</code></li>
+<li>与 Spring Cloud Config 配合使用是主流场景，但 Bus 本身不依赖 Config——任何需要广播的事件都可以通过 Bus 传播</li>
+</ul>
+<h3 id="2spring-cloud-bus-的组成">（2）Spring Cloud Bus 的组成
+</h3><ul>
+<li><strong>消息中间件</strong>：RabbitMQ 或 Kafka，负责传递事件</li>
+<li><strong>事件生产者</strong>：Config Server 或其他微服务，发送事件</li>
+<li><strong>事件消费者</strong>：Config Client 或其他微服务，接收事件并执行相应操作</li>
+</ul>
+<h3 id="3spring-cloud-bus-的特点">（3）Spring Cloud Bus 的特点
+</h3><ul>
+<li>全局配置刷新：通过 <code>/actuator/bus-refresh</code> 端点触发全局配置刷新</li>
+<li>服务状态同步：通过事件传播实现服务状态同步</li>
+<li>多消息中间件支持：支持 RabbitMQ 和 Kafka</li>
+<li><strong>定点通知</strong>：支持指定某个或某几个服务实例刷新（<code>/actuator/bus-refresh/{destination}</code>），避免全量广播</li>
+</ul>
+<h2 id="spring-cloud-bus-的工作原理">Spring Cloud Bus 的工作原理
+</h2><h3 id="1事件传播流程">（1）事件传播流程
+</h3><ol>
+<li>事件生产者（如 Config Server）发送事件到消息中间件</li>
+<li>消息中间件将事件广播给所有订阅该队列的消费者</li>
+<li>事件消费者接收到事件并执行相应操作</li>
+</ol>
+<p>关键：每个 Bus 客户端启动时会在消息中间件中创建自己的唯一队列（基于 <code>spring.cloud.bus.id</code>），Bus 通过这个队列实现定点通知——<code>/bus-refresh/user-service:**</code> 只会发送给 service ID 为 user-service 的实例。</p>
+<h3 id="2全局配置刷新流程">（2）全局配置刷新流程
+</h3><ol>
+<li>管理员调用 POST <code>/actuator/bus-refresh</code>（向任意一个 Bus 客户端请求即可——它会通过消息中间件广播给所有实例）</li>
+<li>该客户端发布 <code>RefreshRemoteApplicationEvent</code></li>
+<li>消息中间件广播该事件</li>
+<li>所有 Config Client 监听到事件，调用 <code>ContextRefresher.refresh()</code> → <code>RefreshScope.refreshAll()</code></li>
+<li>标记了 <code>@RefreshScope</code> 的 Bean 被销毁并重新创建，加载新配置</li>
+</ol>
+<h2 id="spring-cloud-bus-的配置">Spring Cloud Bus 的配置
+</h2><h3 id="1rabbitmq-配置">（1）RabbitMQ 配置
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rabbitmq</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">host</span>: <span style="color:#ae81ff">localhost</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">5672</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">username</span>: <span style="color:#ae81ff">guest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">password</span>: <span style="color:#ae81ff">guest</span>
+</span></span></code></pre></div><h3 id="2kafka-配置">（2）Kafka 配置
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kafka</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">bootstrap-servers</span>: <span style="color:#ae81ff">localhost:9092</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">consumer</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">group-id</span>: <span style="color:#ae81ff">my-group</span>
+</span></span></code></pre></div><h3 id="3添加依赖">（3）添加依赖
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-bus-amqp<span style="color:#f92672">&lt;/artifactId&gt;</span> <span style="color:#75715e">&lt;!-- RabbitMQ --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- 或 --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- &lt;artifactId&gt;spring-cloud-starter-bus-kafka&lt;/artifactId&gt; --&gt;</span> <span style="color:#75715e">&lt;!-- Kafka --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h3 id="4暴露-actuator-端点">（4）暴露 Actuator 端点
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">management</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">endpoints</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">web</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">exposure</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">include</span>: <span style="color:#ae81ff">bus-refresh</span>
+</span></span></code></pre></div><h2 id="spring-cloud-bus-的使用场景">Spring Cloud Bus 的使用场景
+</h2><h3 id="1全局配置刷新">（1）全局配置刷新
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 全量刷新</span>
+</span></span><span style="display:flex;"><span>curl -X POST http://localhost:8888/actuator/bus-refresh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 定点刷新（只刷新 user-service）</span>
+</span></span><span style="display:flex;"><span>curl -X POST http://localhost:8888/actuator/bus-refresh/user-service:**
+</span></span></code></pre></div><h3 id="2自定义事件">（2）自定义事件
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 发送自定义事件</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> ApplicationEventPublisher publisher;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendCustomEvent</span>() {
+</span></span><span style="display:flex;"><span>    publisher.<span style="color:#a6e22e">publishEvent</span>(<span style="color:#66d9ef">new</span> MyCustomEvent(<span style="color:#66d9ef">this</span>, <span style="color:#e6db74">&#34;custom-data&#34;</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 接收自定义事件</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EventListener</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">handleCustomEvent</span>(MyCustomEvent event) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 处理事件</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>注意：自定义事件必须继承 <code>RemoteApplicationEvent</code> 才能通过 Bus 传播到其他服务节点，否则只会在本地发布。</p>
+<h3 id="3指定服务刷新的场景">（3）指定服务刷新的场景
+</h3><p>当集群中不同服务配置不同时，全量刷新可能造成混乱。定点刷新适用于：</p>
+<ul>
+<li>灰度配置发布：只刷新新版本的服务实例</li>
+<li>分批部署：一组一组刷新，观察无问题后再继续</li>
+</ul>
+<h2 id="spring-cloud-bus-源码概览">Spring Cloud Bus 源码概览
+</h2><h3 id="1busrefreshendpoint">（1）BusRefreshEndpoint
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Endpoint</span>(id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;bus-refresh&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BusRefreshEndpoint</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ApplicationEventPublisher publisher;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">BusRefreshEndpoint</span>(ApplicationEventPublisher publisher) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">publisher</span> <span style="color:#f92672">=</span> publisher;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@WriteOperation</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">refresh</span>() {
+</span></span><span style="display:flex;"><span>        publisher.<span style="color:#a6e22e">publishEvent</span>(<span style="color:#66d9ef">new</span> RefreshRemoteApplicationEvent(<span style="color:#66d9ef">this</span>, <span style="color:#66d9ef">null</span>, <span style="color:#66d9ef">null</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="2refreshremoteapplicationevent">（2）RefreshRemoteApplicationEvent
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RefreshRemoteApplicationEvent</span> <span style="color:#66d9ef">extends</span> RemoteApplicationEvent {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">RefreshRemoteApplicationEvent</span>(Object source, String originService, String destinationService) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span>(source, originService, destinationService);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>destinationService</code> 参数用于定点通知：<code>null</code> 表示广播给所有服务，指定值（如 <code>user-service:**</code>）则只发送给匹配的实例。</p>
+<h3 id="3refreshlistener">（3）RefreshListener
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RefreshListener</span> <span style="color:#66d9ef">implements</span> ApplicationListener<span style="color:#f92672">&lt;</span>RefreshRemoteApplicationEvent<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> RefreshScope refreshScope;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">RefreshListener</span>(RefreshScope refreshScope) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">refreshScope</span> <span style="color:#f92672">=</span> refreshScope;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onApplicationEvent</span>(RefreshRemoteApplicationEvent event) {
+</span></span><span style="display:flex;"><span>        refreshScope.<span style="color:#a6e22e">refreshAll</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="常见问题排查">常见问题排查
+</h2><ol>
+<li>
+<p><strong>Bugs 刷新后配置未生效</strong></p>
+<ul>
+<li>检查 <code>@RefreshScope</code> 是否标注在使用配置的 Bean 上（注意：@RefreshScope 只对加了该注解的 Bean 有效，其依赖的其他 Bean 不会重建）</li>
+<li><code>@ConfigurationProperties</code> 的类只需标注 <code>@RefreshScope</code> 即可刷新，但已经在使用的 Bean 不会自动重新注入——需要确保引用方也标注 @RefreshScope</li>
+<li>检查 Control Bus 端口（<code>spring.cloud.bus.id</code>）是否在多个服务间唯一</li>
+</ul>
+</li>
+<li>
+<p><strong>事件未传播到其他服务</strong></p>
+<ul>
+<li>检查所有服务是否连接到同一个消息中间件实例（不同的 RabbitMQ vhost 或 Kafka topic 会导致隔离）</li>
+<li>检查 <code>spring.cloud.bus.destination</code> 配置是否一致（默认 <code>springCloudBus</code> 即可）</li>
+</ul>
+</li>
+<li>
+<p><strong>Bus refresh 导致启动过慢</strong></p>
+<ul>
+<li>Bus 客户端启动时会连接到消息中间件，如果中间件不可用，启动会卡住。可通过 <code>spring.cloud.bus.enabled=false</code> 禁用非必要实例的 Bus 功能</li>
+<li>建议配置 <code>spring.cloud.bus.env.enabled=true</code>（默认开启），允许 Bus 端点只在特定 profile 下启用</li>
+</ul>
+</li>
+<li>
+<p><strong>RabbitMQ 配置正确但连接失败</strong></p>
+<ul>
+<li>检查防火墙和端口（5672 是 AMQP 端口，15672 是管理控制台——两者不要混淆）</li>
+<li>验证 RabbitMQ 的 vhost 和用户权限</li>
+</ul>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring-cloud-bus/">Spring Cloud Bus</a>
+        
+            <a href="/tags/spring-cloud/">Spring Cloud</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">相关文章</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/ribbon/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ribbon</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/nacos/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Nacos</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/hystrix/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Hystrix</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/feign/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Feign</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/eureka/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Eureka</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https:\/\/xumf.net\/blog\/springcloudbus\/';
+        this.page.identifier = 'b7979bb494420cdf3d1face04254c1d3';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xumf.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 小蜜蜂
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

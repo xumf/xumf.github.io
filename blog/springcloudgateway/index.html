@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Spring Cloud Gateway 核心原理 1. 为什么选择 Gateway 而非 Zuul？ Spring Cloud Gateway 基于 Spring WebFlux 和 Project Reactor，采用反应式编程模型（非阻塞 I/O）。与 Zuul 1.x（基于 Servlet API，同步阻塞）相比：\n">
+<title>Spring Cloud Gateway</title>
+
+
+<link rel="canonical" href="https://xumf.net/blog/springcloudgateway/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="Spring Cloud Gateway">
+<meta property='og:description' content="Spring Cloud Gateway 核心原理 1. 为什么选择 Gateway 而非 Zuul？ Spring Cloud Gateway 基于 Spring WebFlux 和 Project Reactor，采用反应式编程模型（非阻塞 I/O）。与 Zuul 1.x（基于 Servlet API，同步阻塞）相比：\n">
+<meta property='og:url' content='https://xumf.net/blog/springcloudgateway/'>
+<meta property='og:site_name' content='小蜜蜂'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:tag' content='Spring Cloud Gateway' /><meta property='article:tag' content='Spring Cloud' /><meta property='article:published_time' content='2024-07-18T23:13:45&#43;08:00'/><meta property='article:modified_time' content='2024-07-18T23:13:45&#43;08:00'/>
+<meta name="twitter:title" content="Spring Cloud Gateway">
+<meta name="twitter:description" content="Spring Cloud Gateway 核心原理 1. 为什么选择 Gateway 而非 Zuul？ Spring Cloud Gateway 基于 Spring WebFlux 和 Project Reactor，采用反应式编程模型（非阻塞 I/O）。与 Zuul 1.x（基于 Servlet API，同步阻塞）相比：\n">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/images/logo.png" 
+                        width=""
+                        height=""
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">小蜜蜂</a></h1>
+            <h2 class="site-description">Code Farming Engineer</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xumf/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>了解我</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/springcloudgateway/">Spring Cloud Gateway</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2024-07-18T23:13:45&#43;08:00'>2024年 7月 18日</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 4 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    <h2 id="spring-cloud-gateway-核心原理">Spring Cloud Gateway 核心原理
+</h2><h3 id="1-为什么选择-gateway-而非-zuul">1. 为什么选择 Gateway 而非 Zuul？
+</h3><p>Spring Cloud Gateway 基于 <strong>Spring WebFlux</strong> 和 <strong>Project Reactor</strong>，采用反应式编程模型（非阻塞 I/O）。与 Zuul 1.x（基于 Servlet API，同步阻塞）相比：</p>
+<div class="table-wrapper"><table>
+	<thead>
+			<tr>
+					<th>特性</th>
+					<th>Gateway</th>
+					<th>Zuul 1.x</th>
+					<th>Zuul 2.x</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>底层模型</td>
+					<td>Netty + WebFlux</td>
+					<td>Tomcat + Servlet</td>
+					<td>Netty</td>
+			</tr>
+			<tr>
+					<td>I/O 模型</td>
+					<td>异步非阻塞</td>
+					<td>同步阻塞</td>
+					<td>异步非阻塞</td>
+			</tr>
+			<tr>
+					<td>长连接</td>
+					<td>原生支持</td>
+					<td>不支持</td>
+					<td>支持</td>
+			</tr>
+			<tr>
+					<td>性能（吞吐量）</td>
+					<td>高</td>
+					<td>低（每个请求占用一个线程）</td>
+					<td>中</td>
+			</tr>
+			<tr>
+					<td>学习成本</td>
+					<td>较高（需了解 Reactor）</td>
+					<td>低</td>
+					<td>较高</td>
+			</tr>
+	</tbody>
+</table></div>
+<p>Gateway 的异步模型意味着：一个请求从进入到返回不占用独立线程，处理过程中线程可以服务其他请求，因此在高并发场景下线程资源占用远少于 Zuul 1.x。</p>
+<h3 id="2-架构组成">2. 架构组成
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>Client -&gt; Gateway -&gt; Route Predicate -&gt; Gateway Filter -&gt; Target Service
+</span></span></code></pre></div><h3 id="3-核心概念">3. 核心概念
+</h3><ul>
+<li><strong>Route</strong>：路由，包含目标 URI、Predicate 集合和 Filter 集合</li>
+<li><strong>Predicate</strong>：断言，用于匹配 HTTP 请求（满足条件才走该路由）</li>
+<li><strong>Filter</strong>：过滤器，用于修改请求和响应（分为 GatewayFilter 和 GlobalFilter）</li>
+</ul>
+<h3 id="4-工作流程">4. 工作流程
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>1. 客户端发起请求
+</span></span><span style="display:flex;"><span>2. Gateway Handler Mapping 查找匹配的路由（遍历所有 Route 的 Predicate 集合）
+</span></span><span style="display:flex;"><span>3. 执行 Gateway Filter 链（pre filters）
+</span></span><span style="display:flex;"><span>4. 代理请求到目标服务
+</span></span><span style="display:flex;"><span>5. 执行 Gateway Filter 链（post filters）
+</span></span><span style="display:flex;"><span>6. 返回响应给客户端
+</span></span></code></pre></div><h3 id="5-关键组件">5. 关键组件
+</h3><ul>
+<li><strong>RouteLocator</strong>：路由定位器，定义路由规则</li>
+<li><strong>GatewayFilter</strong>：网关过滤器（按路由配置）</li>
+<li><strong>GlobalFilter</strong>：全局过滤器（所有路由生效）</li>
+<li><strong>RoutePredicateHandlerMapping</strong>：路由断言处理器映射</li>
+<li><strong>WebHandler</strong>：Web 请求处理器（底层由 WebFlux 的 DispatcherHandler 执行）</li>
+</ul>
+<h2 id="重要知识点">重要知识点
+</h2><h3 id="1-gateway-和-zuul-的区别">1. Gateway 和 Zuul 的区别？
+</h3><p>见上方对比表。核心差异在于<strong>线程模型</strong>：Gateway 用少量线程处理大量请求（事件驱动），Zuul 1.x 每个请求对应一个线程（同步阻塞）。</p>
+<h3 id="2-gateway-的核心组件">2. Gateway 的核心组件？
+</h3><p>Route、Predicate、Filter（GatewayFilter + GlobalFilter）、RouteLocator、GatewayFilterFactory</p>
+<h3 id="3-如何自定义过滤器">3. 如何自定义过滤器？
+</h3><p>自定义 GatewayFilter 实现 GatewayFilter + Ordered 接口：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CustomFilter</span> <span style="color:#66d9ef">implements</span> GatewayFilter, Ordered {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Mono<span style="color:#f92672">&lt;</span>Void<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">filter</span>(ServerWebExchange exchange, GatewayFilterChain chain) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 前置处理</span>
+</span></span><span style="display:flex;"><span>        String requestPath <span style="color:#f92672">=</span> exchange.<span style="color:#a6e22e">getRequest</span>().<span style="color:#a6e22e">getURI</span>().<span style="color:#a6e22e">getPath</span>();
+</span></span><span style="display:flex;"><span>        exchange.<span style="color:#a6e22e">getAttributes</span>().<span style="color:#a6e22e">put</span>(<span style="color:#e6db74">&#34;startTime&#34;</span>, System.<span style="color:#a6e22e">currentTimeMillis</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> chain.<span style="color:#a6e22e">filter</span>(exchange).<span style="color:#a6e22e">then</span>(Mono.<span style="color:#a6e22e">fromRunnable</span>(() <span style="color:#f92672">-&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 后置处理</span>
+</span></span><span style="display:flex;"><span>            Long startTime <span style="color:#f92672">=</span> exchange.<span style="color:#a6e22e">getAttribute</span>(<span style="color:#e6db74">&#34;startTime&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (startTime <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">long</span> cost <span style="color:#f92672">=</span> System.<span style="color:#a6e22e">currentTimeMillis</span>() <span style="color:#f92672">-</span> startTime;
+</span></span><span style="display:flex;"><span>                log.<span style="color:#a6e22e">info</span>(<span style="color:#e6db74">&#34;{} 耗时 {}ms&#34;</span>, requestPath, cost);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getOrder</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span>1; <span style="color:#75715e">// 越小越先执行</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>注册方式：在 Route 定义中通过 <code>.filters(f -&gt; f.filter(new CustomFilter()))</code> 注入。</p>
+<h3 id="4-gateway-如何实现负载均衡">4. Gateway 如何实现负载均衡？
+</h3><ul>
+<li>集成 Spring Cloud LoadBalancer</li>
+<li>使用 <strong>lb://service-id</strong> 格式的 URI（例如 <code>lb://user-service</code>）</li>
+<li>Gateway 自动从注册中心（Nacos / Eureka）获取服务实例列表</li>
+<li>默认负载均衡算法为轮询（支持自定义 ReactiveLoadBalancer）</li>
+</ul>
+<h3 id="5-如何实现限流">5. 如何实现限流？
+</h3><p>使用 RequestRateLimiter GatewayFilter，基于令牌桶算法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">limit_route</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">http://example.org</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">RequestRateLimiter</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">redis-rate-limiter.replenishRate</span>: <span style="color:#ae81ff">10</span>  <span style="color:#75715e"># 每秒填充的令牌数</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">redis-rate-limiter.burstCapacity</span>: <span style="color:#ae81ff">20</span>   <span style="color:#75715e"># 令牌桶容量</span>
+</span></span></code></pre></div><p>注意：GateWay 的限流需要集成 Redis（基于 Redis 的 lua 脚本实现令牌桶），因此必须引入 <code>spring-boot-starter-data-redis-reactive</code>。</p>
+<h3 id="6-gateway-如何实现熔断">6. Gateway 如何实现熔断？
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">routes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">id</span>: <span style="color:#ae81ff">hystrix_route</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uri</span>: <span style="color:#ae81ff">lb://backing-service:8088</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Hystrix</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">fallbackcmd</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">fallbackUri</span>: <span style="color:#ae81ff">forward:/fallback</span>
+</span></span></code></pre></div><p>注意：Hystrix 已进入维护状态，新项目推荐使用 <strong>Spring Cloud CircuitBreaker</strong>（支持 Resilience4J）替代 Hystrix：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">filters</span>:
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">CircuitBreaker</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">myCircuitBreaker</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fallbackUri</span>: <span style="color:#ae81ff">forward:/fallback</span>
+</span></span></code></pre></div><h3 id="7-如何实现动态路由">7. 如何实现动态路由？
+</h3><p>实现 <code>RouteDefinitionRepository</code> 接口，从数据库或配置中心加载路由：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicRouteService</span> <span style="color:#66d9ef">implements</span> ApplicationEventPublisherAware {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> RouteDefinitionWriter routeDefinitionWriter;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addRoute</span>(RouteDefinition definition) {
+</span></span><span style="display:flex;"><span>        routeDefinitionWriter.<span style="color:#a6e22e">save</span>(Mono.<span style="color:#a6e22e">just</span>(definition)).<span style="color:#a6e22e">subscribe</span>();
+</span></span><span style="display:flex;"><span>        publisher.<span style="color:#a6e22e">publishEvent</span>(<span style="color:#66d9ef">new</span> RefreshRoutesEvent(<span style="color:#66d9ef">this</span>)); <span style="color:#75715e">// 刷新路由</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>更新的关键：保存路由定义后必须发布 <code>RefreshRoutesEvent</code>，否则新路由不会生效。</p>
+<h3 id="8-gateway-的安全机制">8. Gateway 的安全机制？
+</h3><ul>
+<li>集成 Spring Security + OAuth2 / JWT</li>
+<li>支持 HTTPS</li>
+<li>支持 IP 白名单（通过自定义 GlobalFilter 实现）</li>
+<li>常见安全风险：Gateway 默认不校验重复路由、不限制请求体大小——生产环境需额外配置</li>
+</ul>
+<h3 id="9-gateway-的监控">9. Gateway 的监控？
+</h3><ul>
+<li>集成 Actuator，<code>management.endpoints.web.exposure.include=gateway</code></li>
+<li><code>/actuator/gateway/routes</code>：查看已加载的路由</li>
+<li><code>/actuator/gateway/globalfilters</code>：查看已注册的全局过滤器</li>
+<li>结合 Micrometer + Prometheus + Grafana 采集请求延迟和错误率</li>
+</ul>
+<h3 id="10-gateway-如何处理跨域">10. Gateway 如何处理跨域？
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cloud</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">gateway</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">globalcors</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">cors-configurations</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#39;[/**]&#39;</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedOrigins</span>: <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedMethods</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">GET</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">POST</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">PUT</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">DELETE</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowedHeaders</span>: <span style="color:#e6db74">&#34;*&#34;</span>
+</span></span></code></pre></div><p>注意：Gateway 的位置特殊——跨域配置在网关层处理即可，后端服务无需重复配置 CORS。</p>
+<h2 id="排查思路">排查思路
+</h2><ol>
+<li><strong>路由不匹配</strong>
+<ul>
+<li>检查 Predicate 顺序（多个 Predicate 为 AND 关系）</li>
+<li>查看日志：<code>RoutePredicateHandlerMapping</code> 会打印 &ldquo;Mapping found&rdquo; 或 &ldquo;No route found&rdquo;</li>
+</ul>
+</li>
+<li><strong>转发失败</strong>
+<ul>
+<li>确认目标服务健康（直接访问目标服务接口验证）</li>
+<li>检查负载均衡 URI 格式是否以 lb:// 开头</li>
+<li>查看 Gateway 日志：<code>ReadTimeoutException</code> 表示后端响应过慢</li>
+</ul>
+</li>
+<li><strong>过滤器不生效</strong>
+<ul>
+<li>GlobalFilter 默认所有路由生效，GatewayFilter 须在路由配置中明确指定</li>
+<li>检查 Ordered 排序（低 order 值的过滤器先执行前置后执行后置）</li>
+</ul>
+</li>
+<li><strong>WebFlux 与旧版 Servlet 冲突</strong>
+<ul>
+<li>项目中不能同时存在 <code>spring-boot-starter-web</code> 和 <code>spring-boot-starter-webflux</code>，否则 Gateway 无法正常运行（Spring Boot 默认优先使用 Servlet 容器）。排查是否有其他模块引入了 web 依赖。</li>
+</ul>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spring-cloud-gateway/">Spring Cloud Gateway</a>
+        
+            <a href="/tags/spring-cloud/">Spring Cloud</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">相关文章</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/springcloudconfig/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Config</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/springcloudbus/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Spring Cloud Bus</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/ribbon/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ribbon</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/nacos/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Nacos</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/hystrix/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Hystrix</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https:\/\/xumf.net\/blog\/springcloudgateway\/';
+        this.page.identifier = 'cccfab3f24349079bc543cf7f7fb30f7';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xumf.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 小蜜蜂
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

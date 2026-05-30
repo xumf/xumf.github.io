@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="一、Nacos 核心概念 是什么？ Nacos（Dynamic Naming and Configuration Server）是阿里开源的服务发现+配置管理+服务治理平台，核心功能：\n服务发现与健康监测：服务注册、心跳机制、DNS 查询 动态配置管理：配置发布、监听、版本管理 动态 DNS：基于权重的路由、地域就近访问 服务元数据管理：支持应用/版本/环境等元数据 关键特性 双模式：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现） 配置实时推送：基于长轮询（减少无效请求） 生态兼容：无缝集成 Spring Cloud、Dubbo、Kubernetes 二、核心架构与原理 服务注册与发现流程 注册：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPC） 心跳：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除 发现：消费者通过订阅机制获取服务列表，本地缓存+增量更新 配置管理机制 发布配置：通过控制台/API发布配置，存储于 Derby 或 MySQL 监听配置：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回 历史版本：支持配置回滚和版本对比 一致性协议 CP 模式：使用 Raft 协议（配置管理场景） AP 模式：自研 Distro 协议（服务发现场景，最终一致性） 三、重要知识点 Nacos vs Eureka vs Zookeeper？ Eureka：AP 设计，适合服务发现，但功能单一 Zookeeper：CP 设计，强一致性，但写性能低 Nacos：AP/CP 可切换，集成服务发现+配置管理，生态更全面 长轮询如何实现配置实时推送？ 客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回 对比传统轮询：减少无效请求，提升实时性 对比 WebSocket：长轮询服务端实现更简单，但存在30秒最大延迟（非实时配置场景选长轮询即可，实时性要求极高场景考虑 gRPC 流式推送） Nacos 集群如何保证数据一致性？ Distro 模式（AP 模式）：每个节点负责部分数据，通过异步复制保证最终一致性。写入时先写本地，再异步复制到其他节点；读取时可能读到旧数据，但通常可接受（服务发现场景对一致性要求不高）。 Raft 协议（CP 模式）：选举 Leader，多数节点写成功才返回。适用于配置管理——配置错了影响面大，宁可不更新也不能不一致。 Nacos 2.0 升级了哪些内容？ 通信层优化：gRPC 替代 HTTP，减少连接数（1.x 每个客户端与 server 维持多个 HTTP 长连接，2.0 全复用为一条 gRPC 连接） 长连接增强：支持服务端主动推送，降低延迟 性能提升：支撑百万级服务实例 如何实现配置灰度发布？ 通过 Data ID 或 Group 分组，结合 Spring Cloud 的 @RefreshScope 或监听 ConfigChangeEvent 实现部分实例更新 更优雅的方式：使用 Nacos 的 Beta 发布功能——指定目标 IP 列表，只有命中 IP 的客户端拉取到灰度配置。验证无误后再全量发布。 四、实战场景与排查思路 服务注册失败常见原因 网络不通：检查 Nacos Server 地址和端口（telnet 或 nc 测试连通性） 版本冲突：Spring Cloud Alibaba 与 Nacos 版本不兼容 → 参考官方版本对应表 命名空间/Group 配置错误：客户端 namespace 和 group 须与服务端一致，命名空间为空时默认使用 public 防火墙/安全组拦截：gRPC 端口（9848/9849）需额外开放 配置不生效排查步骤 检查控制台配置是否发布成功（Data ID、Group、命名空间与客户端代码匹配） 检查 @RefreshScope 是否加在正确的位置——标注在 @Configuration 类上可能导致整个类重新创建，注意副作用 查看日志：com.alibaba.nacos.client.config.listener 包日志是否有监听异常 长轮询超时确认：查看请求日志中 HTTP 状态码是否为 200（非 304 表示配置变更） Nacos 集群部署注意事项 至少 3 个节点形成 Raft 选举（节点数建议奇数，避免脑裂） 使用 MySQL 作为外部存储（Derby 仅适合单机测试——集群模式下不使用 MySQL 会导致各节点数据不一致） 所有节点配置文件中的 cluster.conf 必须包含所有节点地址 通过 Nginx 做负载均衡时，gRPC 长连接需要配置 upstream 为 ip_hash 或使用 nginx-stream 模块 五、高级话题 Nacos-Sync 应用 跨注册中心同步（如 Kubernetes Service 到 Nacos、Eureka 迁移到 Nacos） 本质是事件监听+双向同步，注意循环同步问题（A→B→A 死循环），Nacos-Sync 通过记录同步来源避免 安全控制 开启鉴权：nacos.core.auth.enabled=true，配置自定义用户角色 重要：Nacos 2.2.3 之前默认鉴权不开启，且密钥为硬编码，务必修改 nacos.core.auth.plugin.nacos.token.secret.key 双活部署 多数据中心通过 Nacos-Sync 同步数据，结合 DNS 实现流量切换 注意：跨地域同步存在网络延迟，配置变更可能在数秒后才能传播到异地——不要依赖 Nacos 跨地域强一致 ">
+<title>Nacos</title>
+
+
+<link rel="canonical" href="https://xumf.net/blog/nacos/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap">
+
+
+<link rel="stylesheet" href="/scss/style.min.e62e09c60ba428a627e03568fa3df938f6a8224f815b5846f00816c17d4a0be4.css"><meta property='og:title' content="Nacos">
+<meta property='og:description' content="一、Nacos 核心概念 是什么？ Nacos（Dynamic Naming and Configuration Server）是阿里开源的服务发现+配置管理+服务治理平台，核心功能：\n服务发现与健康监测：服务注册、心跳机制、DNS 查询 动态配置管理：配置发布、监听、版本管理 动态 DNS：基于权重的路由、地域就近访问 服务元数据管理：支持应用/版本/环境等元数据 关键特性 双模式：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现） 配置实时推送：基于长轮询（减少无效请求） 生态兼容：无缝集成 Spring Cloud、Dubbo、Kubernetes 二、核心架构与原理 服务注册与发现流程 注册：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPC） 心跳：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除 发现：消费者通过订阅机制获取服务列表，本地缓存+增量更新 配置管理机制 发布配置：通过控制台/API发布配置，存储于 Derby 或 MySQL 监听配置：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回 历史版本：支持配置回滚和版本对比 一致性协议 CP 模式：使用 Raft 协议（配置管理场景） AP 模式：自研 Distro 协议（服务发现场景，最终一致性） 三、重要知识点 Nacos vs Eureka vs Zookeeper？ Eureka：AP 设计，适合服务发现，但功能单一 Zookeeper：CP 设计，强一致性，但写性能低 Nacos：AP/CP 可切换，集成服务发现+配置管理，生态更全面 长轮询如何实现配置实时推送？ 客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回 对比传统轮询：减少无效请求，提升实时性 对比 WebSocket：长轮询服务端实现更简单，但存在30秒最大延迟（非实时配置场景选长轮询即可，实时性要求极高场景考虑 gRPC 流式推送） Nacos 集群如何保证数据一致性？ Distro 模式（AP 模式）：每个节点负责部分数据，通过异步复制保证最终一致性。写入时先写本地，再异步复制到其他节点；读取时可能读到旧数据，但通常可接受（服务发现场景对一致性要求不高）。 Raft 协议（CP 模式）：选举 Leader，多数节点写成功才返回。适用于配置管理——配置错了影响面大，宁可不更新也不能不一致。 Nacos 2.0 升级了哪些内容？ 通信层优化：gRPC 替代 HTTP，减少连接数（1.x 每个客户端与 server 维持多个 HTTP 长连接，2.0 全复用为一条 gRPC 连接） 长连接增强：支持服务端主动推送，降低延迟 性能提升：支撑百万级服务实例 如何实现配置灰度发布？ 通过 Data ID 或 Group 分组，结合 Spring Cloud 的 @RefreshScope 或监听 ConfigChangeEvent 实现部分实例更新 更优雅的方式：使用 Nacos 的 Beta 发布功能——指定目标 IP 列表，只有命中 IP 的客户端拉取到灰度配置。验证无误后再全量发布。 四、实战场景与排查思路 服务注册失败常见原因 网络不通：检查 Nacos Server 地址和端口（telnet 或 nc 测试连通性） 版本冲突：Spring Cloud Alibaba 与 Nacos 版本不兼容 → 参考官方版本对应表 命名空间/Group 配置错误：客户端 namespace 和 group 须与服务端一致，命名空间为空时默认使用 public 防火墙/安全组拦截：gRPC 端口（9848/9849）需额外开放 配置不生效排查步骤 检查控制台配置是否发布成功（Data ID、Group、命名空间与客户端代码匹配） 检查 @RefreshScope 是否加在正确的位置——标注在 @Configuration 类上可能导致整个类重新创建，注意副作用 查看日志：com.alibaba.nacos.client.config.listener 包日志是否有监听异常 长轮询超时确认：查看请求日志中 HTTP 状态码是否为 200（非 304 表示配置变更） Nacos 集群部署注意事项 至少 3 个节点形成 Raft 选举（节点数建议奇数，避免脑裂） 使用 MySQL 作为外部存储（Derby 仅适合单机测试——集群模式下不使用 MySQL 会导致各节点数据不一致） 所有节点配置文件中的 cluster.conf 必须包含所有节点地址 通过 Nginx 做负载均衡时，gRPC 长连接需要配置 upstream 为 ip_hash 或使用 nginx-stream 模块 五、高级话题 Nacos-Sync 应用 跨注册中心同步（如 Kubernetes Service 到 Nacos、Eureka 迁移到 Nacos） 本质是事件监听+双向同步，注意循环同步问题（A→B→A 死循环），Nacos-Sync 通过记录同步来源避免 安全控制 开启鉴权：nacos.core.auth.enabled=true，配置自定义用户角色 重要：Nacos 2.2.3 之前默认鉴权不开启，且密钥为硬编码，务必修改 nacos.core.auth.plugin.nacos.token.secret.key 双活部署 多数据中心通过 Nacos-Sync 同步数据，结合 DNS 实现流量切换 注意：跨地域同步存在网络延迟，配置变更可能在数秒后才能传播到异地——不要依赖 Nacos 跨地域强一致 ">
+<meta property='og:url' content='https://xumf.net/blog/nacos/'>
+<meta property='og:site_name' content='小蜜蜂'>
+<meta property='og:type' content='article'><meta property='article:section' content='Blog' /><meta property='article:tag' content='Nacos' /><meta property='article:tag' content='Spring Cloud' /><meta property='article:published_time' content='2022-05-03T20:54:29&#43;08:00'/><meta property='article:modified_time' content='2022-05-03T20:54:29&#43;08:00'/>
+<meta name="twitter:title" content="Nacos">
+<meta name="twitter:description" content="一、Nacos 核心概念 是什么？ Nacos（Dynamic Naming and Configuration Server）是阿里开源的服务发现+配置管理+服务治理平台，核心功能：\n服务发现与健康监测：服务注册、心跳机制、DNS 查询 动态配置管理：配置发布、监听、版本管理 动态 DNS：基于权重的路由、地域就近访问 服务元数据管理：支持应用/版本/环境等元数据 关键特性 双模式：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现） 配置实时推送：基于长轮询（减少无效请求） 生态兼容：无缝集成 Spring Cloud、Dubbo、Kubernetes 二、核心架构与原理 服务注册与发现流程 注册：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPC） 心跳：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除 发现：消费者通过订阅机制获取服务列表，本地缓存+增量更新 配置管理机制 发布配置：通过控制台/API发布配置，存储于 Derby 或 MySQL 监听配置：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回 历史版本：支持配置回滚和版本对比 一致性协议 CP 模式：使用 Raft 协议（配置管理场景） AP 模式：自研 Distro 协议（服务发现场景，最终一致性） 三、重要知识点 Nacos vs Eureka vs Zookeeper？ Eureka：AP 设计，适合服务发现，但功能单一 Zookeeper：CP 设计，强一致性，但写性能低 Nacos：AP/CP 可切换，集成服务发现+配置管理，生态更全面 长轮询如何实现配置实时推送？ 客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回 对比传统轮询：减少无效请求，提升实时性 对比 WebSocket：长轮询服务端实现更简单，但存在30秒最大延迟（非实时配置场景选长轮询即可，实时性要求极高场景考虑 gRPC 流式推送） Nacos 集群如何保证数据一致性？ Distro 模式（AP 模式）：每个节点负责部分数据，通过异步复制保证最终一致性。写入时先写本地，再异步复制到其他节点；读取时可能读到旧数据，但通常可接受（服务发现场景对一致性要求不高）。 Raft 协议（CP 模式）：选举 Leader，多数节点写成功才返回。适用于配置管理——配置错了影响面大，宁可不更新也不能不一致。 Nacos 2.0 升级了哪些内容？ 通信层优化：gRPC 替代 HTTP，减少连接数（1.x 每个客户端与 server 维持多个 HTTP 长连接，2.0 全复用为一条 gRPC 连接） 长连接增强：支持服务端主动推送，降低延迟 性能提升：支撑百万级服务实例 如何实现配置灰度发布？ 通过 Data ID 或 Group 分组，结合 Spring Cloud 的 @RefreshScope 或监听 ConfigChangeEvent 实现部分实例更新 更优雅的方式：使用 Nacos 的 Beta 发布功能——指定目标 IP 列表，只有命中 IP 的客户端拉取到灰度配置。验证无误后再全量发布。 四、实战场景与排查思路 服务注册失败常见原因 网络不通：检查 Nacos Server 地址和端口（telnet 或 nc 测试连通性） 版本冲突：Spring Cloud Alibaba 与 Nacos 版本不兼容 → 参考官方版本对应表 命名空间/Group 配置错误：客户端 namespace 和 group 须与服务端一致，命名空间为空时默认使用 public 防火墙/安全组拦截：gRPC 端口（9848/9849）需额外开放 配置不生效排查步骤 检查控制台配置是否发布成功（Data ID、Group、命名空间与客户端代码匹配） 检查 @RefreshScope 是否加在正确的位置——标注在 @Configuration 类上可能导致整个类重新创建，注意副作用 查看日志：com.alibaba.nacos.client.config.listener 包日志是否有监听异常 长轮询超时确认：查看请求日志中 HTTP 状态码是否为 200（非 304 表示配置变更） Nacos 集群部署注意事项 至少 3 个节点形成 Raft 选举（节点数建议奇数，避免脑裂） 使用 MySQL 作为外部存储（Derby 仅适合单机测试——集群模式下不使用 MySQL 会导致各节点数据不一致） 所有节点配置文件中的 cluster.conf 必须包含所有节点地址 通过 Nginx 做负载均衡时，gRPC 长连接需要配置 upstream 为 ip_hash 或使用 nginx-stream 模块 五、高级话题 Nacos-Sync 应用 跨注册中心同步（如 Kubernetes Service 到 Nacos、Eureka 迁移到 Nacos） 本质是事件监听+双向同步，注意循环同步问题（A→B→A 死循环），Nacos-Sync 通过记录同步来源避免 安全控制 开启鉴权：nacos.core.auth.enabled=true，配置自定义用户角色 重要：Nacos 2.2.3 之前默认鉴权不开启，且密钥为硬编码，务必修改 nacos.core.auth.plugin.nacos.token.secret.key 双活部署 多数据中心通过 Nacos-Sync 同步数据，结合 DNS 实现流量切换 注意：跨地域同步存在网络延迟，配置变更可能在数秒后才能传播到异地——不要依赖 Nacos 跨地域强一致 ">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        <figure class="site-avatar">
+                <a href="/">
+                    <img src="/images/logo.png" 
+                        width=""
+                        height=""
+                        class="site-logo"
+                        loading="lazy"
+                        alt="Avatar">
+                </a>
+                
+            </figure>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">小蜜蜂</a></h1>
+            <h2 class="site-description">Code Farming Engineer</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/xumf/'
+                        
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/' >
+                
+                <span>博客</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                <span>了解我</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/nacos/">Nacos</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2022-05-03T20:54:29&#43;08:00'>2022年 5月 03日</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 4 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    <h2 id="一nacos-核心概念">一、Nacos 核心概念
+</h2><ol>
+<li><strong>是什么？</strong></li>
+</ol>
+<p>Nacos（Dynamic Naming and Configuration Server）是阿里开源的<strong>服务发现+配置管理+服务治理平台</strong>，核心功能：</p>
+<ul>
+<li><strong>服务发现与健康监测</strong>：服务注册、心跳机制、DNS 查询</li>
+<li><strong>动态配置管理</strong>：配置发布、监听、版本管理</li>
+<li><strong>动态 DNS</strong>：基于权重的路由、地域就近访问</li>
+<li><strong>服务元数据管理</strong>：支持应用/版本/环境等元数据</li>
+</ul>
+<ol start="2">
+<li><strong>关键特性</strong>
+<ul>
+<li><strong>双模式</strong>：支持 CP（强一致性、如配置管理）和 AP（高可用，如服务发现）</li>
+<li><strong>配置实时推送</strong>：基于长轮询（减少无效请求）</li>
+<li><strong>生态兼容</strong>：无缝集成 Spring Cloud、Dubbo、Kubernetes</li>
+</ul>
+</li>
+</ol>
+<h2 id="二核心架构与原理">二、核心架构与原理
+</h2><ol>
+<li><strong>服务注册与发现流程</strong>
+<ul>
+<li><strong>注册</strong>：服务启动时向 Nacos Server 发送注册请求（HTTP/gRPC）</li>
+<li><strong>心跳</strong>：客户端定期发送心跳（默认5秒），超时（15秒）标记为不健康，30秒后剔除</li>
+<li><strong>发现</strong>：消费者通过订阅机制获取服务列表，本地缓存+增量更新</li>
+</ul>
+</li>
+<li><strong>配置管理机制</strong>
+<ul>
+<li><strong>发布配置</strong>：通过控制台/API发布配置，存储于 Derby 或 MySQL</li>
+<li><strong>监听配置</strong>：客户端长轮询（默认30秒），服务端 Hold 住请求，配置变更立即返回</li>
+<li><strong>历史版本</strong>：支持配置回滚和版本对比</li>
+</ul>
+</li>
+<li><strong>一致性协议</strong>
+<ul>
+<li><strong>CP 模式</strong>：使用 Raft 协议（配置管理场景）</li>
+<li><strong>AP 模式</strong>：自研 <a class="link" href="https://nacos.io/zh-cn/blog/nacos-distro-mechanism/"  target="_blank" rel="noopener"
+    >Distro 协议</a>（服务发现场景，最终一致性）</li>
+</ul>
+</li>
+</ol>
+<h2 id="三重要知识点">三、重要知识点
+</h2><ol>
+<li><strong>Nacos vs Eureka vs Zookeeper？</strong>
+<ul>
+<li><strong>Eureka</strong>：AP 设计，适合服务发现，但功能单一</li>
+<li><strong>Zookeeper</strong>：CP 设计，强一致性，但写性能低</li>
+<li><strong>Nacos</strong>：AP/CP 可切换，集成服务发现+配置管理，生态更全面</li>
+</ul>
+</li>
+<li><strong>长轮询如何实现配置实时推送？</strong>
+<ul>
+<li>客户端发起查询请求，若配置无变化，服务端 Hold 请求至超时（默认30秒）或期间配置变更立即返回</li>
+<li>对比传统轮询：减少无效请求，提升实时性</li>
+<li>对比 WebSocket：长轮询服务端实现更简单，但存在30秒最大延迟（非实时配置场景选长轮询即可，实时性要求极高场景考虑 gRPC 流式推送）</li>
+</ul>
+</li>
+<li><strong>Nacos 集群如何保证数据一致性？</strong>
+<ul>
+<li><strong>Distro 模式（AP 模式）</strong>：每个节点负责部分数据，通过异步复制保证最终一致性。写入时先写本地，再异步复制到其他节点；读取时可能读到旧数据，但通常可接受（服务发现场景对一致性要求不高）。</li>
+<li><strong>Raft 协议（CP 模式）</strong>：选举 Leader，多数节点写成功才返回。适用于配置管理——配置错了影响面大，宁可不更新也不能不一致。</li>
+</ul>
+</li>
+<li><strong>Nacos 2.0 升级了哪些内容？</strong>
+<ul>
+<li><strong>通信层优化</strong>：gRPC 替代 HTTP，减少连接数（1.x 每个客户端与 server 维持多个 HTTP 长连接，2.0 全复用为一条 gRPC 连接）</li>
+<li><strong>长连接增强</strong>：支持服务端主动推送，降低延迟</li>
+<li><strong>性能提升</strong>：支撑百万级服务实例</li>
+</ul>
+</li>
+<li><strong>如何实现配置灰度发布？</strong>
+<ul>
+<li>通过 <strong>Data ID 或 Group</strong> 分组，结合 Spring Cloud 的 <code>@RefreshScope</code> 或监听 <code>ConfigChangeEvent</code> 实现部分实例更新</li>
+<li>更优雅的方式：使用 Nacos 的 Beta 发布功能——指定目标 IP 列表，只有命中 IP 的客户端拉取到灰度配置。验证无误后再全量发布。</li>
+</ul>
+</li>
+</ol>
+<h2 id="四实战场景与排查思路">四、实战场景与排查思路
+</h2><ol>
+<li><strong>服务注册失败常见原因</strong>
+<ul>
+<li>网络不通：检查 Nacos Server 地址和端口（telnet 或 nc 测试连通性）</li>
+<li>版本冲突：Spring Cloud Alibaba 与 Nacos 版本不兼容 → 参考官方版本对应表</li>
+<li>命名空间/Group 配置错误：客户端 <code>namespace</code> 和 <code>group</code> 须与服务端一致，命名空间为空时默认使用 public</li>
+<li>防火墙/安全组拦截：gRPC 端口（9848/9849）需额外开放</li>
+</ul>
+</li>
+<li><strong>配置不生效排查步骤</strong>
+<ul>
+<li>检查控制台配置是否发布成功（Data ID、Group、命名空间与客户端代码匹配）</li>
+<li>检查 <code>@RefreshScope</code> 是否加在正确的位置——标注在 @Configuration 类上可能导致整个类重新创建，注意副作用</li>
+<li>查看日志：<code>com.alibaba.nacos.client.config.listener</code> 包日志是否有监听异常</li>
+<li>长轮询超时确认：查看请求日志中 HTTP 状态码是否为 200（非 304 表示配置变更）</li>
+</ul>
+</li>
+<li><strong>Nacos 集群部署注意事项</strong>
+<ul>
+<li>至少 3 个节点形成 Raft 选举（节点数建议奇数，避免脑裂）</li>
+<li>使用 MySQL 作为外部存储（Derby 仅适合单机测试——集群模式下不使用 MySQL 会导致各节点数据不一致）</li>
+<li>所有节点配置文件中的 <code>cluster.conf</code> 必须包含所有节点地址</li>
+<li>通过 Nginx 做负载均衡时，gRPC 长连接需要配置 <code>upstream</code> 为 <code>ip_hash</code> 或使用 <code>nginx-stream</code> 模块</li>
+</ul>
+</li>
+</ol>
+<h2 id="五高级话题">五、高级话题
+</h2><ol>
+<li><strong>Nacos-Sync 应用</strong>
+<ul>
+<li>跨注册中心同步（如 Kubernetes Service 到 Nacos、Eureka 迁移到 Nacos）</li>
+<li>本质是事件监听+双向同步，注意循环同步问题（A→B→A 死循环），Nacos-Sync 通过记录同步来源避免</li>
+</ul>
+</li>
+<li><strong>安全控制</strong>
+<ul>
+<li>开启鉴权：<code>nacos.core.auth.enabled=true</code>，配置自定义用户角色</li>
+<li>重要：Nacos 2.2.3 之前默认鉴权不开启，且密钥为硬编码，务必修改 <code>nacos.core.auth.plugin.nacos.token.secret.key</code></li>
+</ul>
+</li>
+<li><strong>双活部署</strong>
+<ul>
+<li>多数据中心通过 Nacos-Sync 同步数据，结合 DNS 实现流量切换</li>
+<li>注意：跨地域同步存在网络延迟，配置变更可能在数秒后才能传播到异地——不要依赖 Nacos 跨地域强一致</li>
+</ul>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/nacos/">Nacos</a>
+        
+            <a href="/tags/spring-cloud/">Spring Cloud</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside>
+    <h2 class="section-title">相关文章</h2>
+    <div class="subsection-list">
+        <div class="article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/hystrix/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Hystrix</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/feign/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Feign</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/eureka/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Eureka</h2>
+        </div>
+    </a>
+</article>
+            
+                
+<article class="">
+    <a href="/blog/zookeeper/">
+        
+
+        <div class="article-details">
+            <h2 class="article-title">ZooKeeper</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+
+        <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https:\/\/xumf.net\/blog\/nacos\/';
+        this.page.identifier = '405f72dbb493b580068fc7a466d8b321';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xumf.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (typeof DISQUS == 'object') {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 小蜜蜂
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on 小蜜蜂</title>
+        <link>https://xumf.net/tags/</link>
+        <description>Recent content in Tags on 小蜜蜂</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh</language>
+        <lastBuildDate>Wed, 07 May 2025 23:04:30 +0800</lastBuildDate><atom:link href="https://xumf.net/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+            <title>Spring Cloud</title>
+            <link>https://xumf.net/tags/spring-cloud/</link>
+            <pubDate>Wed, 07 May 2025 23:04:30 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring-cloud/</guid>
+            <description></description>
+        </item><item>
+            <title>Zuul</title>
+            <link>https://xumf.net/tags/zuul/</link>
+            <pubDate>Wed, 07 May 2025 23:04:30 +0800</pubDate>
+            <guid>https://xumf.net/tags/zuul/</guid>
+            <description></description>
+        </item><item>
+            <title>Zipkin</title>
+            <link>https://xumf.net/tags/zipkin/</link>
+            <pubDate>Mon, 03 Mar 2025 22:19:24 +0800</pubDate>
+            <guid>https://xumf.net/tags/zipkin/</guid>
+            <description></description>
+        </item><item>
+            <title>Spring</title>
+            <link>https://xumf.net/tags/spring/</link>
+            <pubDate>Thu, 30 Jan 2025 22:39:17 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring/</guid>
+            <description></description>
+        </item><item>
+            <title>Spring Refresh</title>
+            <link>https://xumf.net/tags/spring-refresh/</link>
+            <pubDate>Thu, 30 Jan 2025 22:39:17 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring-refresh/</guid>
+            <description></description>
+        </item><item>
+            <title>Java</title>
+            <link>https://xumf.net/tags/java/</link>
+            <pubDate>Wed, 22 Jan 2025 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/java/</guid>
+            <description></description>
+        </item><item>
+            <title>JVM</title>
+            <link>https://xumf.net/tags/jvm/</link>
+            <pubDate>Wed, 22 Jan 2025 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/jvm/</guid>
+            <description></description>
+        </item><item>
+            <title>Lock</title>
+            <link>https://xumf.net/tags/lock/</link>
+            <pubDate>Wed, 22 Jan 2025 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/lock/</guid>
+            <description></description>
+        </item><item>
+            <title>Spring Cloud Sleuth</title>
+            <link>https://xumf.net/tags/spring-cloud-sleuth/</link>
+            <pubDate>Thu, 01 Aug 2024 13:54:50 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring-cloud-sleuth/</guid>
+            <description></description>
+        </item><item>
+            <title>Spring Cloud Gateway</title>
+            <link>https://xumf.net/tags/spring-cloud-gateway/</link>
+            <pubDate>Thu, 18 Jul 2024 23:13:45 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring-cloud-gateway/</guid>
+            <description></description>
+        </item><item>
+            <title>Spring Cloud Config</title>
+            <link>https://xumf.net/tags/spring-cloud-config/</link>
+            <pubDate>Tue, 11 Jun 2024 15:40:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring-cloud-config/</guid>
+            <description></description>
+        </item><item>
+            <title>Spring Cloud Bus</title>
+            <link>https://xumf.net/tags/spring-cloud-bus/</link>
+            <pubDate>Fri, 05 Jan 2024 13:42:22 +0800</pubDate>
+            <guid>https://xumf.net/tags/spring-cloud-bus/</guid>
+            <description></description>
+        </item><item>
+            <title>SpringBoot</title>
+            <link>https://xumf.net/tags/springboot/</link>
+            <pubDate>Tue, 09 May 2023 23:36:22 +0800</pubDate>
+            <guid>https://xumf.net/tags/springboot/</guid>
+            <description></description>
+        </item><item>
+            <title>Ribbon</title>
+            <link>https://xumf.net/tags/ribbon/</link>
+            <pubDate>Wed, 19 Apr 2023 21:09:25 +0800</pubDate>
+            <guid>https://xumf.net/tags/ribbon/</guid>
+            <description></description>
+        </item><item>
+            <title>MQ</title>
+            <link>https://xumf.net/tags/mq/</link>
+            <pubDate>Fri, 03 Mar 2023 20:54:29 +0800</pubDate>
+            <guid>https://xumf.net/tags/mq/</guid>
+            <description></description>
+        </item><item>
+            <title>RabbitMQ</title>
+            <link>https://xumf.net/tags/rabbitmq/</link>
+            <pubDate>Fri, 03 Mar 2023 20:54:29 +0800</pubDate>
+            <guid>https://xumf.net/tags/rabbitmq/</guid>
+            <description></description>
+        </item><item>
+            <title>Netty</title>
+            <link>https://xumf.net/tags/netty/</link>
+            <pubDate>Wed, 22 Jun 2022 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/netty/</guid>
+            <description></description>
+        </item><item>
+            <title>Server</title>
+            <link>https://xumf.net/tags/server/</link>
+            <pubDate>Wed, 22 Jun 2022 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/server/</guid>
+            <description></description>
+        </item><item>
+            <title>Nacos</title>
+            <link>https://xumf.net/tags/nacos/</link>
+            <pubDate>Tue, 03 May 2022 20:54:29 +0800</pubDate>
+            <guid>https://xumf.net/tags/nacos/</guid>
+            <description></description>
+        </item><item>
+            <title>Docker</title>
+            <link>https://xumf.net/tags/docker/</link>
+            <pubDate>Tue, 24 Mar 2020 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/docker/</guid>
+            <description></description>
+        </item><item>
+            <title>Kubernetes</title>
+            <link>https://xumf.net/tags/kubernetes/</link>
+            <pubDate>Tue, 24 Mar 2020 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/kubernetes/</guid>
+            <description></description>
+        </item><item>
+            <title>Hystrix</title>
+            <link>https://xumf.net/tags/hystrix/</link>
+            <pubDate>Wed, 22 May 2019 15:49:23 +0800</pubDate>
+            <guid>https://xumf.net/tags/hystrix/</guid>
+            <description></description>
+        </item><item>
+            <title>Database</title>
+            <link>https://xumf.net/tags/database/</link>
+            <pubDate>Wed, 15 Aug 2018 15:43:54 +0800</pubDate>
+            <guid>https://xumf.net/tags/database/</guid>
+            <description></description>
+        </item><item>
+            <title>HBase</title>
+            <link>https://xumf.net/tags/hbase/</link>
+            <pubDate>Wed, 15 Aug 2018 15:43:54 +0800</pubDate>
+            <guid>https://xumf.net/tags/hbase/</guid>
+            <description></description>
+        </item><item>
+            <title>GC</title>
+            <link>https://xumf.net/tags/gc/</link>
+            <pubDate>Wed, 18 Jul 2018 15:43:54 +0800</pubDate>
+            <guid>https://xumf.net/tags/gc/</guid>
+            <description></description>
+        </item><item>
+            <title>Feign</title>
+            <link>https://xumf.net/tags/feign/</link>
+            <pubDate>Fri, 15 Jun 2018 15:43:54 +0800</pubDate>
+            <guid>https://xumf.net/tags/feign/</guid>
+            <description></description>
+        </item><item>
+            <title>Eureka</title>
+            <link>https://xumf.net/tags/eureka/</link>
+            <pubDate>Tue, 01 May 2018 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/eureka/</guid>
+            <description></description>
+        </item><item>
+            <title>ElasticSearch</title>
+            <link>https://xumf.net/tags/elasticsearch/</link>
+            <pubDate>Sun, 22 Apr 2018 13:16:53 +0800</pubDate>
+            <guid>https://xumf.net/tags/elasticsearch/</guid>
+            <description></description>
+        </item><item>
+            <title>ZooKeeper</title>
+            <link>https://xumf.net/tags/zookeeper/</link>
+            <pubDate>Thu, 22 Mar 2018 22:21:04 +0800</pubDate>
+            <guid>https://xumf.net/tags/zookeeper/</guid>
+            <description></description>
+        </item></channel>
+</rss>
