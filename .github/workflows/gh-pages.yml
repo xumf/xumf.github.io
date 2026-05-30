@@ -28,7 +28,7 @@ jobs:
         run: git clone --depth 1 https://github.com/CaiJimmy/hugo-theme-stack/ themes/stack
 
       - name: Build
-        run: hugo --cleanDestinationDir
+        run: hugo --baseURL "https://xumf.net/" --cleanDestinationDir
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
