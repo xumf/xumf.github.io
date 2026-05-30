@@ -4,195 +4,184 @@ date: 2023-04-19T21:09:25+08:00
 tags: ["Ribbon", "Spring Cloud"]
 ---
 
+> **注意**：Ribbon 已进入**维护状态**（Netflix 不再积极开发）。从 Spring Cloud 2020.0.x（Ilford）开始，官方推荐使用 **Spring Cloud LoadBalancer** 作为替代。新项目直接使用 LoadBalancer，旧项目建议逐步迁移。本文内容基于 Ribbon 2.x 版本。
+
 ## 核心概念
-主要功能：负载均衡、故障转移、重试机制
 
-特点：
+Ribbon 是 Netflix 开源的客户端负载均衡器，核心功能：
 
-* 客户端负载均衡：负载均衡逻辑在客户端实现，而不是在服务端。
-* 集成Spring Cloud：与 Spring Cloud 深度集成，常用于 Feign 和 RestTemplate
-* 可扩展性：支持自定义负载均衡策略和规则
+- **负载均衡**：从多个服务实例中选择一个处理请求
+- **故障转移**：选择的实例不可用时自动重试其他实例
+- **重试机制**：支持配置重试次数和超时
+
+关键设计点：Ribbon 是**客户端负载均衡**，与 Nginx 等**服务端负载均衡**不同：
+
+| 特性 | 客户端负载均衡（Ribbon） | 服务端负载均衡（Nginx） |
+|------|------------------------|----------------------|
+| 位置 | 在应用内部运行 | 独立部署 |
+| 实例感知 | 从注册中心获取列表 | 配置 upstream |
+| 故障转移 | 自动重试其他实例 | 需在 upstream 配置 |
+| 部署复杂度 | 无需额外部署 | 需要独立部署和运维 |
 
 ## 工作原理
-1. 服务发现
-   1. Ribbon 从服务注册中心（如 Eureka）获取服务实例列表
-   2. 服务实例列表动态更新，确保 Ribbon 能够感知服务实例变化
-2. 负载均衡
-   1. Ribbon 根据配置的负载均衡策略，从服务实例列表中选择一个实例
-   2. 常见的负载均衡策略
-      1. 轮询（Round Robin）：依次选择每个实例
-      2. 随机（Random）：随机选择一个实例
-      3. 加权响应时间（Weighted Response Time）：根据实例的响应时间分配权重
-      4. 区域感知（Zone Aware）：优先选择同一区域的实例
-3. 故障转移
-   1. 如果选择的实例不可用，Ribbon 会自动重试其他实例
-   2. 重试次数和超时时间可以通过配置调整
-4. 请求分发
-   1. Ribbon 将请求分发到选定的服务实例，并处理响应
 
-## 配置
-1. 负载均衡策略
-   1. 通过配置文件负载均衡策略：
+1. **服务发现**：Ribbon 从注册中心（如 Eureka）获取服务实例列表，并动态更新
+2. **负载均衡**：根据配置的策略从列表中选择一个实例
+3. **故障转移**：不可用时自动重试其他实例
+4. **请求分发**：将请求分发到选定实例，处理响应
+
+### 完整请求流程
+
+```
+Client Request
+    → RestTemplate/Feign (URL: http://service-name/endpoint)
+    → RibbonLoadBalancerClient.choose("service-name")
+        → DynamicServerListLoadBalancer.getServerList()
+            → EurekaClient.getInstancesByVipAddress()
+        → IRule.choose(serverList)
+            → 选择策略: 轮询/随机/加权...
+    → 发送 HTTP 请求到选定实例
+    → 失败时: RetryHandler 重试其他实例
+    → 返回响应
+```
+
+## 负载均衡策略详解
+
+Ribbon 提供 7 种内置策略：
+
+| 策略类 | 说明 | 适用场景 |
+|-------|------|---------|
+| RoundRobinRule | 轮询 | 默认策略，各实例配置均衡 |
+| RandomRule | 随机 | 无状态服务 |
+| WeightedResponseTimeRule | 加权响应时间 | 实例性能不均 |
+| ZoneAvoidanceRule | 区域感知 | 多数据中心部署 |
+| BestAvailableRule | 最小并发 | 长连接场景 |
+| RetryRule | 带重试的轮询 | 需要自动重试 |
+| AvailabilityFilteringRule | 可用性过滤 | 剔除熔断实例 |
+
+## 配置方式
+
+### 全局配置
+
+```yaml
+ribbon:
+  ConnectTimeout: 1000
+  ReadTimeout: 3000
+  MaxAutoRetries: 0          # 同一实例重试次数
+  MaxAutoRetriesNextServer: 1 # 切换实例重试次数
+  OkToRetryOnAllOperations: false  # 是否所有操作都重试
+```
+
+### 服务级配置
 
 ```yaml
 service-name:
-    ribbon:
-        NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+    MaxAutoRetries: 3
+    MaxAutoRetriesNextServer: 1
+    ConnectTimeout: 1000
+    ReadTimeout: 3000
 ```
-   2. 通过代码配置负载均衡策略：
+
+### 代码配置
 
 ```java
 @RibbonClient(name = "service-name", configuration = MyRibbonConfig.class)
 public class MyRibbonConfig {
     @Bean
     public IRule ribbonRule() {
-        return new RoundRobinRule(); // 轮询策略
-        // return new RandomRule(); // 随机策略
-        // return new WeightedResponseTimeRule(); // 加权响应时间策略
-        // return new ZoneAvoidanceRule(); // 区域感知策略
-    }
-}
-```
-2. 重试机制
-   1. 通过配置文件配置重试次数和超时时间
-
-```yaml
-  service-name:
-    ribbon:
-      MaxAutoRetries: 3
-      MaxAutoRetriesNextServer: 1
-      ConnectTimeout: 1000
-      ReadTimeout: 3000
-```
-   2. 通过代码方式配置重试次数和超时时间
-
-```java
-@RibbonClient(name = "service-name", configuration = MyRibbonConfig.class)
-public class MyRibbonConfig {
-    @Bean
-    public IRule ribbonRule() {
-        return new RoundRobinRule(); // 轮询策略
+        return new RandomRule();
     }
 
     @Bean
     public RetryHandler retryHandler() {
-        return new DefaultLoadBalancerRetryHandler(3, 1, true); // 重试配置
+        // 参数: maxRetriesOnSameServer, maxRetriesOnNextServer, okToRetryOnAllOperations
+        return new DefaultLoadBalancerRetryHandler(3, 1, true);
     }
 }
 ```
-3. 自定义配置
-   3. 通过 **@RibbonClient **注解指定自定义配置：
 
-```java
-  @RibbonClient(name = "service-name", configuration = MyRibbonConfig.class)
-  public class MyRibbonConfig {
-      @Bean
-      public IRule ribbonRule() {
-          return new RandomRule();
-      }
-  }
-```
-## 
+**注意**：使用 `@RibbonClient` 时，配置类不能被 `@ComponentScan` 扫描到（否则成为全局配置），建议放在启动类所在包之外。
+
 ## 使用场景
 
-1. 与 RestTemplate 集成
-   1. 使用 **@LoadBalanced** 注解启用 Ribbon 负载均衡：
+### 与 RestTemplate 集成
 
 ```java
-  @Bean
-  @LoadBalanced
-  public RestTemplate restTemplate() {
-      return new RestTemplate();
-  }
+@Bean
+@LoadBalanced
+public RestTemplate restTemplate() {
+    return new RestTemplate();
+}
+
+// 调用时直接用服务名，Ribbon 自动解析为实例 IP:PORT
+String response = restTemplate.getForObject("http://service-name/endpoint", String.class);
 ```
-   2. 调用服务时，Ribbon 会自动选择服务实例
+
+### 与 Feign 集成
+
+Feign 默认集成 Ribbon，无需额外配置：
 
 ```java
-  String response = restTemplate.getForObject("http://service-name/endpoint", String.class);
+@FeignClient(name = "service-name")
+public interface MyFeignClient {
+    @GetMapping("/endpoint")
+    String getResponse();
+}
 ```
-2. 与 Feign 集成
-   1. Feign 默认集成了 Ribbon，无需额外配置
-   2. 通过 Feign 客户端调用服务时，Ribbon 会自动处理负载均衡：
-
-```java
-  @FeignClient(name = "service-name")
-  public interface MyFeignClient {
-      @GetMapping("/endpoint")
-      String getResponse();
-  }
-```
-
 
 ## 底层原理
-1. 负载均衡器（LoadBalancer）
-   1. Ribbon 的核心组件时 **ILoadBalancer**，负责管理服务实例列表和选择实例
-   2. 默认实现时** DynamicServerListLoadBalancer **，动态更新服务实例列表
+
+### ILoadBalancer 接口
+
+Ribbon 的核心接口是 `ILoadBalancer`，负责管理服务实例列表：
+
+```java
+public interface ILoadBalancer {
+    void addServers(List<Server> newServers);
+    Server chooseServer(Object key);     // 选择一个实例
+    void markServerDown(Server server);
+    List<Server> getServerList(boolean availableOnly);
+    void markServerDown(Server server);
+}
+```
+
+默认实现 `DynamicServerListLoadBalancer` 通过 `ServerListUpdater` 定时从注册中心拉取最新实例：
 
 ```java
 public class DynamicServerListLoadBalancer<T extends Server> extends BaseLoadBalancer {
-    private final ServerList<T> serverList; // 服务实例列表
-    private final ServerListUpdater serverListUpdater; // 服务实例列表更新器
-
-    @Override
-    public void setServersList(List<T> servers) {
-        super.setServersList(servers); // 更新服务实例列表
-    }
+    private final ServerList<T> serverList;
+    private final ServerListUpdater serverListUpdater;
 
     protected void updateListOfServers() {
-        List<T> servers = serverList.getUpdatedListOfServers(); // 获取最新的服务实例列表
-        setServersList(servers); // 更新负载均衡器中的服务实例列表
-    }
-
-    @Override
-    public void start() {
-        super.start();
-        serverListUpdater.start(new UpdateAction()); // 启动服务实例列表更新任务
-    }
-
-    private class UpdateAction implements ServerListUpdater.UpdateAction {
-        @Override
-        public void doUpdate() {
-            updateListOfServers(); // 执行服务实例列表更新
-        }
+        List<T> servers = serverList.getUpdatedListOfServers();
+        setServersList(servers);
     }
 }
 ```
-2. 负载均衡策略（IRule）
-   1. **IRule** 接口定义了负载均衡策略，常见实现包括：
-      1. **RoundRobinRule**：轮询策略
-      2. **RandomRule**：随机策略
-      3. **WeightedResponseTimeRule**：加权响应时间策略
-      4. **ZoneAvoidanceRule**：区域感知策略
-3. 服务实例列表（ServerList）
-   1. **ServerList** 接口负责从服务注册中心获取服务实例列表
-   2. 默认实现时 **DiscoveryEnabledNIWSServerList**，从 Eureka 获取实例列表
+
+### IRule 负载均衡策略接口
+
+```java
+public interface IRule {
+    Server choose(Object key);
+    void setLoadBalancer(ILoadBalancer lb);
+    ILoadBalancer getLoadBalancer();
+}
+```
+
+### 从 Eureka 获取实例
 
 ```java
 public class DiscoveryEnabledNIWSServerList extends AbstractServerList<DiscoveryEnabledServer> {
-    private final EurekaClient eurekaClient; // Eureka 客户端
-    private final String serviceId; // 服务名称
-
-    @Override
-    public List<DiscoveryEnabledServer> getInitialListOfServers() {
-        return obtainServersViaDiscovery(); // 从 Eureka 获取初始服务实例列表
-    }
-
-    @Override
-    public List<DiscoveryEnabledServer> getUpdatedListOfServers() {
-        return obtainServersViaDiscovery(); // 从 Eureka 获取更新后的服务实例列表
-    }
+    private final EurekaClient eurekaClient;
+    private final String serviceId;
 
     private List<DiscoveryEnabledServer> obtainServersViaDiscovery() {
-        List<DiscoveryEnabledServer> serverList = new ArrayList<>();
-        if (eurekaClient == null) {
-            return serverList;
-        }
-
-        // 从 Eureka 获取服务实例信息
         List<InstanceInfo> listOfInstanceInfo = eurekaClient.getInstancesByVipAddress(serviceId, false);
         for (InstanceInfo instanceInfo : listOfInstanceInfo) {
             if (instanceInfo.getStatus() == InstanceInfo.InstanceStatus.UP) {
-                // 将 Eureka 的 InstanceInfo 转换为 Ribbon 的 Server
                 serverList.add(new DiscoveryEnabledServer(instanceInfo, false, true));
             }
         }
@@ -200,5 +189,46 @@ public class DiscoveryEnabledNIWSServerList extends AbstractServerList<Discovery
     }
 }
 ```
-4. 故障转移（Retry）
-   1. Ribbon 通过 **RetryHandler** 实现故障转移，支持重试和超时处理
+
+## 迁移到 Spring Cloud LoadBalancer
+
+从 Spring Cloud 2020.0.x 开始，Ribbon 被 LoadBalancer 取代。迁移要点：
+
+1. **移除 Ribbon 依赖**：删除 `spring-cloud-starter-netflix-ribbon`
+2. **添加 LoadBalancer 依赖**：`spring-cloud-starter-loadbalancer`
+3. **接口变化**：
+   - `ILoadBalancer` → `ReactiveLoadBalancer` / `BlockingLoadBalancerClient`
+   - `IRule` → `ReactiveLoadBalancer` 实现（如 `RoundRobinLoadBalancer`）
+   - `@RibbonClient` → 无直接等价，通过 `LoadBalancerClient` 配置
+4. **配置变化**：`service-name.ribbon.*` → `spring.cloud.loadbalancer.*`
+
+```yaml
+# LoadBalancer 配置示例
+spring:
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+      health-check:
+        interval: 30s
+      configurations: health-check # 启用健康检查
+```
+
+## 排查思路
+
+1. **负载均衡不生效（总是访问同一个实例）**
+   - 确认 `@LoadBalanced` 注解已在 RestTemplate Bean 上
+   - 检查服务名解析：`http://service-name/` 中的 service-name 是否与注册中心的服务名一致
+   - Ribbon 默认使用 ZoneAvoidanceRule，如果所有实例在同一 zone，行为类似轮询
+
+2. **实例列表未更新**
+   - 检查 `ServerListRefreshInterval`（默认 30 秒）
+   - 检查 Eureka Client 的 `eureka.client.registryFetchIntervalSeconds`（默认 30 秒）
+
+3. **重试不生效**
+   - Ribbon 本身不触发重试——需要配合 Spring Retry（需引入 `spring-retry` 依赖）
+   - 只有 `@LoadBalanced` 的 RestTemplate 或 Feign 客户端才会触发 Ribbon 重试
+   - 确保 `MaxAutoRetries` 和 `MaxAutoRetriesNextServer` 配置了正值
+
+4. **引入 LoadBalancer 后 Ribbon 失效**
+   - Spring Cloud 2020.0.x 默认禁用了 Ribbon，如果仍想使用需要设置 `spring.cloud.loadbalancer.ribbon.enabled=true`（但已不推荐）

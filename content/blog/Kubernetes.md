@@ -5,30 +5,73 @@ tags: ["Kubernetes", "Docker"]
 ---
 
 ## Kubernetes 核心概念
-### 1. 基本概念
-   * Pod：最小的部署单元，包含一个或多个容器
-   * Node：工作节点，运行 Pod
-   * Cluster：由多个 Node 组成的集群
-   * Namespace：资源隔离和分组
-### 2. 核心组件
-   * Master 组件：
-      * API Server：提供 Restful API，是集群的前端接口
-      * Scheduler：负责调度 Pod 到合适的 Node
-      * Controller Manager：运行各种控制器，如 Replication Controller、Node Controller 等
-      * etcd： 分布式键值存储，保存集群的所有配置数据
-   * Node 组件
-      * Kubelet：负责管理 Pod 和容器的生命周期
-      * Kube Proxy：负责网络代理和负载均衡
-      * Container Runtime： 运行容器的软件，如 Docker、containerd
-### 3. 资源对象
-   * Pod
-      * 最小的部署单元
-      * 包含一个或多个容器
-      * 共享网络和存储
-   * Deployment
-      * 声明式更新 Pod 和 ReplicaSet
-      * 支持滚动更新和回滚
-      * 示例：
+
+### 为什么需要 Kubernetes？
+
+容器化解决了环境一致性问题，但生产环境需要管理成百上千个容器——自动部署、扩缩容、负载均衡、服务发现、滚动更新。Kubernetes 提供了这些能力的声明式编排框架。
+
+### 架构总览
+
+```
+┌─────────────────────────────────────────┐
+│              Control Plane              │
+│  ┌──────────┐ ┌──────────┐ ┌─────────┐ │
+│  │ API Svr  │ │Scheduler │ │Ctrl Mgr │ │
+│  └────┬─────┘ └────┬─────┘ └────┬────┘ │
+│       │            │            │       │
+│  ┌────▼──────────────────────────▼────┐ │
+│  │              etcd                  │ │
+│  └───────────────────────────────────┘ │
+└──────────────────┬──────────────────────┘
+                   │
+┌──────────────────▼──────────────────────┐
+│               Node                      │
+│  ┌──────────┐  ┌──────────┐ ┌────────┐ │
+│  │ Kubelet  │  │Kube-Proxy│ │Runtime │ │
+│  └────┬─────┘  └────┬─────┘ └───┬────┘ │
+│       │             │           │       │
+│  ┌────▼─────────────▼───────────▼────┐ │
+│  │          Pods                     │ │
+│  └──────────────────────────────────┘ │
+└────────────────────────────────────────┘
+```
+
+### 核心组件设计原理
+
+| 组件 | 作用 | 为什么这样设计 |
+|------|------|--------------|
+| **API Server** | 提供 RESTful API，是集群入口 | 所有组件只与 API Server 通信，避免组件间直接耦合——这是 K8s 的核心设计哲学：**声明式 + 控制循环** |
+| **etcd** | 分布式 KV 存储，保存集群全部状态 | 基于 Raft 共识算法保证一致性。为什么选 etcd？强一致、watch 机制（支持控制器监听变更）、CNCF 项目 |
+| **Scheduler** | 将 Pod 分配到最优 Node | 筛选（Predicates）→ 打分（Priorities）两阶段算法，而非简单轮询，因为需要考虑资源、亲和性、污点等多维约束 |
+| **Controller Manager** | 运行各种控制器（Deployment、Node、Endpoints 等） | 控制循环模式（Reconciliation Loop）：期望状态 vs 实际状态，不断调谐直到一致 |
+| **Kubelet** | 管理 Pod 生命周期 | 节点上的 Agent，负责创建/删除容器、健康检查、上报节点状态 |
+| **Kube-Proxy** | 网络代理和负载均衡 | 维护 iptables/IPVS 规则，将 Service IP 转发到后端 Pod |
+
+#### 关键设计：声明式 API + 控制循环
+
+K8s 的设计核心不是命令式（"启动 3 个 nginx"），而是声明式（"确保有 3 个 nginx 在运行"）。用户提交期望状态（通过 YAML），控制器监听 API Server 的变化，不断调谐直到实际状态与期望状态一致。这种模式的好处：
+- 自动恢复：Pod 挂了，ReplicaSet 控制器自动补一个
+- 幂等：同样的 YAML 应用多次结果一致
+- 可审计：所有变更记录在 etcd 中
+
+## 核心资源对象详解
+
+### Pod
+
+Pod 是最小调度单元。为什么不是容器？因为有些场景多个容器需要共享网络栈（如 Sidecar 模式），K8s 将它们打包为 Pod，共享 IP、端口、存储卷。
+
+**Pod 生命周期**：`Pending → Running → Succeeded/Failed → Unknown`
+
+```
+关键阶段说明：
+- Pending：API Server 已接受，但 Pod 尚未调度到 Node（或镜像拉取中）
+- Running：至少有一个容器在运行
+- Unknown：Node 失联（kubelet 停止上报心跳）
+```
+
+### Deployment
+
+Deployment 管理 ReplicaSet，ReplicaSet 管理 Pod。为什么中间加一层 ReplicaSet？为了实现**滚动更新与回滚**——每发布一次，创建一个新 RS，逐步扩容新 RS 并缩容旧 RS，回滚时直接指回旧 RS。
 
 ```yaml
 apiVersion: apps/v1
@@ -37,6 +80,12 @@ metadata:
   name: nginx-deployment
 spec:
   replicas: 3
+  revisionHistoryLimit: 10          # 保留最近的 10 个版本用于回滚
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1                   # 滚动期间最多允许超出 1 个副本
+      maxUnavailable: 0             # 滚动期间不允许有不可用副本
   selector:
     matchLabels:
       app: nginx
@@ -50,11 +99,32 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
 ```
-   * Service
-      * 定义 Pod 的访问策略
-      * 支持 ClusterIP、NodePort、LoadBalancer 等类型
-      * 示例：
+
+**滚动更新流程**：
+1. 创建新 ReplicaSet（副本数为 0）
+2. 新 RS +1，旧 RS -1（maxSurge=1, maxUnavailable=0 意味着始终保持 3 个可用 Pod）
+3. 重复直到新 RS 达到 3，旧 RS 缩到 0
+
+### Service
+
+Pod 的 IP 不固定（重启、扩缩容后会变），Service 提供稳定的访问入口。实现方式：kube-proxy 在节点上维护 iptables/IPVS 规则。
+
+**Service 类型选择**：
+
+| 类型 | 访问范围 | 实现方式 | 场景 |
+|------|---------|---------|------|
+| ClusterIP | 集群内 | iptables/IPVS 转发 | 内部服务调用 |
+| NodePort | 集群外（节点 IP:端口） | 每个节点监听端口 → iptables | 开发调试、无 LB |
+| LoadBalancer | 公网 | 云厂商 LB + NodePort | 生产对外服务 |
+| ExternalName | DNS 映射 | CoreDNS 返回 CNAME | 访问外部服务 |
 
 ```yaml
 apiVersion: v1
@@ -70,90 +140,95 @@ spec:
       targetPort: 80
   type: ClusterIP
 ```
-   * ConfigMap 和 Secret
-      * 存储配置数据
-      * 示例：
+
+### ConfigMap 和 Secret
+
+为什么需要 ConfigMap？将配置与容器镜像解耦，镜像不变、配置可变。
 
 ```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: game-config
+  name: app-config
 data:
-  game.properties: |
-    enemy.types=aliens,monsters
-    player.maximum-lives=5
+  application.yml: |
+    server:
+      port: 8080
+    database:
+      url: jdbc:mysql://db:3306/app
 ```
-   * Secret：
-      * 存储敏感信息
+
+Secret 存储敏感信息，数据以 Base64 编码（非加密——需要配合 RBAC 和加密存储）。
 
 ```yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: mysecret
+  name: db-secret
 type: Opaque
 data:
   username: YWRtaW4=
   password: MWYyZDFlMmU2N2Rm
 ```
+
+**注意**：ConfigMap/Secret 更新后，Pod 中的环境变量不会自动更新，只有通过 Volume 挂载的方式才会自动同步（默认约 60 秒）。
+
 ## 网络模型
-### 1. Pod 网络
-   * 每个 Pod 有唯一的 IP 地址
-   * Pod 之间可以直接通信
-   * 使用 CNI（Container Network Interface）插件
-### 2. Service 网络
-   * ClusterIP：集群内部访问
-   * NodePort：通过节点访问
-   * LoadBalancer：通过云服务商的负载均衡访问
-### 3. DNS 服务
-   * 内置 DNS 服务
-   * 通过服务名进行服务发现
-   * 示例：`my-service.my-namespace.svc.cluster.local`
+
+K8s 网络模型的核心约定——**每个 Pod 都有独立 IP，Pod 之间可以直接通信**（无需 NAT）。
+
+### CNI 插件原理
+
+K8s 不自己实现网络，而是通过 CNI（Container Network Interface）插件接入。工作流程：
+
+```
+Pod 创建 → kubelet 调用 CNI 插件 → 插件创建 veth pair → 一端 Pod 内，一端连到网桥/路由
+```
+
+常见 CNI 对比：
+
+| CNI | 数据平面 | 特点 |
+|-----|---------|------|
+| Flannel | VXLAN/UDP | 简单，性能一般，适合小集群 |
+| Calico | BGP + iptables | 纯三层，性能好，支持 NetworkPolicy |
+| Cilium | eBPF | 性能极高，支持 L7 策略，但要求内核 5.8+ |
+| Weave | VXLAN + fastdp | 自动组网，跨主机通信简单 |
+
+**Service 网络**：ClusterIP 通过 kube-proxy 的 iptables/IPVS 规则将虚拟 IP 映射到后端 Pod。IPVS 比 iptables 更适合大规模集群（iptables 的规则复杂度为 O(n)，IPVS 为 O(1)）。
+
+**DNS**：CoreDNS 为 Service 解析域名，格式为 `<service>.<namespace>.svc.cluster.local`。
 
 ## 存储管理
-### 1. Volume
-   * 提供持久化存储
-   * 支持多种类型（如 emptyDir、hostPath、NFS、云存储）
-   * 示例：
+
+### Volumes 类型与选择
+
+| 类型 | 生命周期 | 场景 |
+|------|---------|------|
+| emptyDir | Pod 生命周期 | 临时缓存、Sidecar 数据交换 |
+| hostPath | Node 生命周期 | 需要读取宿主机数据 |
+| PersistentVolumeClaim | 独立于 Pod | 数据库等需持久化存储 |
+
+### PV/PVC 设计原理
+
+为什么设计 PV 和 PVC 两层抽象？将**存储的提供**和**存储的使用**分离：
+- **PV**：由集群管理员预先创建或通过 StorageClass 动态供应
+- **PVC**：用户声明存储需求（大小、访问模式），与 PV 匹配后绑定
 
 ```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: test-pd
-spec:
-  containers:
-  - image: k8s.gcr.io/test-webserver
-    name: test-container
-    volumeMounts:
-    - mountPath: /test-pd
-      name: test-volume
-  volumes:
-  - name: test-volume
-    hostPath:
-      path: /data
-      type: Directory
-```
-### 2. PersistentVolume(PV) 和 PersistentVolumeClaim(PVC)
-   * PV：集群范围的存储资源
-   * PVC：用户对存储资源的请求
-   * 示例：
-
-```yaml
+# PV
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv0001
+  name: pv001
 spec:
   capacity:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /mnt/data
-```
-```yaml
+    path: /data
+---
+# PVC
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -165,49 +240,94 @@ spec:
     requests:
       storage: 3Gi
 ```
-## 调度策略
-### 1. 节点选择器（nodeSelector）
-   * 根据节点标签选择节点
-   * 示例：
+
+**PV 回收策略**：`Retain`（管理员手动回收）→ 生产环境推荐 / `Delete`（自动删除）→ 动态供应场景 / `Recycle`（已废弃，不建议使用）
+
+## 调度原理
+
+### 两阶段调度算法
+
+Scheduler 对每个待调度 Pod 执行两步：
+
+1. **Predicates（筛选）**：过滤不满足条件的 Node。包括：
+   - `PodFitsResources`：节点资源足够
+   - `MatchNodeSelector`：匹配 `nodeSelector` 标签
+   - `PodToleratesNodeTaints`：Pod 能容忍 Node 的污点
+   - `CheckNodePortConflict`：端口不冲突
+   - `CheckNodeAffinity`：满足节点亲和性
+
+2. **Priorities（打分）**：对候选 Node 按策略评分：
+   - `LeastRequestedPriority`：资源利用率低的 Node 得分高（分散 Pod）
+   - `BalancedResourceAllocation`：CPU 和内存均衡使用
+   - `ImageLocalityPriority`：Pod 镜像已有的 Node 得分高
+   - NodeAffinity、TaintToleration 等优先级
+
+### 节点选择器与亲和性
 
 ```yaml
+# nodeSelector：简单的标签匹配
 spec:
   nodeSelector:
     disktype: ssd
+
+# 节点亲和性：更灵活的表达
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:  # 硬约束
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values: ["ssd"]
+      preferredDuringSchedulingIgnoredDuringExecution:  # 软约束
+      - weight: 80
+        preference:
+          matchExpressions:
+          - key: zone
+            operator: In
+            values: ["us-east-1"]
 ```
-### 2. 亲和性和反亲和性（affinity/anti-affinity）
-   * 控制 Pod 的调度位置
-   * 示例：
+
+### Pod 亲和性与反亲和性
 
 ```yaml
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/e2e-az-name
-          operator: In
-          values:
-          - e2e-az1
-          - e2e-az2
+spec:
+  affinity:
+    podAntiAffinity:  # 确保同一服务的 Pod 分散在不同节点
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app: nginx
+        topologyKey: kubernetes.io/hostname
 ```
-### 3. 污点与容忍（taint/toleration）
-   * 控制 Pod 是否可以调度到特定节点
-   * 示例：
+
+**topologyKey** 指定了"分散的范围"——这里是 `hostname`，即不同宿主机。
+
+### 污点与容忍
+
+污点（Taint）阻止 Pod 调度到特定 Node，容忍（Toleration）允许 Pod"忍受"污点。
 
 ```yaml
-tolerations:
-- key: "key1"
-  operator: "Equal"
-  value: "value1"
-  effect: "NoSchedule"
+# 给节点打污点
+# kubectl taint nodes node1 key=value:NoSchedule
+
+# Pod 容忍
+spec:
+  tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
 ```
+
+污点效果：`NoSchedule`（不调度新 Pod）/ `PreferNoSchedule`（尽量不调度）/ `NoExecute`（驱逐已有 Pod）
+
 ## 安全机制
-### 1. 认证（Authentication）
-   * 支持多种认证方式（如证书、令牌、用户名密码）
-### 2. 授权（Authorization）
-   * 使用 RBAC （Role-Based Access Controll）
-   * 示例：
+
+### RBAC
+
+K8s 的授权体系基于 RBAC（最小权限原则）。
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -219,151 +339,76 @@ rules:
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "watch", "list"]
-```
-### 3. 网络策略（Network Policy）
-   * 控制 Pod 之间的网络通信
-   * 示例：
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
-  name: test-network-policy
+  name: read-pods
   namespace: default
-spec:
-  podSelector:
-    matchLabels:
-      role: db
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - ipBlock:
-        cidr: 172.17.0.0/16
-        except:
-        - 172.17.1.0/24
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: frontend
-    ports:
-    - protocol: TCP
-      port: 6379
-  egress:
-  - to:
-    - ipBlock:
-        cidr: 10.0.0.0/24
-    ports:
-    - protocol: TCP
-      port: 5978
+subjects:
+- kind: User
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
 ```
-## 监控和日志
-### 1. Metrics Server
-   * 收集集群资源使用情况
-   * 支持 Horizontal Pod Autoscaler（HPA）
-### 2. Prometheus 和 Grafana
-   * 提供强大的监控和可视化功能
-   * 示例：
 
-```yaml
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: prometheus
-spec:
-  serviceAccountName: prometheus
-  serviceMonitorSelector:
-    matchLabels:
-      team: frontend
-  resources:
-    requests:
-      memory: 400Mi
-```
-### 3. Kubernetes Dashboard
-   * 提供 Web 界面管理集群
-   * 示例：
+**ClusterRole vs Role**：Role 作用于特定 Namespace，ClusterRole 作用于集群范围。
 
-`kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml`
+## 高可用设计
 
-## Kubernetes 架构
-### 1. Master 节点
-```Plain Text
-+-------------------+
-|    API Server     |
-+-------------------+
-|    Scheduler      |
-+-------------------+
-| Controller Manager|
-+-------------------+
-|      etcd         |
-+-------------------+
-```
-### 2. Node 节点
-```Plain Text
-+-------------------+
-|     Kubelet       |
-+-------------------+
-|   Kube Proxy      |
-+-------------------+
-| Container Runtime |
-+-------------------+
-```
-### 3. 整体架构
-```Plain Text
-+-------------------+     +-------------------+
-|      Master       | <-> |       Node        |
-+-------------------+     +-------------------+
-      ^                         ^
-      |                         |
-      v                         v
-+-------------------+     +-------------------+
-|      etcd         |     |      Pods         |
-+-------------------+     +-------------------+
+### Master 高可用
 
 ```
-## 常见问题
-### 1. Kubernetes 的核心组件有哪些？
-   * Master 组件：API Server、Scheduler、Controller Manager、etcd
-   * Node 组件：Kubelet、Kube Proxy、Container Runtime
-### 2. Pod 和容器区别是什么
-   * Pob 是 Kubernetes 的最小部署单元
-   * 一个 Pod 可以包含一个或者多个容器
-   * Pod 内的容器共享网络和存储
-### 3. 如何实现 Kubernetes 的高可用？
-   * 部署多个 Master 节点
-   * 使用负载均衡
-   * 配置 etcd 集群
-   * 定期备份数据
-### 4. Kubernetes 的网络模型是怎么样的？
-   * 每个 Pod 有唯一的 IP 地址
-   * Pod 之间可以直接通信
-   * 使用 CNI （Container Network Interface）
-### 5. 如何实现 Kubernetes 的自动扩展？
-   * 使用 Horizontal Pod Autoscaler （HPA）
-   * 配置资源请求和限制
-   * 监控应用指标
-### 6. 如何管理 Kubernetes 的配置
-   * 使用 ConfigMap 存储配置数据
-   * 使用 Secret 存储敏感信息
-   * 通过环境变量或 Volume 挂载到 Pod
-### 7. Kubernetes 的调度策略有哪些？
-   * 节点选择器（nodeSelector）
-   * 亲和性和反亲和性（affinity/anti-affinity）
-   * 污点和容忍（taint/toleration）
-   * 优先级和抢占（priority/preempiton）
-### 8. 如何实现 Kubernetes 的持久化存储？
-   * 使用 PersistentVolume（PV）
-   * 使用 PersistentVolumeClaim（PVC）
-   * 支持多种存储后端（如 NFS、iSCI、云存储）
-### 9. 如何监控 Kubernetes 集群？
-   * 使用 Metrics Server
-   * 集成 Prometheus 和 Grafana
-   * 使用 Kubernetes Dashborad
-   * 配置告警规则
-### 10. 如何实现 Kubernetes 的滚动更新？
-   * 使用 Deployment
-   * 配置更新策略（RollingUpdate）
-   * 设置最大不可用和最大超出副本数
+Load Balancer → API Server × 3 → etcd cluster × 3（奇数节点）
+```
+
+etcd 基于 Raft 协议，3 节点允许 1 个故障，5 节点允许 2 个故障。Scheduler 和 Controller Manager 通过 Leader Election 选主。
+
+### Pod 高可用
+
+- Deployment 多副本 + 反亲和性确保跨节点分布
+- PDB（PodDisruptionBudget）确保更新时最少存活副本数
+- HPA 根据指标自动伸缩
+
+### 节点故障处理
+
+Node 失联后：
+1. 默认 40 秒后 Node 变为 `NotReady`（`node-monitor-period` 5 秒 × `node-monitor-grace-period` 40 秒 × 8 次失败）
+2. Controller Manager 的 NodeLifecycleController 驱逐 Pod（`pod-eviction-timeout` 默认 5 分钟）
+3. 被驱逐的 Pod 在其他 Node 上重建
+
+## 常见问题排查
+
+1. **Pod 一直 Pending**
+   - `kubectl describe pod <name>` 查看 Events
+   - 常见原因：节点资源不足、PVC 未绑定、镜像拉取失败、端口冲突
+   - 检查 `kubectl get nodes` 是否有 Ready 节点
+
+2. **Pod 不断 CrashLoopBackOff**
+   - `kubectl logs <pod>` 查看日志
+   - `kubectl logs <pod> --previous` 查看上次启动的日志
+   - 常见原因：启动参数错误、依赖服务未就绪、配置错误
+
+3. **Node 一直 NotReady**
+   - 排查 kubelet 是否运行：`systemctl status kubelet`
+   - 检查 kubelet 日志：`journalctl -u kubelet -f`
+   - `docker info`（或 `crictl info`）确认容器运行时正常
+   - 检查磁盘空间：`df -h`（磁盘满会导致 Node NotReady）
+
+4. **Service 不通**
+   - 检查 Endpoint：`kubectl get endpoints <service>`——为空说明 Pod 未匹配到 Service selector
+   - 检查 CoreDNS：`kubectl run -it test --image=busybox -- wget <service>`——DNS 解析是否正常
+   - 检查 kube-proxy 能否正常工作：`iptables-save | grep <service-name>`
+
+5. **存储异常**
+   - 检查 PV/PVC 状态：`kubectl get pv,pvc`——Pending 说明未绑定
+   - 检查 StorageClass 是否正确创建——动态供应时需要默认 StorageClass
+   - 检查宿主机目录权限——hostPath 场景需确认目录存在且权限正确
+
+6. **etcd 性能问题**
+   - `etcdctl check perf` 检查读写延迟
+   - 避免单 etcd 成员存储过大（建议 8GB 限制）
+   - 避免频繁大量写入（如频繁创建/删除 Pod）

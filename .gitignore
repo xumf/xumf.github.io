@@ -1,5 +1,8 @@
 public
 
+.DS_Store
+._*
+
 themes
 themes/cocoa
 themes/cocoa-eh

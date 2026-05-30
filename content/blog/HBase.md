@@ -5,207 +5,218 @@ tags: ["HBase", "Database"]
 draft: false
 ---
 
-## 1. HBase 核心组件源码深度解析
+## 为什么需要 HBase？
+
+传统关系型数据库在数据量达到 TB 级、写入吞吐量达到每秒百万行时会出现瓶颈：
+- MySQL 分库分表后跨节点 Join/聚合困难
+- 写入吞吐受限于单机 B+Tree 的随机写性能
+
+HBase 的解决思路：**LSM-Tree + 列式存储 + 水平扩展**。它将随机写转为顺序写（先写内存再刷盘），通过 Region 自动分裂实现水平扩展。
+
+## 1. HBase 核心组件
+
 ### 1.1 HMaster
-**源码路径**：`org.apache.hadoop.hbase.master.HMaster` 
 
-* 核心职责：
-   * 元数据管理：
-      * 管理表创建、删除、修改等 DDL 操作
-      * 维护 `hbase:meta` 表，记录所有 Region 的分布信息
-   * 负载均衡：
-      * 监控 RegionServer 的状态，分配 Region 到 RegionServer
-      * 处理 RegionServer 的故障恢复
-   * 协调分裂与合并
-      * 当 Region 大小超过阈值时，触发 Region 分裂
-      * 合并小 Region，减少元数据开销
+**源码路径**：`org.apache.hadoop.hbase.master.HMaster`
 
-**源码关键点**：
+核心职责：
+- **元数据管理**：处理 DDL（创建/删除/修改表），维护 `hbase:meta` 表
+- **负载均衡**：监控 RegionServer 负载，分配/迁移 Region
+- **故障恢复**：RegionServer 宕机时重新分配其 Region
 
-* 启动流程：
-   * 初始化 ZooKeeper 链接，注册 HMaster 节点
-   * 加载 `hbase:meta` 表，获取所有 Region 的分布信息
-   * 启动后台线程，监控 RegionServer 状态
-* Region 分配
-   * 通过 AssignmentManager 将 Region 分配到 RegionServer
-   * 使用 ZooKeeper 协调 Region 的分配和迁移
+**启动流程**：
+1. 连接 ZooKeeper，尝试创建 HMaster 临时节点（选主）
+2. 加载 `hbase:meta` 表，获取所有 Region 分布信息
+3. 启动后台线程：LoadBalancer（定期均衡 Region）、CatalogJanitor（清理 meta 中的无效条目）
 
-**面试题**：
+**高可用机制**：通过 ZooKeeper 选举，同一时间只有一个活跃 HMaster。Standby HMaster 监听活跃节点，发现 znode 消失后立刻尝试成为主。
 
-* HMaster 宕机后，HBase 还能正常工作吗？
-   * 可以，HBase 的读写操作有 RegionServer 直接处理，HMaster 宕机不会影响已有表的读写，但会影响表的元数据操作（如创建表）
-* HMaster 如何实现高可用？
-   * 通过 ZooKeeper 选举机制，确保只有一个活跃的 HMaster
+**面试常见问题：HMaster 宕机后 HBase 还能工作吗？**
+- 可以。读写操作由 RegionServer 直接处理，HMaster 只负责 DDL 和负载均衡。已有表的读写不受影响，但无法创建新表或修改表结构。
 
 ### 1.2 RegionServer
+
 **源码路径**：`org.apache.hadoop.hbase.regionserver.HRegionServer`
 
-* 核心职责：
-   * 数据存储：
-      * 管理多个 Region，每个 Region 负责表的一部分数据
-      * 将数据写入 MemStore，定期刷写到 HFile
-   * 读写请求处理：
-      * 处理客户端的读写请求
-      * 使用 BlockCache 缓存热点数据，提升读性能
-   * WAL 管理
-      * 每次写入数据时，先写入 WAL，确保数据可靠性
-      * 定期滚动 WAL 文件，防止文件过大
+核心职责与架构：
 
-**源码关键点**：
+```
+┌─────────────────── RegionServer ───────────────────┐
+│  ┌────────┐  ┌────────┐  ┌────────┐                │
+│  │ Region1 │  │ Region2 │  │ Region3 │  ← 每个 Region 负责一段 RowKey 范围
+│  └────┬───┘  └────┬───┘  └────┬───┘                │
+│       │           │           │                     │
+│  ┌────▼───────────▼───────────▼─────┐               │
+│  │  Store(ColumnFamily: info)       │               │
+│  │  ┌────────────┐ ┌─────────────┐ │               │
+│  │  │ MemStore   │ │ StoreFile   │ │               │
+│  │  │(SkipList)  │ │ (HFile × N) │ │               │
+│  │  └────────────┘ └─────────────┘ │               │
+│  ├──────────────────────────────────┤               │
+│  │ BlockCache (LruBlockCache)       │               │
+│  │ WAL (Write Ahead Log → HDFS)    │               │
+│  └──────────────────────────────────┘               │
+└────────────────────────────────────────────────────┘
+```
 
-* 写流程：
-   * 数据先写入 WAL，再写入 MemStore
-   * 当 MemStore 达到阈值时，触发刷写（Flush）操作，将数据写如 HFile
-* 读流程：
-   * 首先从 BlockCache 中查找数据
-   * 如果未命中，则从 MemStore 和 HFile 中读取数据
-* Compaction
-   * 定期合并 HFile，减少文件数量，提升读性能
+#### 写流程详解
 
-**面试题**：
+```
+Client → RegionServer
+  1️⃣ 写入 WAL（HDFS，保证不丢数据）
+  2️⃣ 写入 MemStore（ConcurrentSkipListMap，有序）
+  ─── 返回成功给客户端 ───
+  3️⃣ 后台 Flush 线程：当 MemStore 达到阈值（128MB）→ 生成 HFile
+  4️⃣ 后台 Compaction：合并小 HFile，删除已删除/过期的数据
+```
 
-* RegionServer 的架构时怎么样的？
-   * RegionServer 包含多个 Region，每个 Region 负责表的一部分数据。RegionServer 还包含 MemStore（内存存储）、BlockCache（读缓存）和 WAL（预写日志）
-   * MemStore 的作用时什么？
-      * MemStore 是内存中的数据结构，用于缓存写入的数据。当 MemStore 达到一定大小时，数据会被刷到 HFile 中
+写入为什么先写 WAL 再写 MemStore？
+- WAL 在 HDFS 上（多副本），RegionServer 宕机后可以通过 WAL 恢复 MemStore 中未刷盘的数据
+- WAL 使用顺序写（HDFS Append），性能远高于随机写
+
+为什么 MemStore 用 ConcurrentSkipListMap？
+- 数据按 RowKey 排序存储——HFile 要求数据有序，这样可以顺序写入
+- ConcurrentSkipListMap 支持 O(log N) 的插入和查找，同时线程安全
+
+#### 读流程详解
+
+```
+Client → RegionServer
+  1️⃣ 查询 BlockCache（LruBlockCache，缓存热点 HFile Block）
+  2️⃣ 未命中 → 查询 MemStore（未刷盘的最新数据）
+  3️⃣ 未命中 → 查询 HFile（Bloom Filter 先过滤，跳过不含该 RowKey 的文件）
+  4️⃣ 合并所有结果（MemStore + 多个 HFile），按时间戳取最新版本
+```
+
+**BlockCache vs MemStore**：MemStore 存的是还没写入 HFile 的数据（写缓存），BlockCache 缓存已读过的 HFile Block（读缓存）。两者分离，避免写操作影响读缓存。
 
 ### 1.3 Region
+
 **源码路径**：`org.apache.hadoop.hbase.regionserver.HRegion`
 
-* 核心职责：
-   * 数据分区：
-      * 按行键范围划分数据
-   * 数据存储：
-      * 每个 Region 包含多个 Store，每个 Store 对应一个列族
-      * Store 包含一个MemStore 和多个 HFile
-   * 读写请求处理：
-      * 处理客户端对当前 Region 的读写请求
+Region 按 RowKey 范围水平切分表数据。每个 Region 包含多个 Store（每列族一个）。
 
-**源码关键点：**
+**Region 分裂流程**：
 
-* Region 分裂：
-   * 当 Region 大小超过阈值时，触发分裂操作
-   * 分裂过程由 RegionServer 触发，HMaster 负责协调
-* Store 管理：
-   * 每个 Store 对应一个列族，包含一个 MemStore 和多个 HFile
-   * 定期刷写 MemStore 到 HFile，合并 HFile
+```
+1. RegionServer 检测 Region 大小超过阈值 (hbase.hregion.max.filesize, 默认 10GB)
+2. 将 Region 下线（短暂不可用）
+3. 找到 Region 的中点 RowKey，拆分为两个子 Region
+4. 在 hbase:meta 中更新 Region 信息
+5. 两个子 Region 上线，客户端刷新 meta 缓存后路由到新 Region
+```
 
-**面试题**：
+分裂对读写的影响：分裂期间该 Region 短暂不可用（毫秒级），通过 WAL 和 Meta 更新保证一致性。
 
-* Region 时如何分裂的？
-   * 当 Region 的大小达到阈值（默认 10GB），Region 会分裂为两个子 Region。分裂过程由 RegionServer 触发，HMaster 负责协调
-* Region 分裂对读写有什么影响
-   * 分裂过程中，Region 会暂时不可用，但分裂完成后，读写请求会路由到新的 Region
+### 1.4 WAL（Write Ahead Log）
 
-### 1.4 WAL（Write Ahead log）
-**源码路径**：`org.apache.hadoop.hbase.wal.WAL` 
+**源码路径**：`org.apache.hadoop.hbase.wal.WAL`
 
-* 核心职责
-   * 数据可靠性：
-      * 每次写入数据时，先写入 WAL，再写入 MemStore
-      * 如果 RegionServer  宕机，可以通过 WAL 恢复未刷写到 HFile 的数据
-   * 日志滚动：
-      * 定期滚动 WAL 文件，防止文件过大
+```
+每次写入流程：
+1. RegionServer 将写入操作封装为 WALEdit
+2. 通过 FSHLog 写入 HDFS 上的 WAL 文件（顺序追加，高性能）
+3. 写入成功后，再写入 MemStore
+4. 当 MemStore 刷盘成功 → 该部分 WAL 可截断
 
-**源码关键点**：
+崩溃恢复流程：
+1. RegionServer 宕机 → HMaster 感知（通过 ZooKeeper Session 超时）
+2. HMaster 将该 RS 上的 Region 重新分配给其他 RS
+3. 新 RS 加载 WAL，回放数据到 MemStore
+4. MemStore 刷盘后，数据恢复完成
+```
 
-* WAL 写入：
-   * 使用 **FSHLog**** **类将日志写入 HDFS
-   * 支持批量写入和异步写入，提升性能
-* WAL 恢复：
-   * 当 RegionServer 重启时，通过 WAL 恢复未持久化的数据
+**WAL 性能优化**：默认是同步写入（每条写入都 fsync），可通过 `hbase.wal.hsync=false` 改为异步（风险：RegionServer 进程级崩溃可能丢失少量数据）。
 
-**面试题**：
+## 2. HBase 读写流程深入
 
-* WAL 的作用时什么？
-   * WAL 记录每次写入操作，确保再 RegionServer 宕机时可以通过 WAL 恢复未持久化的数据。
-* WAL 的写入性能如何优化？
-   * 可以通过批量写入、异步写入等方式优化 WAL 的性能。
+### 2.1 完整写入流程（含客户端侧）
 
-## 2. HBase 读写流程源码深度解析
-### 2.1 写流程
-1. 客户端向 RegionServer 发送写请求
-2. RegionServer 将数据写入 WAL（Write Ahead Log）
-3. 数据写入 MemStore
-4. 当 MemStore 达到一定大小时，数据刷写到 HFile
+```
+1. 客户端从 hbase:meta 获取 RowKey 对应的 RegionServer
+2. 客户端直连该 RegionServer（无中间代理）
+3. RegionServer 接收请求 → 写入 WAL（多副本到 HDFS）
+4. 写入 MemStore（ConcurrentSkipListMap）
+5. 返回成功给客户端
+6. 异步 Flush 线程在 MemStore 达到 128MB（`hbase.hregion.memstore.flush.size`）时：
+   ├─ 在窗口中保持最新写入（不阻塞）
+   ├─ 将当前 MemStore 快照转换为不可变数据
+   └─ 写入 HFile（按照 RowKey 顺序）
+```
 
-**源码关键点**：
+**数据一致性保证**：WAL（HDFS 3 副本）+ MemStore 的 Snapshot + Flush 机制确保即使 RS 宕机也不会丢数据。
 
-* WAL 写入
-   * 使用 `FSHLog` 类将日志写入 HDFS
-* MemStore 写入：
-   * 数据写入`ConcurrentSkipListMap` ，支持高效的内存存储
-* 刷写（Flush）
-   * 当 MemStore 大小超过阈值时，触发刷写操作，将数据写入 HFile
+### 2.2 完整读取流程
 
-**面试题：**
+```
+1. 客户端从 hbase:meta 获取 RowKey 对应的 RegionServer
+2. 客户端直连该 RegionServer
+3. RegionServer 创建 scanner：
+   ├─ 构建读取路径：MemStore + BlockCache + 所有相关 HFile
+   └─ 合并结果（按 RowKey + TimeStamp + Type 排序）
+4. 返回查询结果（逐行或批量）
+```
 
-* **写流程中如何保证数据一致性？**
-   * 通过 WAL 和 HDFS 的多副本机制保证数据一致性。
+**读性能优化**：
+- **Bloom Filter**：跳过不含目标 RowKey 的 HFile，减少 I/O。布隆过滤器会占用内存（每个 HFile 约 1% 额外空间），但可大幅提升随机读性能
+- **BlockCache**：缓存热点 HFile Block（Block 默认 64KB），顺序读取时命中率高
+- **预分区（Pre-splitting）**：建表时指定 Region 数量和 split 点，避免单 Region 热点
+- **压缩**：Snappy 压缩 HFile（CPU 开销小，压缩比约 2:1），减少磁盘 I/O
 
-### 2.2 读流程
-1. 客户端向 RegionServer 发送请求
-2. RegionServer 首先从 BlockCache 中查找数据
-3. 如果 BlockCache 未命中，则从 MemStore 和 HFile 中读取数据
-4. 返回查询结果
+## 3. 高级特性
 
-**源码关键点**：
-
-* BlockCache：
-   * 使用 `LruBlockCache` 缓存热点数据
-* HFile 读取：
-   * 使用 `HFileReader` 读取 HFile 中的数据
-
-**面试题：**
-
-* 如何优化 HBase 的读性能？
-   * 可以通过增大 BlockCache、使用 Bloom Filter、预分区等方式优化读性能
-
-
-
-## 3. HBase 高级特性源码深度解析
 ### 3.1 协处理器（Coprocessor）
-**源码路径**：`org.apache.hadoop.hbase.coprocessor` 
 
-* 核心职责：
-   * Observer
-      * 拦截 HBase 的操作（如 `put`、`get`），执行自定义逻辑
-   * Endpoint：
-      * 在 RegionServer 上执行自定义逻辑，类似于存储过程
+类似数据库的触发器（Observer）和存储过程（Endpoint）。
 
-**源码关键点**：
+**Observer**：拦截 HBase 操作，在执行前后注入自定义逻辑。
 
-* Observer：
-   * 通过 `RegionObserver` 拦截 Region 的操作
-* Endpoint：
-   * 通过 `CoprocessorService` 实现自定义 RPC 服务
+应用场景：
+- **二级索引**：Put 操作时写入索引表（Observer 拦截 postPut）
+- **权限校验**：Get 操作前检查用户权限（Observer 拦截 preGet）
+- **审计日志**：记录所有 DML 操作
 
-**面试题**：
+**Endpoint**：在 RegionServer 上执行聚合计算，避免客户端拉回大量数据。
 
-* 协处理器的作用时什么？
-   * 协处理器允许在 RegionServer 上执行自定义代码，用于实现二级索引、聚合计算等功能
-* Observer 和 Endpoint 的区别时什么？
-   * Observer 用于拦截 HBase 的操作，Enpoint 用于执行自定义逻辑
+场景示例：统计某个表的总行数——不通过 Endpoint 的话需要 Scan 全表拉回客户端，通过 Endpoint 各 Region 并行统计后返回汇总结果。
 
-### 3.2 数据压缩与编码
-**源码路径**： `org.apache.hadoop.hbase.io.compress` 、`org.apache.hadoop.hbase.io.encoding` 
+### 3.2 压缩与编码
 
-* 核心职责：
-   * 压缩：
-      * 减少存储空间和 I/O 开销
-   * 编码：
-      * 优化数据存储格式，提升查询性能
+| 压缩算法 | 压缩比 | CPU 开销 | 场景 |
+|---------|-------|---------|------|
+| GZIP | 最高 | 最高 | 归档数据，读少 |
+| Snappy | 中（~2:1） | 低 | 平衡型（热数据推荐） |
+| LZO | 中 | 中 | 兼容性差（需安装 native lib） |
+| ZSTD | 高 | 中 | JDK 11+，Facebook 开发 |
 
-**源码关键点**：
+设置方式：
+```bash
+# 建表时指定
+create 'mytable', { NAME => 'cf', COMPRESSION => 'SNAPPY' }
+# 已有表修改
+alter 'mytable', { NAME => 'cf', COMPRESSION => 'GZ' }
+```
 
-* 压缩算法：
-   * 支持 GZIP、Snappy、LZO 等压缩算法
-* 编码方式：
-   * 支持 Diff、Prefix 等编码方式
+## 4. 实战排查
 
-**面试题**：
+1. **RegionServer 内存溢出（OOM）**
+   - 症状：RS 进程消失，HMaster 重新分配 Region
+   - 检查 MemStore 大小：`hbase.hregion.memstore.flush.size` × Region 数量 = RS 写缓冲区总量
+   - 通常原因为 Region 过多导致 MemStore 总和超过 RS 堆内存——降低 `hbase.regionserver.global.memstore.size`（默认 0.4，即 40% 堆内存）
 
-* HBase 支持哪些压缩算法？
-   * HBase 支持 GZIP、Snappy、LZO 等压缩算法
-* 数据编码的作用时什么？
-   * 数据编码可以减少存储空间和 I/O 开销，提供查询性能
+2. **读延迟高**
+   - BlockCache 命中率低：增大 `hfile.block.cache.size`（默认 0.4）
+   - HFile 数量过多：触发 Major Compaction 合并（但 Major Compaction 期间 I/O 压力大）
+   - Bloom Filter 未开启：建表时 `BLOOMFILTER => 'ROW'`
+
+3. **Region 热点**
+   - 原因：RowKey 设计不合理，顺序递增导致所有写请求打在一个 Region 上
+   - 解决方案：RowKey 加盐（前缀 hash）——如 `MD5(id).substring(0,4) + id` 使数据均匀分布
+
+4. **Major Compaction 影响读写**
+   - Major Compaction 合并所有 HFile，I/O 消耗大
+   - 建议在低峰期触发：`hbase.hregion.majorcompaction` 设置为 0（关闭自动），通过 crontab 手动触发
+
+5. **ZooKeeper Session 超时导致 RegionServer 被误判宕机**
+   - 检查 GC 日志——长时间的 Full GC 可能让 ZK 认为 RS 失联
+   - 调大 `zookeeper.session.timeout`（默认 90 秒），或缩短 GC 暂停时间

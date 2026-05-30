@@ -1,19 +1,18 @@
 baseURL = "https://xumf.net/"
 title = "小蜜蜂"
-theme = "manis"
-# Copyright notice. Note: You can use HTML tag here
-copyright = "&copy; 2018  xumf.net</a>"
-pluralizeListTitles = false
-# Minimum number of posts before paginate navigation show up
-paginate = 10
-canonifyURL = true
-# Your disqus shortname
-# disqusShortname = "xumf"
-# Edit this if you want to translate your blog
+theme = "stack"
 defaultContentLanguage = "zh"
-pygmentsCodeFences = true
-pygmentsUseClasses = true
-googleAnalytics = "UA-118288238-1"
+hasCJKLanguage = true
+
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
+[pagination]
+pagerSize = 10
+
+[permalinks]
+post = "/blog/:slug/"
+page = "/:slug/"
 
 [markup]
   [markup.goldmark]
@@ -21,66 +20,77 @@ googleAnalytics = "UA-118288238-1"
       unsafe = true
     [markup.goldmark.parser]
       attribute = true
-	  
+
 [frontmatter]
   [frontmatter.defaults]
     [frontmatter.defaults.values]
       slug = "{{ .Name | urlize }}"
 
 [taxonomies]
-  tag = "tags"
-  category = "categories"
-
-[permalinks]
-  tags = "/tags/:slug/"
-  categories = "/categories/:slug/"
+tag = "tags"
+category = "categories"
 
 [params]
-	# If false, use minified CSS (ui.min.css)
-	debugCSS = false
-  	enableMermaid = true
-	# List of sections support disqus comments
-	# disqusSections = ["blog"]
-	# Site meta description
-  	description = "一个热爱技术、开朗积极的开发者的博客"
-	# Site's Tagline (Subtitle or Keyword)
-	tagline = "Code Farming Engineer"
-	# If true give attribution to this theme
-	themeAttrib = false
-	# URL to license file, can be outside of your domain
-	licenseURL = "/about/license"
+mainSections = ["blog"]
+description = "一个热爱技术、开朗积极的开发者的博客"
 
-	# Configure which section for Latest Posts
-	postSection = "blog"
-	# Configure which section for Latest Works
-	workSection = "work"
+[params.footer]
+since = 2018
 
-	# 404 Configuration
-	head404 = "对不起，我找不到你想要的东西。"
-	sub404 = "返回 <a href='/'>主页</a>."
+[params.dateFormat]
+published = "2006年 1月 02日"
+lastUpdated = "2006年 1月 02日"
 
-	# Color of your website's accent
-	colorTheme = "#99CCCC"
-	# Maximum number of item in Latest Posts or Works
-	latestCount = 8
-	# Path to site's favicon image
-	faviconImg = "/images/logo.png"
-	# Date format in item list
-	dateFmt = "2006年 1月 02日"
+[params.sidebar]
+subtitle = "Code Farming Engineer"
+avatar = "/images/logo.png"
+compact = false
 
-	# Code Highlighting (HighlightJS)
-	highlightJs = true
-	highlightJsLanguages = [ "common" ]
-	highlightJsStyle = "atelier-savanna-light"
+[params.article]
+headingAnchor = false
+toc = true
+readingTime = true
 
-	# Social Links
-	email = "xumf.net@gmail.com"
-	github = "https://github.com/xumf/"
-	# twitter = "https://twitter.com/yuri_boya"
+[params.article.list]
+showTags = true
 
+[params.widgets]
+homepage = []
+page = []
 
-# Language Configuration
-#[languages.in]
-#	lang = "in"
-#	languageName = "Bahasa Indonesia"
-#	weight = 1
+[params.colorScheme]
+toggle = true
+default = "auto"
+
+[params.comments]
+enabled = true
+provider = "disqus"
+
+[params.comments.disqusjs]
+shortname = "xumf"
+
+[[menu.social]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/xumf/"
+
+[menu.social.params]
+icon = "brand-github"
+
+[[menu.main]]
+identifier = "blog"
+name = "博客"
+url = "/blog/"
+weight = 10
+
+[[menu.main]]
+identifier = "about"
+name = "关于"
+url = "/about/"
+weight = 30
+
+[services.disqus]
+shortname = "xumf"
+
+[services.googleAnalytics]
+id = "UA-118288238-1"

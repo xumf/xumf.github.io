@@ -9,162 +9,213 @@ tags : [
 ---
 
 # RabbitMQ 知识架构
+
 ## 1. AMQP 协议基础
-RabbitMQ 是 AMQP 0-9-1 协议的实现，其核心模型基于**信道(Channel)**、**交换机(Exchange)**和**队列(Queue)**的协作。
 
-* **AMQP 协议分层**：分为 **Module Layer**（定义业务命令）、**Session Layer**（处理命令传输与同步）、**Transpot Layer**（二进制数据传输）。
-* **信道(Channel)**：基于 TCP 连接的虚拟链路，复用 TCP 连接以降低开销，每个信道独立处理消息路由，支持多线程并发操作。
-* **虚拟主机(VHost)**：逻辑隔离的独立环境，每个 VHost 拥有自己的交换机、队列和权限。
-* **帧(Frame)**：AMQP 数据传输的最小单位，包含帧头、帧体和帧尾，用于封装消息和协议指令。
+RabbitMQ 是 AMQP 0-9-1 协议的实现，其核心模型基于**信道（Channel）**、**交换机（Exchange）**和**队列（Queue）**的协作。
+
+### 为什么需要 Channel？
+
+AMQP 的设计用意：每次请求都创建 TCP 连接代价太高（三次握手+慢启动），Channel 是 TCP 内的虚拟链路，多个 Channel 复用同一个 TCP 连接。每个 Channel 独立处理消息路由，支持多线程并发。
+
+相关概念：
+
+- **虚拟主机（VHost）**：逻辑隔离环境，每个 VHost 拥有独立的交换机、队列和权限。一个 RabbitMQ 实例可以创建多个 VHost，用于多租户隔离。
+- **帧（Frame）**：AMQP 数据传输的最小单位，包含帧头、帧体和帧尾，用于封装消息和协议指令。
 
 ---
+
 ## 2. 消息流转原理
-消息从生产者到消费者的完整生命周期如下：
 
-**(1)生产者发送消息**
+### 生产者发送消息
 
-1. **连接建立**：生产者通过 TCP 连接到 RabbitMQ 节点，并创建信道。
-2. **消息封装**：消息包含**有效负载(Playload)** + **元数据(Headers、Routing Key、Delivery Mode 等)**。
-3. **发送到交换器**：生产者通过`basic.publish` 方法将消息发送到指定的交换器。
-   * 关键参数：`exchange` （目标交换器）、`routing_key` （路由键）、`mandatory` （消息无法路由时是否返回错误）。
-
-**(2)交换器路由消息**
-
-交换器根据**类型**和**绑定规则**将消息路由到队列：
-
-* **Direct Exchange**：精确匹配`routing_key` 和`binding_key` ，类似哈希表查找。
-* **Fanout Exchange**：广播到所有绑定的队列，忽略`routing_key` 。
-* **Topic Exchange**：基于通配符的层次化匹配，内部使用**Trie 树**或**哈希表**优化路由效率。
-* **Headers Exchange**：通过`headers` 键值对匹配，性能较低，适用于复杂条件路由。
-
-**(3)队列存储消息**
-
-消息进入队列后，按**先进先出(FIFO)**顺序存储，但优先级队列(Priority Queue)可调整顺序。
-
-* **持久化队列**：元数据和消息（若标记为持久化）写入磁盘，重启后恢复。
-* **内存队列**：仅存储在内存，重启后丢失。
-
-**(4)消息者拉取消息**
-
-1. **订阅队列**：消费者通过`basic.consume` 订阅队列，进入阻塞等待状态。
-2. **消息推送**：RabbitMQ 通过`basic.deliver` 方法主动推送消息到消费者(Push 模式)。
-   * 消费者也可通过`basic.get` 主动拉取消息（Pull 模式），但效率较低。
-3. **消息确认(ACK)**：
-   * **自动 ACK**：消息发送后立即从队列删除，风险高（消息可能未处理成功）。
-   * **手动 ACK**：消费者处理完成后发送`basic.ack` ，队列删除消息；若未 ACK 且连接断开，消息重新入队（Redelivery）。
-
----
-## 3. 持久化与可靠性机制
-**(1)消息持久化**
-
-* **队列持久化**：声明队列时设置`durable=true` ，确保队列元数据不丢失。
-* **消息持久化**：发送消息时设置`delivery_mode=2` ，将消息体写入磁盘。
-   * **写入时机**：消息先写入内存缓冲区，异步刷盘（可通过 Publisher Confirm 确保刷盘完成）。
-
-**(2)发布者确认(Publisher Confrim)**
-
-* **事务模式**：通过`txSelect` 、`txCommit` 等命令实现原子性，但性能差。
-* **Confirm 模式**：
-   1. 生产者开启`confirm` 模式，每条消息分配唯一 ID。
-   2. RabbitMQ 通过`basic.ack` （成功）或`basic.nack` （失败）异步通知生产者。
-   3. 生产者可批量确认（`confirm.select` 设置`multiple=true` ），提升吞吐量。
-
----
-## 4. 死信队列(DLX)原理
-当消息无法被正常消费时，会被转发到私信交换器（Dead Letter Exchange）
-
-* **触发条件**：
-   * 消息被消费者拒绝（`basic.reject` 或`basic.nack` ）且`requeue=false` 。
-   * 消息 TTL 过期。
-   * 队列达到最大长度限制。
-* **死信路由**：死信消息携带原始的路由键和头部消息，有 DLX 重新路由到死信队列。
-
----
-## 5. 集群与高可用原理
-**(1)集群架构**
-
-* **元数据同步**：所有节点共享交换器、队列、绑定等元数据，但队列数据仅存储在创建节点。
-* **客户端连接**：客户端可连接任意节点，若请求的队列不在该节点，通过内部路由转发。
-
-**(2)镜像队列(Mirrored Queue)**
-
-通过策略（Policy）定义 ha-mode（如 all），队列数据在集群节点间同步，基于 Raft 协议选举主节点。
-
-* **数据同步**：队列的镜像副本分布在多个节点，通过 **Guaranteed Multicast **算法同步。
-* **故障转移**：主节点（Master）宕机后，从镜像中选举新的主节点（基于 Raft 协议）。
-
-**(3)网络分区处理**
-
-* **自动恢复策略**：
-   * `pause_minority` ：少数派节点自动暂停，避免数据冲突。
-   * `autoHeal` ：重启后自动选择分区中的多数派恢复。
-* **手动干预**：通过`rabbitmqctl forget_cluster_node` 移除故障节点。
-
----
-## 6. 内存与磁盘管理
-
-* **内存控制**：RabbitMQ 默认优先使用内存存储消息，超出阈值（`vm_memory_high_watermark` ）后持久化到磁盘。
-* **流控机制**：当消费者处理速度过慢时，通过 TCP 背压（Back Pressure）机制阻止生产者继续发送消息。
-
----
-## 7. 性能优化原理
-**(1)预取(QoS)**
-
-* **channel.basicQos(prefetchCount)** ：限制消费者未确认消息的最大数量，避免消费过载。
-* **公平分发**：若多个消费者订阅同一队列，RabbitMQ 会轮询分发消息（Round-Robin）。
-
-**(2)批量操作**
-
-* **批量发布消息**：合并多个消息到单个帧，减少网络开销。
-* **批量确认**：通过`multiple=true` 参数确认多条消息。
-
----
-## 8. RPC 模式原理
-
-* **回调队列**：消费者在`reply_to` 头部指定响应队列。
-* **关联 ID**：生产者通过`correlation_id` 匹配请求与响应。
-
-```Plain Text
-  +---------+          +------------+          +---------+
-  | Client  | --(1)--> | RabbitMQ   | --(2)--> | Server  |
-  |         | <--(4)-- | (RPC Queue)| <--(3)-- |         |
-  +---------+          +------------+          +---------+
-  步骤：
-  1. 客户端发送请求到 RPC 队列，携带 `reply_to` 和 `correlation_id`。
-  2. 服务端消费请求，处理完成后将结果发送到 `reply_to` 队列。
-  3. 客户端监听 `reply_to` 队列，通过 `correlation_id` 匹配响应。
 ```
+生产者 → TCP 连接 → Channel → basic.publish(exchange, routingKey, props, body) → Exchange
+```
+
+关键参数：
+- `exchange`：目标交换机
+- `routing_key`：路由键（交换机据此路由）
+- `mandatory`：true 时消息无法路由则返回错误，false 时消息丢失
+- `delivery_mode`：2 表示持久化消息
+
+### 交换机类型
+
+| 类型 | 路由规则 | 性能 | 场景 |
+|------|---------|------|------|
+| **Direct** | 精确匹配 `routing_key` = `binding_key` | 最高 | 点对点、单播 |
+| **Fanout** | 广播到所有绑定队列，忽略 routing_key | 高 | 发布订阅 |
+| **Topic** | 通配符匹配 `*`（一个单词）`#`（多个单词） | 中 | 按主题分类 |
+| **Headers** | 根据消息 header 键值对匹配 | 低 | 复杂条件路由 |
+
+### 消息确认机制
+
+| 模式 | 行为 | 风险 | 场景 |
+|------|------|------|------|
+| **自动 ACK** | 消息发送后立即删除 | 消费者处理失败时消息丢失 | 可以容忍丢失 |
+| **手动 ACK（basic.ack）** | 消费者处理完成后发送确认消息 | 无（除非消费者忘记 ACK） | 生产环境必选 |
+
+手动 ACK 的注意事项：
+- 不 ACK 也不拒绝，消息会一直留在队列中（unacked）
+- 消费者断开连接后，unacked 消息重新入队（requeue），支持重试
+- 拒绝时 `requeue=true` 会重新入队（可能导致死循环），`requeue=false` 进入死信队列
+
 ---
-## 9. 流量削峰原理
 
-* **队列缓冲**：通过队列暂存突发流量，消费者按处理能力逐步消费。
-* **限流策略**：结合 QoS 预取和消费者水平扩展，控制处理速率。
+## 3. 持久化与可靠性
 
-## 10. 保证消息有序性
-![消息有序性](/images/rabbitmq-message-flow.png)
+### 消息持久化三要素
 
-## 11. 高可用
-![高可用](/images/rabbitmq-cluster.png)
+```
+队列 durable = true  +  消息 delivery_mode = 2  +  Publisher Confirm
+```
+
+三者缺一不可：
+- 队列不持久化 → 队列本身在重启后消失
+- 消息不持久化 → 即使队列持久化，消息也只存在内存中
+- 没有 Confirm → 不知道消息是否到达 Broker
+
+### Publisher Confirm 模式
+
+```java
+// Spring AMQP 示例: 启用 Confirm
+@Bean
+public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    RabbitTemplate template = new RabbitTemplate(connectionFactory);
+    template.setConfirmCallback((correlationData, ack, cause) -> {
+        if (ack) {
+            // 消息成功到达 Exchange
+        } else {
+            // 消息到达 Exchange 失败，记录日志/重试
+        }
+    });
+    template.setMandatory(true);
+    template.setReturnsCallback(returned -> {
+        // 消息无法路由到 Queue（mandatory=true 时触发）
+        log.warn("消息不可路由: {}", returned.getMessage());
+    });
+    return template;
+}
+```
+
+Confirm 和 Return 的区别：
+- **Confirm**：确认消息是否到达 Exchange
+- **Return**：确认消息从 Exchange 是否路由到 Queue（mandatory=true）
 
 ---
-## 12. 重要知识点
 
-1. **为什么使用消息队列**？
-   * **核心场景**：解耦（服务间异步通信）、削峰（缓冲高并发请求）、异步（非阻塞处理）。
-   * **缺点**：系统可用性降低（依赖 MQ）、复杂性增加（需处理消息丢失、重复、顺序性问题）。
-2. **如何保证消息不丢失？**
-   * **生产者**：使用 Confirm 模式（异步确认）或事务（同步确认）。
-   * **Broker**：持久化队列与消息，结合镜像队列。
-   * **消费者**：关闭自动 ACK，处理完成后手动发送 ACK。
-3. **如何避免消息重复消费？**
-   * **生产者去重**：MQ 内部生成`inner-msg-id` 拦截重复投递。
-   * **消费者幂等**：业务层通过唯一标识（如订单 ID）校验，结合数据库唯一键或 Redis 原子操作。
-4. **RabbitMQ 集群模式？**
-   * **普通集群**：元数据同步，但队列数据仅存于创建节点，故障时需重新拉取数据。
-   * **镜像集群**：队列数据全节点同步，高可用但性能开销大，拓展性差。
-5. **消息顺序性如何保证？**
-   * **单队列消费者**：同一业务的消息路由到同一队列，由单个消费者顺序处理。
-   * **全局序列号**：消息中添加序号，消费者按序处理。
-6. **消息堆积如何处理？**
-   * **临时扩容**：增加队列 Partition 和消费者实例，并行消费积压数据。
-   * **批量导出**：将积压消息导出至临时 Topic，分片处理。
+## 4. 死信队列（DLX）
+
+### 触发条件
+
+1. 消息被消费者拒绝（`basic.reject` / `basic.nack`）+ `requeue=false`
+2. 消息 TTL 过期（`expiration` 属性）
+3. 队列达到最大长度（`x-max-length` / `x-max-length-bytes`）
+4. 消息超过队列的 TTL（`x-message-ttl`）
+
+### 应用场景
+
+- **延迟队列**：消息设置 TTL → 过期后进入死信队列 → 消费者从死信队列消费。不需要额外插件。
+
+### 使用示例
+
+```java
+// Spring Boot 配置延迟队列（通过死信实现）
+@Bean
+public Queue normalQueue() {
+    Map<String, Object> args = new HashMap<>();
+    args.put("x-dead-letter-exchange", "dlx.exchange");
+    args.put("x-dead-letter-routing-key", "dlx.routing.key");
+    args.put("x-message-ttl", 30000); // 30秒后过期
+    return new Queue("normal.queue", true, false, false, args);
+}
+
+@Bean
+public Queue dlq() {
+    return new Queue("dlq.queue", true);
+}
+```
+
+---
+
+## 5. 集群与高可用
+
+### 普通集群
+
+- 所有节点共享交换机、队列元数据
+- 队列数据仅存储在创建节点
+- 其他节点访问该队列时内部转发（性能损耗）
+- **问题**：队列所在节点宕机 → 队列数据丢失
+
+### 镜像队列（Quorum Queue 替代）
+
+从 RabbitMQ 3.8 起，推荐使用 **Quorum Queue** 替代传统镜像队列：
+
+| 特性 | 镜像队列 | Quorum Queue |
+|------|---------|-------------|
+| 一致性协议 | GM（Guaranteed Multicast） | Raft |
+| 数据模型 | Master-Slave | Leader-Follower |
+| 网络分区处理 | 手动策略 | 自动（Raft 自动选主） |
+| 适用场景 | 高可用 | 高可用 + 强一致（推荐） |
+
+**生产环境推荐**：新项目直接使用 Quorum Queue。
+
+---
+
+## 6. 性能优化
+
+### QoS 预取
+
+```java
+// Spring Boot: 每次只拉取 1 条消息，处理完再拉取下一条
+@Bean
+public SimpleRabbitListenerContainerFactory myFactory(
+        ConnectionFactory connectionFactory) {
+    SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+    factory.setConnectionFactory(connectionFactory);
+    factory.setPrefetchCount(1); // 关键参数
+    return factory;
+}
+```
+
+**prefetchCount 的选择**：
+- = 1：公平分发，适合处理时间不均匀的任务，但吞吐量低
+- > 1：批量拉取，吞吐量高，但可能出现"慢消费者囤积任务"
+
+### 批量操作
+
+```
+批量发布：合并多个消息到单次网络帧
+批量 Confirm：multiple=true 一次性确认多条消息
+批量 ACK：消费者处理一批后统一 ACK
+```
+
+---
+
+## 7. 常见问题排查
+
+1. **消息丢失**
+   - 检查队列 `durable=true`
+   - 检查消息 `delivery_mode=2`（Spring Boot 通过 `spring.rabbitmq.template.mandatory=true` + `MessageDeliveryMode.PERSISTENT`）
+   - 检查是否开启了 Confirm 模式
+
+2. **消息堆积**
+   - 消费者处理速度跟不上 → 增加消费者数量（`concurrency` 参数）
+   - 消费者处理异常一直失败 → 检查 `maxLength` + 死信队列兜底
+
+3. **消息重复消费**
+   - 消费者 ACK 超时后消息重新入队
+   - **根本解决方案**：生产者幂等（每条消息 `correlationId` 唯一）+ 消费者侧去重（数据库唯一键 / Redis 原子操作）
+
+4. **Linux 文件句柄限制**
+   - RabbitMQ 打开大量文件（队列、连接），超过系统限制会崩溃
+   - 检查 `ulimit -n`，调整 `/etc/security/limits.conf`
+
+5. **性能瓶颈定位**
+   - 使用 `rabbitmqctl status` 查看内存、磁盘、连接数
+   - 管理界面监控 `Queued Messages` / `Message Rates`
+
+6. **Spring Boot 连接 RabbitMQ 失败**
+   - 检查 `spring.rabbitmq.host`、`port`（5672 不是 15672）
+   - 检查 Virtual Host 是否存在（`spring.rabbitmq.virtual-host` 默认 `/`）
+   - 检查防火墙和认证凭据
